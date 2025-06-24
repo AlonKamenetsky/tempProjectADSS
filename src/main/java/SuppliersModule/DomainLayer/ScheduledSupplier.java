@@ -1,5 +1,6 @@
 package SuppliersModule.DomainLayer;
 
+import SuppliersModule.DataLayer.DTO.SupplierDTO;
 import SuppliersModule.DataLayer.DTO.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
@@ -21,7 +22,7 @@ public class ScheduledSupplier extends Supplier {
 
     public ScheduledSupplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod, ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo, EnumSet<WeekDay> supplyDays) {
         super(supplierId, supplierName, productCategory, supplierDeliveringMethod, supplierContactInfo, supplierPaymentInfo);
-        this.supplierDTO.supplyMethod = this.getSupplyMethod().toString();
+
 
         this.supplyDays = supplyDays;
 
@@ -31,6 +32,19 @@ public class ScheduledSupplier extends Supplier {
 
         for (WeekDay day : supplyDays)
             this.supplierDaysDTOS.add(new SupplierDaysDTO(supplierId, day.toString()));
+        this.supplierDTO = new SupplierDTO(
+                supplierId,
+                supplierName,
+                productCategory.toString(),
+                supplierDeliveringMethod.toString(),
+                supplierContactInfo.getName(),
+                supplierContactInfo.getEmail(),
+                supplierContactInfo.getPhoneNumber(),
+                supplierContactInfo.getAddress(),
+                supplierPaymentInfo.getSupplierBankAccount(),
+                supplierPaymentInfo.getSupplierPaymentMethod().toString(),
+                SupplyMethod.SCHEDULED.toString()
+        );
     }
 
     @Override
@@ -65,6 +79,10 @@ public class ScheduledSupplier extends Supplier {
     public String toString() {
         return super.toString() + "\nAvailable days: " + this.supplyDays + "\nScheduled orders: " + this.scheduledOrders;
     }
+    public List<SupplierDaysDTO> getSupplierDaysDTOS() {
+        return this.supplierDaysDTOS;
+    }
+
 
     public static Date getNearestWeekdayDate(WeekDay targetDay) {
         LocalDate today = LocalDate.now();

@@ -10,18 +10,28 @@ import java.util.Optional;
 
 public class SqliteSupplierDAO {
 
-    public List<SupplierDTO> findAll() throws SQLException {
-        String sql = "SELECT * FROM suppliers";
-        try (Statement stmt = Database.getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+    public List<SupplierDTO> findAllScheduled() throws SQLException {
+        return findBySupplyMethod("SCHEDULED");
+    }
 
-            List<SupplierDTO> list = new ArrayList<>();
-            while (rs.next()) {
-                list.add(mapResultSetToDTO(rs));
+    public List<SupplierDTO> findAllOnDemand() throws SQLException {
+        return findBySupplyMethod("ON_DEMAND");
+    }
+
+    private List<SupplierDTO> findBySupplyMethod(String method) throws SQLException {
+        String sql = "SELECT * FROM suppliers WHERE supply_method = ?";
+        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, method);
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<SupplierDTO> list = new ArrayList<>();
+                while (rs.next()) {
+                    list.add(mapResultSetToDTO(rs));
+                }
+                return list;
             }
-            return list;
         }
     }
+
 
     public Optional<SupplierDTO> findById(int supplierId) throws SQLException {
         String sql = "SELECT * FROM suppliers WHERE id = ?";

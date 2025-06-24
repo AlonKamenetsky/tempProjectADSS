@@ -16,7 +16,7 @@ public class OrderController {
     int numOfOrders = 0;
     ArrayList<Order> ordersArrayList;
 
-    OrderControllerDTO orderControllerDTO;
+
 
     public OrderController() {
         this.numOfOrders = 0;

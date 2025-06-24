@@ -79,30 +79,30 @@ public class Order {
     // Constructor used when reading an existing OrderDTO from the database
     // -------------------------------------------------------------------------
     public Order(OrderDTO orderDTO) {
-        this.orderID = orderDTO.orderID;
-        this.supplierID = orderDTO.supplierID;
+        this.orderID = orderDTO.orderID();
+        this.supplierID = orderDTO.supplierID();
 
         ContactInfo contactInfo = new ContactInfo(
-                orderDTO.phoneNumber,
-                orderDTO.physicalAddress,
-                orderDTO.emailAddress,
-                orderDTO.contactName
+                orderDTO.phoneNumber(),
+                orderDTO.physicalAddress(),
+                orderDTO.emailAddress(),
+                orderDTO.contactName()
         );
         this.supplierContactInfo = contactInfo;
 
-        this.deliveringMethod = DeliveringMethod.valueOf(orderDTO.deliveryMethod);
+        this.deliveringMethod = DeliveringMethod.valueOf(orderDTO.deliveryMethod());
 
         // Now parse the "dd/MM/yyyy" strings back into Date
-        this.orderDate = ParaseDate(orderDTO.orderDate);
-        this.supplyDate = ParaseDate(orderDTO.deliveryDate);
+        this.orderDate = ParaseDate(orderDTO.orderDate());
+        this.supplyDate = ParaseDate(orderDTO.deliveryDate());
 
-        this.totalPrice = orderDTO.totalPrice;
+        this.totalPrice = orderDTO.totalPrice();
 
         this.productArrayList = new ArrayList<>();
 
-        this.supplyMethod = SupplyMethod.valueOf(orderDTO.supplyMethod);
+        this.supplyMethod = SupplyMethod.valueOf(orderDTO.supplyMethod());
 
-        this.orderStatus = OrderStatus.valueOf(orderDTO.orderStatus);
+        this.orderStatus = OrderStatus.valueOf(orderDTO.orderStatus());
 
         this.orderDTO = orderDTO;
     }
@@ -160,35 +160,30 @@ public class Order {
 
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
         this.supplierContactInfo = supplierContactInfo;
-        this.orderDTO.phoneNumber = supplierContactInfo.phoneNumber;
-        this.orderDTO.physicalAddress = supplierContactInfo.address;
-        this.orderDTO.emailAddress = supplierContactInfo.email;
-        this.orderDTO.contactName = supplierContactInfo.name;
     }
 
     public void setSupplyMethod(SupplyMethod supplyMethod) {
         this.supplyMethod = supplyMethod;
-        this.orderDTO.supplyMethod = supplyMethod.toString();
     }
 
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
-        this.orderDTO.orderDate = formatDate(orderDate);
+
     }
 
     public void setSupplyDate(Date supplyDate) {
         this.supplyDate = supplyDate;
-        this.orderDTO.deliveryDate = formatDate(supplyDate);
+
     }
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
-        this.orderDTO.totalPrice = totalPrice;
+
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
-        this.orderDTO.orderStatus = orderStatus.toString();
+
     }
 
     @Override

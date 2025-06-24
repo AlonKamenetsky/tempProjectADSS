@@ -20,8 +20,9 @@ public abstract class Supplier {
     ContactInfo supplierContactInfo;
 
     PaymentInfo supplierPaymentInfo;
+    protected SupplierDTO supplierDTO;
 
-    SupplierDTO supplierDTO;
+
 
     public Supplier(int supplierId, String supplierName, ProductCategory productCategory, DeliveringMethod supplierDeliveringMethod,  ContactInfo supplierContactInfo, PaymentInfo supplierPaymentInfo) {
         this.supplierId = supplierId;
@@ -35,9 +36,8 @@ public abstract class Supplier {
 
         this.supplierPaymentInfo = supplierPaymentInfo;
 
-        this.supplierDTO = new SupplierDTO(this.supplierId, this.supplierName, this.productCategory.toString(), this.supplierDeliveringMethod.toString(),
-                supplierContactInfo.name, supplierContactInfo.email, supplierContactInfo.phoneNumber, supplierContactInfo.address,
-                supplierPaymentInfo.supplierBankAccount.toString(), supplierPaymentInfo.supplierPaymentMethod.toString(), "temp");
+
+
     }
 
     public int getSupplierId() {
@@ -50,7 +50,6 @@ public abstract class Supplier {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
-        this.supplierDTO.supplierName = supplierName;
     }
 
     public ProductCategory getSupplierProductCategory() {
@@ -59,7 +58,7 @@ public abstract class Supplier {
 
     public void setSupplierProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
-        this.supplierDTO.productCategory = productCategory.toString();
+
     }
 
     public abstract SupplyMethod getSupplyMethod();
@@ -70,7 +69,7 @@ public abstract class Supplier {
 
     public void setSupplierDeliveringMethod(DeliveringMethod supplierDeliveringMethod) {
         this.supplierDeliveringMethod = supplierDeliveringMethod;
-        this.supplierDTO.deliveryMethod = supplierDeliveringMethod.toString();
+
     }
 
     public void addSupplierContract(SupplyContract supplierContract) {
@@ -87,10 +86,6 @@ public abstract class Supplier {
 
     public void setSupplierContactInfo(ContactInfo supplierContactInfo) {
         this.supplierContactInfo = supplierContactInfo;
-        this.supplierDTO.contactName = supplierContactInfo.name.toString();
-        this.supplierDTO.emailAddress = supplierContactInfo.email;
-        this.supplierDTO.phoneNumber = supplierContactInfo.phoneNumber;
-        this.supplierDTO.address = supplierContactInfo.address;
     }
 
     public PaymentInfo getSupplierPaymentInfo() {
@@ -99,9 +94,9 @@ public abstract class Supplier {
 
     public void setSupplierPaymentInfo(PaymentInfo supplierPaymentInfo) {
         this.supplierPaymentInfo = supplierPaymentInfo;
-        this.supplierDTO.bankAccount = supplierPaymentInfo.supplierBankAccount;
-        this.supplierDTO.paymentMethod = supplierPaymentInfo.supplierPaymentMethod.toString();
+
     }
+
 
     public String toString() {
         return String.format(
@@ -120,5 +115,9 @@ public abstract class Supplier {
                 supplierPaymentInfo,
                 supplierContracts
         );
+    }
+
+    public SupplierDTO getSupplierDTO() {
+        return supplierDTO;
     }
 }

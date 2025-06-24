@@ -22,11 +22,11 @@ public class SupplyContractProductData {
     }
 
     public SupplyContractProductData(SupplyContractProductDataDTO supplyContractProductDataDTO) {
-        this.contractID = supplyContractProductDataDTO.supplyContractID;
-        this.productID = supplyContractProductDataDTO.productID;
-        this.productPrice = supplyContractProductDataDTO.productPrice;
-        this.quantityForDiscount = supplyContractProductDataDTO.quantityForDiscount;
-        this.discountPercentage = supplyContractProductDataDTO.discountPercentage;
+        this.contractID = supplyContractProductDataDTO.supplyContractID();
+        this.productID = supplyContractProductDataDTO.productID();
+        this.productPrice = supplyContractProductDataDTO.productPrice();
+        this.quantityForDiscount = supplyContractProductDataDTO.quantityForDiscount();
+        this.discountPercentage = supplyContractProductDataDTO.discountPercentage();
 
         this.supplyContractProductDataDTO = supplyContractProductDataDTO;
     }

@@ -9,7 +9,7 @@ import java.util.*;
 public class SupplyContractController {
     int contractID;
 
-    SupplyContractControllerDTO supplyContractControllerDTO;
+
 
     ArrayList<SupplyContract> supplyContractsArrayList;
 
@@ -17,8 +17,6 @@ public class SupplyContractController {
         this.contractID = 0;
 
         this.supplyContractsArrayList = new ArrayList<>();
-
-        this.supplyContractControllerDTO = SupplyContractControllerDTO.getInstance();
 
         for (SupplyContractDTO supplyContractDTO : supplyContractControllerDTO.getAllSupplyContracts()) {
             SupplyContract supplyContract = supplyContractDTO.convertDTOToEntity();

@@ -1,9 +1,8 @@
 package SuppliersModule.ServiceLayer;
 
-import IntegrationInventoryAndSupplier.MutualProduct;
-import Integration4Modules.Interfaces.SupplierInterface;
+
 import SuppliersModule.DomainLayer.Enums.*;
-import inventory.serviceLayer.InventoryService;
+import TransportationSuppliers.Interfaces.SupplierInterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +11,10 @@ import java.time.ZoneId;
 import java.util.*;
 
 public class ServiceController implements SupplierInterface {
+    public HashMap<Integer, Integer> updateOrderStatus(int orderID, int status) {
+        return null;
+    }
+
     private static class ServiceControllerHelper {
         private static final ServiceController INSTANCE = new ServiceController();
     }
@@ -20,7 +23,7 @@ public class ServiceController implements SupplierInterface {
         return ServiceControllerHelper.INSTANCE;
     }
 
-    private static final InventoryService inventoryService = InventoryService.getInstance();
+
 
     private SupplierService supplierService;
     private ProductService productService;
@@ -32,19 +35,8 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- SHARED FUNCTIONS ---------------------------
 
-    public List<MutualProduct> getAllAvailableProduct() {
-        return this.productService.getAllProductAsMutual();
-    }
 
-    public List<MutualProduct> getAllAvailableProductForOrder() {
-        List<MutualProduct> filteredProducts = new ArrayList<>();
-        Set<Integer> productsInContracts = this.supplierService.getAllAvailableProductsInContracts();
-        for (MutualProduct product : this.getAllAvailableProduct())
-            if (productsInContracts.contains(product.getId()))
-                filteredProducts.add(product);
 
-        return filteredProducts;
-    }
 
     public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
         ArrayList<int[]> dataList = new ArrayList<>();
@@ -264,18 +256,7 @@ public class ServiceController implements SupplierInterface {
         return this.supplierService.updateOrderSupplyDate(orderID, supplyDateAsDate);
     }
 
-    public HashMap<Integer, Integer> updateOrderStatus(int orderID, int orderStatus) {
-        if (this.validateOrderStatus(orderID)) {
-            HashMap<Integer, Integer> results = this.supplierService.updateOrderStatus(orderID, orderStatus);
-            if (results == null)
-                return null;
-            for (Map.Entry<Integer, Integer> entry : results.entrySet())
-                this.inventoryService.acceptDelivery(entry.getKey(), entry.getValue());
-            return  results;
-        }
 
-        return null;
-    }
 
     public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
         return this.supplierService.addProductsToOrder(orderID, dataList);

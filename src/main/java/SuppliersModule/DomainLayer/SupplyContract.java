@@ -29,8 +29,8 @@ public class SupplyContract {
    }
 
    public SupplyContract(SupplyContractDTO supplyContractDTO) {
-      this.contractID = supplyContractDTO.supplyContractID;
-      this.supplierID = supplyContractDTO.supplierID;
+      this.contractID = supplyContractDTO.supplyContractID();
+      this.supplierID = supplyContractDTO.supplierID();
       this.supplyContractDTO = supplyContractDTO ;
    }
 

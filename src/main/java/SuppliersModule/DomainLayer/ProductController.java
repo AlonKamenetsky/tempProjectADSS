@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProductController {
 
-    ProductControllerDTO productControllerDTO;
+
 
     ArrayList<Product> productsArrayList;
     int numberOfProducts;
@@ -19,7 +19,7 @@ public class ProductController {
 
         this.productsArrayList = new ArrayList<>();
 
-        this.productControllerDTO = ProductControllerDTO.getInstance();
+
 
         ArrayList<ProductDTO> productsDTO = this.productControllerDTO.getAllProducts();
         for (ProductDTO productDTO : productsDTO) {
@@ -91,12 +91,5 @@ public class ProductController {
         return null;
     }
 
-    public List<MutualProduct> getAllProductAsMutual() {
-        List<MutualProduct> mutualProducts = new ArrayList<>();
-        for (Product product : this.productsArrayList) {
-            MutualProduct mutualProduct = new MutualProduct(product.getProductId(), product.getProductName(), product.getProductCompanyName(), product.getProductCategory());
-            mutualProducts.add(mutualProduct);
-        }
-        return mutualProducts;
-    }
+
 }

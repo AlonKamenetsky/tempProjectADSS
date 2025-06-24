@@ -9,7 +9,6 @@ public class Product {
     String productCompanyName;
     ProductCategory productCategory;
 
-    ProductDTO productDTO;
 
     public Product(int productId, String productName, String productCompanyName, ProductCategory productCategory) {
         this.productId = productId;
@@ -17,15 +16,15 @@ public class Product {
         this.productCompanyName = productCompanyName;
         this.productCategory = productCategory;
 
-        this.productDTO = new ProductDTO(productId, productName, productCompanyName, productCategory.toString());
+
     }
 
     public Product(ProductDTO dto) {
-        this.productId = dto.productId;
-        this.productName = dto.productName;
-        this.productCompanyName = dto.productCompanyName;
-        this.productCategory = ProductCategory.valueOf(dto.productCategory);
-        this.productDTO = dto;
+        this.productId = dto.productId();
+        this.productName = dto.productName();
+        this.productCompanyName = dto.productCompanyName();
+        this.productCategory = ProductCategory.valueOf(dto.productCategory());
+
     }
 
     public int getProductId() {
@@ -34,7 +33,7 @@ public class Product {
 
     public void setProductId(int productId) {
         this.productId = productId;
-        this.productDTO.productId = productId;
+
     }
 
     public String getProductName() {
@@ -43,7 +42,7 @@ public class Product {
 
     public void setProductName(String productName) {
         this.productName = productName;
-        this.productDTO.productName = productName;
+
     }
 
     public String getProductCompanyName() {
@@ -52,7 +51,7 @@ public class Product {
 
     public void setProductCompanyName(String productCompanyName) {
         this.productCompanyName = productCompanyName;
-        this.productDTO.productCompanyName = productCompanyName;
+
     }
 
     public ProductCategory getProductCategory() {
@@ -61,7 +60,7 @@ public class Product {
 
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
-        this.productDTO.productCategory = productCategory.toString();
+
     }
 
     public String toString() {
