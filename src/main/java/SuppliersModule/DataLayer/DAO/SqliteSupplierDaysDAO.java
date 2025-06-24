@@ -54,7 +54,7 @@ public class SqliteSupplierDaysDAO {
         }
     }
 
-    public void deleteAllBySupplierId(int supplierId) throws SQLException {
+    public void deleteAllDaysForSupplier(int supplierId) throws SQLException {
         String sql = "DELETE FROM suppliers_days WHERE id = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, supplierId);

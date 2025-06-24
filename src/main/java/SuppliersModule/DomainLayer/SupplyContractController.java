@@ -4,6 +4,7 @@ import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
 import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class SupplyContractController {
@@ -109,4 +110,15 @@ public class SupplyContractController {
 
         return contractToStrings;
     }
+    public ArrayList<SupplyContract> getSupplierContracts(int supplierId) throws SQLException {
+        List<SupplyContractDTO> dtos = supplyContractRepository.getContractsBySupplierId(supplierId);
+        ArrayList<SupplyContract> contracts = new ArrayList<>();
+
+        for (SupplyContractDTO dto : dtos) {
+            contracts.add(new SupplyContract(dto));
+        }
+
+        return contracts;
+    }
+
 }

@@ -79,8 +79,9 @@ public final class Database {
 
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS suppliers_days (
-                               id INTEGER,
-                               day TEXT NOT NULL
+                             supplier_id INTEGER NOT NULL,
+                                 day TEXT NOT NULL,
+                                 PRIMARY KEY (supplier_id, day)
                             );
                         """);
 
