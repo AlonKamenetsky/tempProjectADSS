@@ -1,8 +1,8 @@
-package Transportation.Tests.Service;
+package Transportation.Service;
 
 import Transportation.Domain.*;
 import Transportation.DTO.ItemDTO;
-import Transportation.Service.ItemService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
