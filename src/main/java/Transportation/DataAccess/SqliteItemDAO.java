@@ -1,7 +1,7 @@
 package Transportation.DataAccess;
 
 import Transportation.DTO.ItemDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.sql.*;
 import java.util.ArrayList;

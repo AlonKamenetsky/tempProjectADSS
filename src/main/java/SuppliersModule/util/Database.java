@@ -15,7 +15,7 @@ public final class Database {
 
     static {
         try {
-            new File("data").mkdirs();
+            new File("TransportationSuppliers/data").mkdirs();
             conn = DriverManager.getConnection(DB_URL);
             log.info("Connected to SQLite at " + DB_URL);
             try (Statement stmt = conn.createStatement()) {

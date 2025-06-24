@@ -31,10 +31,10 @@ public class CsvToDatabaseImporter {
     private static final String SUPPLIERS_JDBC_URL    = "jdbc:sqlite:data/SuppliersDatabase.db";
     private static final String INVENTORY_JDBC_URL    = "jdbc:sqlite:data/inventoryDatabase.db";
 
-    private static final String PRODUCTS_CSV          = "data/products_data.csv";
-    private static final String SUPPLIERS_CSV         = "data/suppliers_data.csv";
-    private static final String ORDERS_CSV            = "data/orders_data.csv";
-    private static final String CONTRACTS_CSV         = "data/contracts_data.csv";
+    private static final String PRODUCTS_CSV          = "TransportationSuppliers/data/products_data.csv";
+    private static final String SUPPLIERS_CSV         = "TransportationSuppliers/data/suppliers_data.csv";
+    private static final String ORDERS_CSV            = "TransportationSuppliers/data/orders_data.csv";
+    private static final String CONTRACTS_CSV         = "TransportationSuppliers/data/contracts_data.csv";
     // ────────────────────────────────────────────────────────────────────────────
 
 

@@ -1,4 +1,4 @@
-package Util;
+package TransportationSuppliers.data.Util;
 
 import java.sql.SQLException;
 import java.text.ParseException;
