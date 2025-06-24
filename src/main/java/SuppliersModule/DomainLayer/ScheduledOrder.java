@@ -1,10 +1,7 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.ScheduledOrderDataDTO;
-import SuppliersModule.DataLayer.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.WeekDay;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

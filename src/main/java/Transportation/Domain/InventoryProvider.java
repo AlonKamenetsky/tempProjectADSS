@@ -1,6 +1,6 @@
 package Transportation.Domain;
 
-import SuppliersModule.DataLayer.ProductDTO;
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 
 import java.util.List;
 import java.util.Optional;

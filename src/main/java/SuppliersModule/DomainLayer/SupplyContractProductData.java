@@ -1,6 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.SupplyContractProductDataDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 public class SupplyContractProductData {
     int contractID;

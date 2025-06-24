@@ -1,7 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.ScheduledOrderDataDTO;
-import SuppliersModule.DataLayer.SupplierDaysDTO;
+import SuppliersModule.DataLayer.DTO.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;

@@ -1,6 +1,5 @@
 package Transportation.Service;
 
-import Integration4Modules.Interfaces.InventoryInterface;
 import Integration4Modules.Interfaces.TransportationInterface;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.*;

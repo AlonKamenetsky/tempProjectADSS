@@ -1,14 +1,8 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.SupplyContractControllerDTO;
-import SuppliersModule.DataLayer.SupplyContractDTO;
-import SuppliersModule.DataLayer.SupplyContractProductDataDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import java.util.*;
 

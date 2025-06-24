@@ -1,6 +1,7 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.*;
+import SuppliersModule.DataLayer.DTO.SupplierDTO;
+import SuppliersModule.DataLayer.DTO.SupplierDaysDTO;
 import SuppliersModule.DomainLayer.Enums.*;
 
 import java.io.IOException;

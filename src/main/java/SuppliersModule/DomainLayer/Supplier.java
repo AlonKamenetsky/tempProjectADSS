@@ -1,6 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.SupplierDTO;
+import SuppliersModule.DataLayer.DTO.SupplierDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;

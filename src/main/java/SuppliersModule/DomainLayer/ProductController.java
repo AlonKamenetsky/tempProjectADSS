@@ -1,14 +1,9 @@
 package SuppliersModule.DomainLayer;
 
 import IntegrationInventoryAndSupplier.MutualProduct;
-import SuppliersModule.DataLayer.ProductControllerDTO;
-import SuppliersModule.DataLayer.ProductDTO;
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 

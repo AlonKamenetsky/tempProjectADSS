@@ -1,6 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.SupplyContractDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 
 import java.util.ArrayList;

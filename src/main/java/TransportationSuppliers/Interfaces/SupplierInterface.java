@@ -1,6 +1,5 @@
-package Integration4Modules.Interfaces;
+package TransportationSuppliers.Interfaces;
 
-import IntegrationInventoryAndSupplier.MutualProduct;
 
 import java.util.List;
 

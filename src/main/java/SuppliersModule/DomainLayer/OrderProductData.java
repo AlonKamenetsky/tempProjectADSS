@@ -1,6 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.OrderProductDataDTO;
+import SuppliersModule.DataLayer.DTO.OrderProductDataDTO;
 
 public class OrderProductData {
     private int orderID;
