@@ -1,9 +1,7 @@
 package Transportation.Service;
 
-import Integration4Modules.Interfaces.TransportationInterface;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.*;
-import HR.Service.EmployeeService;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -13,18 +11,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
-public class TaskService implements TransportationInterface {
+public class TaskService {
     private final TaskManager taskManager;
-    private final EmployeeService employeeService;
 
     public TaskService() {
-        this.taskManager = new TaskManager(new HREmployeeAdapter());
-        employeeService = EmployeeService.getInstance();
+        this.taskManager = new TaskManager();
     }
 
-    public TaskService(TaskManager taskManager, EmployeeService employeeService) {
+    public TaskService(TaskManager taskManager) {
         this.taskManager = taskManager;
-        this.employeeService = employeeService;
     }
 
     public TransportationTaskDTO addTask(String _taskDate, String _departureTime, String taskSourceSite) throws ParseException, NoSuchElementException, NullPointerException {
@@ -141,15 +136,5 @@ public class TaskService implements TransportationInterface {
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");
         }
-    }
-
-    @Override
-    public void addTransportationAssignment(String sourceSite, String destinationSite, String taskDate, HashMap<String, Integer> itemsNeeded) {
-
-    }
-
-    @Override
-    public void provideSupplierInfo(String contactName, String phoneNumber) {
-
     }
 }

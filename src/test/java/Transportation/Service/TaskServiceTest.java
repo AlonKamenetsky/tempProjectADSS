@@ -1,7 +1,4 @@
-package Transportation.Tests.Service;
-
-import HR.Service.EmployeeService;
-import Transportation.Service.TaskService;
+package Transportation.Service;
 
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.TaskManager;
@@ -24,14 +21,11 @@ public class TaskServiceTest {
     @Mock
     TaskManager taskManager;
 
-    @Mock
-    EmployeeService employeeService;
-
     TaskService taskService;
 
     @BeforeEach
     void setUp() {
-        taskService = new TaskService(taskManager, employeeService);
+        taskService = new TaskService(taskManager);
     }
 
     @Test

@@ -58,9 +58,6 @@ public class ItemRepositoryImpli implements ItemRepository {
         return listDAO.findItemListByID(itemsListId);
     }
 
-
-
-
     @Override
     public void delete(int itemId) throws SQLException {
         itemDAO.delete(itemId);

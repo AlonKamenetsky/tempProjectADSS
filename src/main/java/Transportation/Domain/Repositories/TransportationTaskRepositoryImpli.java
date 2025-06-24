@@ -50,7 +50,6 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
 
     @Override
     public Optional<TransportationTaskDTO> findTask(int taskId) throws SQLException {
-
         return taskDAO.findById(taskId);
     }
 
@@ -85,30 +84,12 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
     }
 
     public TransportationTaskDTO assignTruckToTask(int taskId, String truckLicenseNumber) throws SQLException {
-
         return taskDAO.assignTruck(taskId, truckLicenseNumber);
     }
 
     public TransportationTaskDTO assignDriverToTask(int taskId, String driverId) throws SQLException {
-
         return taskDAO.assignDriver(taskId, driverId);
     }
-
-    @Override
-    public DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        return taskDAO.addOccupiedDriver(shiftId, driverId);
-    }
-
-    @Override
-    public void removeOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        taskDAO.removeOccupiedDriver(shiftId, driverId);
-    }
-
-    @Override
-    public boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        return taskDAO.hasOccupiedDriver(shiftId, driverId);
-    }
-
 
     //helper methods
 

@@ -28,6 +28,12 @@ public class SiteZoneManager {
         return siteManager.mapSiteToZone(site, zoneId);
     }
 
+    List<SiteDTO> getUnassignedSites() throws SQLException {
+        List<SiteDTO> unassignedSites = new ArrayList<>();
+        unassignedSites = getSitesByZone(-1); // -1 means unassigned site
+        return unassignedSites;
+    }
+
     public SiteDTO removeSiteFromZone(SiteDTO site) throws SQLException {
         return siteManager.mapSiteToZone(site, -1);
     }

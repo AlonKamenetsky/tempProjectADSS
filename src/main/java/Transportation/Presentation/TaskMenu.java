@@ -4,7 +4,6 @@ import Transportation.DTO.ItemDTO;
 import Transportation.Service.ItemService;
 import Transportation.Service.TaskService;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
