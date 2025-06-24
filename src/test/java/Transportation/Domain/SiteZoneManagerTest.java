@@ -1,10 +1,8 @@
-package Transportation.Tests.Domain;
+package Transportation.Domain;
 
 import Transportation.DTO.SiteDTO;
 import Transportation.DTO.ZoneDTO;
-import Transportation.Domain.SiteManager;
-import Transportation.Domain.SiteZoneManager;
-import Transportation.Domain.ZoneManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

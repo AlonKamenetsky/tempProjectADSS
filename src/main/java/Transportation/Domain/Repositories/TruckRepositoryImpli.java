@@ -4,10 +4,8 @@ import Transportation.DTO.TruckDTO;
 import Transportation.DataAccess.SqliteTruckDAO;
 import Transportation.DataAccess.TruckDAO;
 import Transportation.Domain.Truck;
-import Transportation.Domain.TruckType;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

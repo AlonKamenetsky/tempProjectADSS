@@ -1,6 +1,5 @@
 package Transportation.Domain.Repositories;
 
-import Transportation.DTO.DriverAvailabilityDTO;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.DataAccess.SqliteTransportationTaskDAO;
 import Transportation.DataAccess.TransportationTaskDAO;

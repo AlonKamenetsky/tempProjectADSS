@@ -1,8 +1,8 @@
-package Transportation.Tests.Domain;
+package Transportation.Domain;
 
 import Transportation.DTO.SiteDTO;
 import Transportation.Domain.Repositories.SiteRepository;
-import Transportation.Domain.SiteManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

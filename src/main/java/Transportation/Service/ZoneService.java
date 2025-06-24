@@ -79,14 +79,4 @@ public class ZoneService {
             throw new RuntimeException("Database access error");
         }
     }
-
-    // will occur in presentation using ZoneDTO.isEmpty()
-//    public void doesZoneExist(String zoneName) throws NullPointerException, NoSuchElementException {
-//        if (zoneName == null) {
-//            throw new NullPointerException();
-//        }
-//        if (!zoneManager.doesZoneExist(zoneName.toLowerCase())) {
-//            throw new NoSuchElementException();
-//        }
-//    }
 }

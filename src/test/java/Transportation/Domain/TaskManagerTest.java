@@ -1,12 +1,10 @@
-package Transportation.Tests.Domain;
+package Transportation.Domain;
 
 import Transportation.DTO.SiteDTO;
 import Transportation.DTO.TransportationDocDTO;
-import Transportation.Domain.*;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.Repositories.TransportationDocRepository;
 import Transportation.Domain.Repositories.TransportationTaskRepository;
-import Transportation.Service.HREmployeeAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -39,9 +37,9 @@ class TaskManagerTest {
         siteManager = mock(SiteManager.class);
         TruckManager truckManager = mock(TruckManager.class);
         itemManager = mock(ItemManager.class);
-        EmployeeProvider adapter = mock(HREmployeeAdapter.class);
+        DriverManager driverManager = mock(DriverManager.class);
 
-        taskManager = new TaskManager(siteManager, truckManager, itemManager, docRepo, taskRepo, adapter);
+        taskManager = new TaskManager(siteManager, truckManager,driverManager, itemManager, docRepo, taskRepo);
     }
 
     @Test

@@ -1,10 +1,7 @@
 package Transportation.Domain;
 
-import HR.DTO.EmployeeDTO;
-import HR.Domain.Shift;
 import Transportation.DTO.*;
 import Transportation.Domain.Repositories.*;
-import Transportation.Service.HREmployeeAdapter;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -15,27 +12,27 @@ import java.util.*;
 public class TaskManager {
     private final SiteManager siteManager;
     private final TruckManager truckManager;
+    private final DriverManager driverManager;
+    private final ItemManager itemManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
-    private final EmployeeProvider employeeProvider;
-    private final InventoryProvider inventoryProvider;
 
-    public TaskManager(EmployeeProvider employeeProvider, InventoryProvider inventoryProvider) {
+    public TaskManager() {
         docRepository = new TransportationDocRepositoryImpli();
         taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
         siteManager = new SiteManager();
         truckManager = new TruckManager();
-        this.employeeProvider = employeeProvider;
-        this.inventoryProvider = inventoryProvider;
+        driverManager = new DriverManager();
+        itemManager = new ItemManager();
     }
 
-    public TaskManager(SiteManager siteManager, TruckManager truckManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, EmployeeProvider employeeProvider, InventoryProvider inventoryProvider) {
+    public TaskManager(SiteManager siteManager, TruckManager truckManager, DriverManager driverManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository) {
         this.siteManager = siteManager;
         this.truckManager = truckManager;
+        this.driverManager = driverManager;
+        this.itemManager = itemManager;
         this.docRepository = docRepository;
         this.taskRepository = taskRepository;
-        this.employeeProvider = employeeProvider;
-        this.inventoryProvider = inventoryProvider;
     }
 
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
@@ -52,7 +49,9 @@ public class TaskManager {
             // free truck and driver
             if (!task.get().truckLicenseNumber().isEmpty() && !task.get().driverId().isEmpty()) {
                 truckManager.setTruckAvailability(truckManager.getTruckIdByLicense(task.get().truckLicenseNumber()), true);
+                driverManager.setDriverAvailability(task.get().driverId(), true);
             }
+
             taskRepository.deleteTask(task.get().taskId());
         }
     }
@@ -60,7 +59,6 @@ public class TaskManager {
 
     public void addDocToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite,
                              String destinationSite, HashMap<String, Integer> itemsChosen) throws SQLException {
-        int sourceSiteId = siteManager.findSiteByAddress(taskSourceSite).get().siteId();
         Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, taskSourceSite);
         if (task.isPresent()) {
             //Create itemList and push it to database
@@ -98,44 +96,25 @@ public class TaskManager {
             }
 
             String licenseTypeNeeded = LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())).toString();
-            Shift.ShiftTime shiftTime = Shift.fromTime(taskDeparture);
-            Date shiftDate = java.sql.Date.valueOf(taskDate);
 
-            List<EmployeeDTO> availableDrivers = employeeProvider.findAvailableDrivers(licenseTypeNeeded, shiftDate, taskDeparture.toString());
-
-            if (availableDrivers.isEmpty()) {
+            Optional<DriverDTO> availableDriver = driverManager.getAvailableDriverByLicense(licenseTypeNeeded);
+            if (availableDriver.isEmpty()) {
                 throw new NoSuchElementException("No drivers available for this task");
             }
 
             // assign warehouse worker
-            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
-
-
-            if (!availableWarehouseWorker) {
-                throw new NoSuchElementException("No warehouse workers available for this task");
-            }
+//            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
+//
+//
+//            if (!availableWarehouseWorker) {
+//                throw new NoSuchElementException("No warehouse workers available for this task");
+//            }
 
             // All good → assign
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
-
-
-            String shiftId = employeeProvider.getShiftIdByDateTime(shiftDate, taskDeparture.toString());
-
-            int counter = availableDrivers.size();
-            while (!availableDrivers.isEmpty()) {
-                EmployeeDTO driverToAssign = availableDrivers.get(0);
-
-                if (!taskRepository.hasOccupiedDriver(shiftId, driverToAssign.getId())) {
-                    taskRepository.addOccupiedDriver(shiftId, driverToAssign.getId());
-                    taskRepository.assignDriverToTask(task.get().taskId(), driverToAssign.getId());
-                    break;
-                }
-                if (counter == 0) {
-                    throw new NoSuchElementException("No drivers available for this task");
-                }
-                counter--;
-            }
+            taskRepository.assignDriverToTask(task.get().taskId(), availableDriver.get().driverId());
+            driverManager.setDriverAvailability(task.get().driverId(), false);
 
             return true;
         } else {

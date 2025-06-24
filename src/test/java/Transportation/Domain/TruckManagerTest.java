@@ -1,6 +1,5 @@
-package Transportation.Tests.Domain;
+package Transportation.Domain;
 
-import Transportation.Domain.TruckManager;
 import Transportation.DTO.TruckDTO;
 import org.junit.jupiter.api.TestInstance;
 import Transportation.Domain.Repositories.TruckRepository;

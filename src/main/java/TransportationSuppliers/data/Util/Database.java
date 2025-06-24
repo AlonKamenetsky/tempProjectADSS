@@ -34,6 +34,21 @@ public final class Database {
                     );
                 """);
                 st.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS drivers (
+                        driver_id    TEXT PRIMARY KEY,
+                        driver_name  TEXT NOT NULL,
+                        is_available BOOLEAN NOT NULL
+                    );
+                """);
+                st.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS driver_licenses (
+                        driver_id     TEXT NOT NULL,
+                        license_type  TEXT NOT NULL,
+                        PRIMARY KEY (driver_id, license_type),
+                        FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
+                );
+                """);
+                st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS zones (
                         zone_id    INTEGER PRIMARY KEY AUTOINCREMENT,
                         zone_name  TEXT NOT NULL
@@ -80,9 +95,10 @@ public final class Database {
                         departure_time        TEXT    NOT NULL,
                         source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
-                        driver_id             TEXT,
+                        driver_id             TEXT, NOT NULL,
                         FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
+                        FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
                     );
                 """);
                 st.executeUpdate("""
@@ -107,7 +123,7 @@ public final class Database {
                 """);
                 st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS drivers_in_tasks (
-                        shift_id       TEXT NOT NULL,
+                        task_id       TEXT NOT NULL,
                         driver_id      TEXT NOT NULL,
                         PRIMARY KEY (shift_id, driver_id),
                         FOREIGN KEY (shift_id) REFERENCES shifts(id),
@@ -115,97 +131,8 @@ public final class Database {
                     );
                 """);
 
+                //Suppliers Tables:
 
-                // HR Tables:
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS employees (
-                        id TEXT PRIMARY KEY,
-                        name TEXT NOT NULL,
-                        password TEXT NOT NULL,
-                        bank_account TEXT,
-                        salary REAL,
-                        employment_date DATE
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS roles (
-                        name TEXT PRIMARY KEY
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS employee_roles (
-                        employee_id TEXT NOT NULL,
-                        role_name TEXT NOT NULL,
-                        PRIMARY KEY (employee_id, role_name),
-                        FOREIGN KEY (employee_id) REFERENCES employees(id),
-                        FOREIGN KEY (role_name) REFERENCES roles(name)
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS shifts (
-                        id TEXT PRIMARY KEY,
-                        date DATE NOT NULL,
-                        time TEXT NOT NULL
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS shift_assignments (
-                        shift_id TEXT NOT NULL,
-                        employee_id TEXT NOT NULL,
-                        role_name TEXT NOT NULL,
-                        PRIMARY KEY (shift_id, employee_id, role_name),
-                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
-                        FOREIGN KEY (employee_id) REFERENCES employees(id),
-                        FOREIGN KEY (role_name) REFERENCES roles(name)
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS weekly_availability (
-                        employee_id TEXT NOT NULL,
-                        available_date DATE NOT NULL,
-                        shift_time TEXT NOT NULL,
-                        PRIMARY KEY (employee_id, available_date, shift_time),
-                        FOREIGN KEY (employee_id) REFERENCES employees(id)
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS swap_requests (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        requester_id TEXT NOT NULL,
-                        shift_id TEXT NOT NULL,
-                        role_name TEXT NOT NULL,
-                        FOREIGN KEY (requester_id) REFERENCES employees(id),
-                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
-                        FOREIGN KEY (role_name) REFERENCES roles(name)
-                    );
-                """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS driver_info (
-                          employee_id TEXT NOT NULL,
-                          license_type TEXT NOT NULL,
-                          PRIMARY KEY (employee_id, license_type),
-                          FOREIGN KEY (employee_id) REFERENCES employees(id)
-                      );
-                """);
-
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS shift_templates (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        day_of_week TEXT NOT NULL,
-                        shift_time TEXT NOT NULL
-                    );
-                """);
-
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS shift_template_roles (
-                        template_id INTEGER NOT NULL,
-                        role_name TEXT NOT NULL,
-                        count INTEGER NOT NULL,
-                        PRIMARY KEY (template_id, role_name),
-                        FOREIGN KEY (template_id) REFERENCES shift_templates(id),
-                        FOREIGN KEY (role_name) REFERENCES roles(name)
-                    );
-                """);
 
 
             }

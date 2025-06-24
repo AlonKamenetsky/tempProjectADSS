@@ -27,7 +27,7 @@ public class TruckService {
         try {
             truckManager.addTruck(truckType.toLowerCase(), licenseNumber, model.toLowerCase(), netWeight, maxWeight);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - Adding truck failed");
         }
     }
 
@@ -39,7 +39,7 @@ public class TruckService {
             int truckId = truckManager.getTruckIdByLicense(licenseNumber);
             truckManager.removeTruck(truckId);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - Removing truck failed");
         }
     }
 
@@ -47,7 +47,7 @@ public class TruckService {
         try {
             return truckManager.getAllTrucksString();
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - View all trucks failed");
         }
     }
 
@@ -71,7 +71,7 @@ public class TruckService {
                 return "Truck not found.";
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - Getting truck failed");
         }
     }
 
@@ -84,7 +84,7 @@ public class TruckService {
             int truckId = truckManager.getTruckIdByLicense(licenseNumber);
             truckManager.setTruckAvailability(truckId, status);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - Changing truck availability failed");
         }
     }
 }

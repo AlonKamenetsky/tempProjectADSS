@@ -1,4 +1,4 @@
-package Integration4Modules.Interfaces;
+package TransportationSuppliers.Interfaces;
 
 import java.util.HashMap;
 
