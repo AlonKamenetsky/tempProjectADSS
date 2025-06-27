@@ -3,7 +3,10 @@ package SuppliersModule.DataLayer.DAO;
 import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.util.Database;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,10 @@ public class SqliteSupplyContractProductDataDAO {
             }
             return list;
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
     }
 
     public List<SupplyContractProductDataDTO> findByContractId(int contractId) throws SQLException {
@@ -34,6 +41,14 @@ public class SqliteSupplyContractProductDataDAO {
                 }
                 return list;
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -45,6 +60,14 @@ public class SqliteSupplyContractProductDataDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -60,6 +83,10 @@ public class SqliteSupplyContractProductDataDAO {
             stmt.setInt(4, dto.quantityForDiscount());
             stmt.setDouble(5, dto.discountPercentage());
             stmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -77,6 +104,10 @@ public class SqliteSupplyContractProductDataDAO {
             stmt.setInt(5, dto.productID());
             stmt.executeUpdate();
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
     }
 
     public void delete(int contractId, int productId) throws SQLException {
@@ -86,6 +117,10 @@ public class SqliteSupplyContractProductDataDAO {
             stmt.setInt(2, productId);
             stmt.executeUpdate();
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
     }
 
     public void deleteAllByContractId(int contractId) throws SQLException {
@@ -93,6 +128,10 @@ public class SqliteSupplyContractProductDataDAO {
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, contractId);
             stmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 

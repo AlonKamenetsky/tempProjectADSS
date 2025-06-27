@@ -1,6 +1,7 @@
 package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DTO.SupplierDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -16,4 +17,6 @@ public interface ISupplierRepositoryBase {
     void updateSupplier(SupplierDTO supplier) throws SQLException;
 
     void deleteSupplier(int id) throws SQLException;
+
+    List<SupplyContractDTO> getAllContracts();
 }

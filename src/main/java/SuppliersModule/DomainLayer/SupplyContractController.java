@@ -3,100 +3,105 @@ package SuppliersModule.DomainLayer;
 import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
 import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Repositories.ISupplyContractRepository;
+import SuppliersModule.DomainLayer.Repositories.SupplyContractRepositoryImpl;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SupplyContractController {
-    int contractID;
 
+    private final ISupplyContractRepository contractRepository;
+    private final List<SupplyContractDTO> supplyContractsList;
 
-
-    ArrayList<SupplyContract> supplyContractsArrayList;
-
-    public SupplyContractController() {
-        this.contractID = 0;
-
-        this.supplyContractsArrayList = new ArrayList<>();
-
-        for (SupplyContractDTO supplyContractDTO : supplyContractControllerDTO.getAllSupplyContracts()) {
-            SupplyContract supplyContract = supplyContractDTO.convertDTOToEntity();
-            for (SupplyContractProductDataDTO productDataDTO : supplyContractControllerDTO.getSupplyContractProductDataByContractID(supplyContractDTO))
-                supplyContract.addSupplyContractProductData(productDataDTO.convertDTOToEntity());
-
-            this.supplyContractsArrayList.add(supplyContract);
-            this.contractID++;
-        }
+    public SupplyContractController() throws SQLException {
+        this.contractRepository = new SupplyContractRepositoryImpl();
+        this.supplyContractsList = contractRepository.getAllSupplyContracts();
     }
 
-    public SupplyContract registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) {
-        ArrayList<SupplyContractProductData> supplyContractProductDataArrayList = new ArrayList<>();
+    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) throws SQLException {
+        // Step 1: Create and insert a new contract
+        SupplyContractDTO newContract = new SupplyContractDTO(null, supplierID);
+        int contractId = contractRepository.insertSupplyContract(newContract);
+
+        // Step 2: For each product data, create DTO and persist it
         for (int[] data : dataList) {
             int productID = data[0];
-            int price = data[1];
+            double price = data[1];
             int quantityForDiscount = data[2];
-            int discountPercentage = data[3];
+            double discountPercentage = data[3];
 
-            SupplyContractProductData supplyContractProductData = new SupplyContractProductData(contractID, productID, price, quantityForDiscount, discountPercentage);
+            SupplyContractProductDataDTO productDataDTO = new SupplyContractProductDataDTO(
+                    contractId,
+                    productID,
+                    price,
+                    quantityForDiscount,
+                    discountPercentage
+            );
 
-            supplyContractProductDataArrayList.add(supplyContractProductData);
-            supplyContractProductData.supplyContractProductDataDTO.Insert();
+            contractRepository.addProductToContract(contractId, productDataDTO);
         }
 
-        SupplyContract supplyContract = new SupplyContract(contractID, supplierID, method, supplyContractProductDataArrayList);
-        supplyContract.supplyContractDTO.Insert();
-        supplyContractsArrayList.add(supplyContract);
-        contractID++;
+        // Optional: add to in-memory list if needed
+        supplyContractsList.add(new SupplyContractDTO(contractId, supplierID));
 
-        return supplyContract;
+        return true;
     }
 
-    private SupplyContract getContractByContactID(int contractID) {
-        for (SupplyContract supplyContract : supplyContractsArrayList)
-            if(supplyContract.contractID == contractID)
+
+    private SupplyContractDTO getContractByContactID(int contractID) {
+        for (SupplyContractDTO supplyContract : supplyContractsList)
+            if(supplyContract.supplyContractID() == contractID)
                 return supplyContract;
 
         return null;
     }
 
     public boolean removeContractByID(int contractID) {
-        return this.supplyContractsArrayList.removeIf(contract -> contract.contractID == contractID);
+        try {
+            contractRepository.deleteContract(contractID);
+        }
+        catch (Exception e) {
+
+        }
+        return supplyContractsList.removeIf(supplyContract -> supplyContract.supplyContractID() == contractID);
     }
-    
-    public boolean removeAllSupplierContracts(int supplierID) {
-        return this.supplyContractsArrayList.removeIf(contract -> contract.supplierID == supplierID);
+
+    public boolean removeAllSupplierContracts(int supplierID) throws SQLException {
+        // Step 1: Remove from DB via repository
+        contractRepository.deleteAllBySupplierId(supplierID);
+
+        // Step 2: Remove from memory
+        return supplyContractsList.removeIf(contract -> contract.supplierID() == supplierID);
     }
+
 
     // ********** GETTERS FUNCTIONS **********
 
-    public ArrayList<SupplyContract> getAllSupplierContracts(int supplierID) {
-        ArrayList<SupplyContract> supplyContractArrayList = new ArrayList<>();
-        for (SupplyContract supplyContract : supplyContractsArrayList)
-            if(supplyContract.supplierID == supplierID)
+    public ArrayList<SupplyContractDTO> getAllSupplierContracts(int supplierID) {
+        ArrayList<SupplyContractDTO> supplyContractArrayList = new ArrayList<>();
+        for (SupplyContractDTO supplyContract : supplyContractsList)
+            if(supplyContract.supplyContractID() == supplierID)
                 supplyContractArrayList.add(supplyContract);
 
         return supplyContractArrayList;
     }
 
-    public ArrayList<SupplyContractProductData> getSupplyContractProductDataArrayList(int contractID) {
-        SupplyContract supplyContract = getContractByContactID(contractID);
-        if(supplyContract != null) {
-            return supplyContract.getSupplyContractProductData();
-        }
-        return null;
+    public ArrayList<SupplyContractProductDataDTO> getSupplyContractProductDataArrayList(int contractID) throws SQLException {
+        return new ArrayList<>(contractRepository.getSupplyContractProductDataByContractId(contractID));
     }
 
-    public ArrayList<SupplyContract> getAllAvailableContracts() {
-        ArrayList<SupplyContract> copy = new ArrayList<>();
-        Collections.copy(copy, this.supplyContractsArrayList);
 
-        return copy;
+    public ArrayList<SupplyContractDTO> getAllAvailableContracts() {
+        return new ArrayList<>(this.supplyContractsList); // creates a shallow copy
     }
+
 
     // ********** OUTPUT FUNCTIONS **********
 
     public String getContractToString(int contractID) {
-        SupplyContract supplyContract = getContractByContactID(contractID);
+        SupplyContractDTO supplyContract = getContractByContactID(contractID);
         if(supplyContract != null) {
             return supplyContract.toString();
         }
@@ -104,18 +109,18 @@ public class SupplyContractController {
     }
 
     public String[] getAllContractToStrings() {
-        String[] contractToStrings = new String[supplyContractsArrayList.size()];
-        for(int i = 0; i < supplyContractsArrayList.size(); i++)
-            contractToStrings[i] = supplyContractsArrayList.get(i).toString();
+        String[] contractToStrings = new String[supplyContractsList.size()];
+        for(int i = 0; i < supplyContractsList.size(); i++)
+            contractToStrings[i] = supplyContractsList.get(i).toString();
 
         return contractToStrings;
     }
-    public ArrayList<SupplyContract> getSupplierContracts(int supplierId) throws SQLException {
-        List<SupplyContractDTO> dtos = supplyContractRepository.getContractsBySupplierId(supplierId);
-        ArrayList<SupplyContract> contracts = new ArrayList<>();
+    public ArrayList<SupplyContractDTO> getSupplierContracts(int supplierId) throws SQLException {
+        List<SupplyContractDTO> dtos = contractRepository.getContractsBySupplierId(supplierId);
+        ArrayList<SupplyContractDTO> contracts = new ArrayList<>();
 
         for (SupplyContractDTO dto : dtos) {
-            contracts.add(new SupplyContract(dto));
+            contracts.add(dto);
         }
 
         return contracts;

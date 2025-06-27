@@ -1,7 +1,5 @@
 package SuppliersModule.DataLayer.DTO;
 
-import SuppliersModule.DomainLayer.SupplyContractProductData;
-
 public record SupplyContractProductDataDTO (
     Integer supplyContractID,
     Integer productID,
@@ -9,4 +7,16 @@ public record SupplyContractProductDataDTO (
     Integer quantityForDiscount,
     Double discountPercentage
 
-){}
+){
+    @Override
+    public String toString() {
+        return "SupplyContractProductDataDTO{" +
+                "supplyContractID=" + supplyContractID +
+                ", productID=" + productID +
+                ", productPrice=" + productPrice +
+                ", quantityForDiscount=" + quantityForDiscount +
+                ", discountPercentage=" + discountPercentage +
+                '}';
+    }
+
+}

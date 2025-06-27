@@ -1,10 +1,20 @@
 package SuppliersModule.DataLayer.DTO;
 
-import SuppliersModule.DomainLayer.OrderProductData;
-
 public record OrderProductDataDTO (
      Integer orderID,
      Integer productID,
      Integer productQuantity,
-     Integer productPrice
-){}
+     Double productPrice
+){
+    @Override
+    public String toString() {
+        return "OrderProductDataDTO{" +
+                "orderID=" + orderID +
+                ", productID=" + productID +
+                ", productQuantity=" + productQuantity +
+                ", productPrice=" + productPrice +
+                '}';
+    }
+
+
+}

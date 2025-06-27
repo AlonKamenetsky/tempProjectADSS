@@ -15,9 +15,11 @@ public final class Database {
 
     static {
         try {
-            new File("TransportationSuppliers/data").mkdirs();
+            new File("data").mkdirs();
             conn = DriverManager.getConnection(DB_URL);
             log.info("Connected to SQLite at " + DB_URL);
+            log.info("Connected to SQLite at " + new File("data/suppliers.db").getAbsolutePath());
+
             try (Statement stmt = conn.createStatement()) {
                 stmt.executeUpdate("""
                             CREATE TABLE IF NOT EXISTS products (
@@ -39,10 +41,10 @@ public final class Database {
                                 total_price REAL NOT NULL,
                                 supply_method TEXT NOT NULL,
                                 order_status TEXT NOT NULL,
-                                FOREIGN KEY (contact_info_id) REFERENCES contact_info(id),
                                 FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
                             );
                         """);
+
 
                 // Create order_product_data table
                 stmt.executeUpdate("""
@@ -72,7 +74,7 @@ public final class Database {
                                 -- Payment Info fields
                                 bank_account TEXT NOT NULL,
                                 payment_method TEXT NOT NULL,  -- enum stored as string
-        
+                        
                                 supply_method TEXT NOT NULL
                             );
                         """);
@@ -107,7 +109,7 @@ public final class Database {
 
             } catch (SQLException e) {
 
-
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to connect to the database", e);

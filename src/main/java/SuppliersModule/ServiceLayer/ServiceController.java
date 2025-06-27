@@ -1,8 +1,9 @@
 package SuppliersModule.ServiceLayer;
 
 
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.*;
-import TransportationSuppliers.Interfaces.SupplierInterface;
+import TransportationSuppliers.Integration.SupplierInterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,25 @@ public class ServiceController implements SupplierInterface {
     // --------------------------- SHARED FUNCTIONS ---------------------------
 
 
+    @Override
+    public List<ProductDTO> getAllProducts() {
+        return List.of();
+    }
 
+    @Override
+    public Optional<ProductDTO> getProductById(int productId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Float> getWeightByProductId(int productId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ProductDTO> getProductByName(String productName) {
+        return Optional.empty();
+    }
 
     public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
         ArrayList<int[]> dataList = new ArrayList<>();

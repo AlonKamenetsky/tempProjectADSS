@@ -1,9 +1,9 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.*;
-
 import SuppliersModule.DomainLayer.Enums.*;
+import SuppliersModule.DomainLayer.SupplierController;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class SupplierService {
@@ -32,7 +32,11 @@ public class SupplierService {
                 sd.add(WeekDay.values()[day - 1]);
         }
 
-        return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm, sd);
+        try {
+            return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm, sd);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean updateSupplierName(int supplierID, String supplierName) {
@@ -102,12 +106,20 @@ public class SupplierService {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
-        return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
+        try {
+            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         WeekDay d = WeekDay.values()[day - 1];
-        return this.supplierController.registerNewScheduledOrder(d, dataList);
+        try {
+            return this.supplierController.registerNewScheduledOrder(d, dataList);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
@@ -148,7 +160,11 @@ public class SupplierService {
     }
 
     public String[] getAllScheduledOrdersAsString() {
-        return this.supplierController.getAllScheduledOrdersAsString();
+        try {
+            return this.supplierController.getAllScheduledOrdersAsString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean orderExists(int orderID) {

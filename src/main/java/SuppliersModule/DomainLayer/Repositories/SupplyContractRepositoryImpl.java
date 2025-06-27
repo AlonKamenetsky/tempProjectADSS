@@ -2,6 +2,7 @@ package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DAO.SqliteSupplyContractDAO;
 import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -43,5 +44,40 @@ public class SupplyContractRepositoryImpl implements ISupplyContractRepository {
     @Override
     public void deleteContract(int contractId) throws SQLException {
         dao.delete(contractId);
+    }
+
+    @Override
+    public void deleteAllBySupplierId(int supplierID) {
+
+    }
+
+    @Override
+    public int getSupplyContractProductDataByContractId(int contractID) {
+        return 0;
+    }
+
+    @Override
+    public List<SupplyContractDTO> getContractsBySupplierId(int supplierId) {
+        return List.of();
+    }
+
+    @Override
+    public List<SupplyContractDTO> getAllSupplyContracts() {
+        return List.of();
+    }
+
+    @Override
+    public int insertSupplyContract(SupplyContractDTO newContract) {
+        return 0;
+    }
+
+    @Override
+    public void addProductToContract(int contractId, SupplyContractProductDataDTO productDataDTO) {
+
+    }
+
+    @Override
+    public List<SupplyContractProductDataDTO> getByContractId(Integer integer) {
+        return List.of();
     }
 }

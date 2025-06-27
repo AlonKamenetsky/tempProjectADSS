@@ -12,4 +12,22 @@ public record SupplierDTO (
      String bankAccount,
      String paymentMethod,
      String supplyMethod
-){}
+){
+    @Override
+    public String toString() {
+        return "SupplierDTO{" +
+                "supplierID=" + supplierID +
+                ", supplierName='" + supplierName + '\'' +
+                ", productCategory='" + productCategory + '\'' +
+                ", deliveryMethod='" + deliveryMethod + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", bankAccount='" + bankAccount + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", supplyMethod='" + supplyMethod + '\'' +
+                '}';
+    }
+
+}

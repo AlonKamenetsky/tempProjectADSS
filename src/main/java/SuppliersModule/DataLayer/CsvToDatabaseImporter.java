@@ -1,6 +1,6 @@
 package SuppliersModule.DataLayer;
 
-import inventory.dataLayer.utils.DatabaseManager;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +55,7 @@ public class CsvToDatabaseImporter {
             System.out.println("Dropped all tables in inventoryDatabase.db");
 
             // Recreate tables by running DDL through DatabaseManager
-            DatabaseManager.getInstance().runDDL();
+
             invConn.commit();
             System.out.println("Recreated all tables in inventoryDatabase.db");
 

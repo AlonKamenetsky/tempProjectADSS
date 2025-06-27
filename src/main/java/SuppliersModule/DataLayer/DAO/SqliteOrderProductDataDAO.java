@@ -3,7 +3,10 @@ package SuppliersModule.DataLayer.DAO;
 import SuppliersModule.DataLayer.DTO.OrderProductDataDTO;
 import SuppliersModule.util.Database;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,11 @@ public class SqliteOrderProductDataDAO {
             }
             return list;
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     public List<OrderProductDataDTO> findByOrderId(int orderId) throws SQLException {
@@ -34,6 +42,14 @@ public class SqliteOrderProductDataDAO {
                 }
                 return list;
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -45,6 +61,14 @@ public class SqliteOrderProductDataDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -54,8 +78,12 @@ public class SqliteOrderProductDataDAO {
             stmt.setInt(1, dto.orderID());
             stmt.setInt(2, dto.productID());
             stmt.setInt(3, dto.productQuantity());
-            stmt.setInt(4, dto.productPrice());
+            stmt.setDouble(4, dto.productPrice());
             stmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+
         }
     }
 
@@ -63,10 +91,13 @@ public class SqliteOrderProductDataDAO {
         String sql = "UPDATE order_product_data SET quantity = ?, price = ? WHERE order_id = ? AND product_id = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, dto.productQuantity());
-            stmt.setInt(2, dto.productPrice());
+            stmt.setDouble(2, dto.productPrice());
             stmt.setInt(3, dto.orderID());
             stmt.setInt(4, dto.productID());
             stmt.executeUpdate();
+        }catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -77,6 +108,10 @@ public class SqliteOrderProductDataDAO {
             stmt.setInt(2, productId);
             stmt.executeUpdate();
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
     }
 
     private OrderProductDataDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
@@ -84,7 +119,7 @@ public class SqliteOrderProductDataDAO {
                 rs.getInt("order_id"),
                 rs.getInt("product_id"),
                 rs.getInt("quantity"),
-                rs.getInt("price")
+                rs.getDouble("price")
         );
     }
 }

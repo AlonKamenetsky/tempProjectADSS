@@ -3,7 +3,11 @@ package SuppliersModule.DataLayer.DAO;
 import SuppliersModule.DataLayer.DTO.SupplierDTO;
 import SuppliersModule.util.Database;
 
-import java.sql.*;
+import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +22,7 @@ public class SqliteSupplierDAO {
         return findBySupplyMethod("ON_DEMAND");
     }
 
-    private List<SupplierDTO> findBySupplyMethod(String method) throws SQLException {
+    public List<SupplierDTO> findBySupplyMethod(String method) throws SQLException {
         String sql = "SELECT * FROM suppliers WHERE supply_method = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setString(1, method);
@@ -29,6 +33,14 @@ public class SqliteSupplierDAO {
                 }
                 return list;
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -40,19 +52,27 @@ public class SqliteSupplierDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
     public SupplierDTO insert(SupplierDTO dto) throws SQLException {
-        if (dto.supplierID() == null) {
+        if (dto.supplierID() == -1) {
             String sql = """
-                    INSERT INTO suppliers(name, product_category, delivering_method,
-                                          contact_name, phone_number, address, email,
-                                          bank_account, payment_method, supply_method)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """;
-            try (PreparedStatement stmt = Database.getConnection()
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                INSERT INTO suppliers(name, product_category, delivering_method,
+                                      contact_name, phone_number, address, email,
+                                      bank_account, payment_method, supply_method)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+            try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+                System.out.println("Database file: " + new File("data/suppliers.db").getAbsolutePath());
 
                 stmt.setString(1, dto.supplierName());
                 stmt.setString(2, dto.productCategory());
@@ -67,31 +87,39 @@ public class SqliteSupplierDAO {
 
                 stmt.executeUpdate();
 
-                try (ResultSet keys = stmt.getGeneratedKeys()) {
-                    keys.next();
-                    return new SupplierDTO(
-                            keys.getInt(1),
-                            dto.supplierName(),
-                            dto.productCategory(),
-                            dto.deliveryMethod(),
-                            dto.contactName(),
-                            dto.emailAddress(),
-                            dto.phoneNumber(),
-                            dto.address(),
-                            dto.bankAccount(),
-                            dto.paymentMethod(),
-                            dto.supplyMethod()
-                    );
+                // Get the generated ID using SQLite-specific syntax
+                try (Statement idStmt = Database.getConnection().createStatement();
+                     ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid()")) {
+                    if (rs.next()) {
+                        return new SupplierDTO(
+                                rs.getInt(1),
+                                dto.supplierName(),
+                                dto.productCategory(),
+                                dto.deliveryMethod(),
+                                dto.contactName(),
+                                dto.emailAddress(),
+                                dto.phoneNumber(),
+                                dto.address(),
+                                dto.bankAccount(),
+                                dto.paymentMethod(),
+                                dto.supplyMethod()
+                        );
+                    } else {
+                        throw new SQLException("Failed to retrieve inserted supplier ID.");
+                    }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException("Supplier insertion failed", e);
             }
         } else {
             String sql = """
-                    UPDATE suppliers
-                    SET name = ?, product_category = ?, delivering_method = ?,
-                        contact_name = ?, phone_number = ?, address = ?, email = ?,
-                        bank_account = ?, payment_method = ?, supply_method = ?
-                    WHERE id = ?
-                    """;
+                UPDATE suppliers
+                SET name = ?, product_category = ?, delivering_method = ?,
+                    contact_name = ?, phone_number = ?, address = ?, email = ?,
+                    bank_account = ?, payment_method = ?, supply_method = ?
+                WHERE id = ?
+                """;
             try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, dto.supplierName());
                 stmt.setString(2, dto.productCategory());
@@ -106,15 +134,24 @@ public class SqliteSupplierDAO {
                 stmt.setInt(11, dto.supplierID());
                 stmt.executeUpdate();
                 return dto;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException("Supplier update failed", e);
             }
         }
     }
+
+
 
     public void delete(int supplierId) throws SQLException {
         String sql = "DELETE FROM suppliers WHERE id = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, supplierId);
             stmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 

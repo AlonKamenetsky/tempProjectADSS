@@ -1,8 +1,7 @@
 package SuppliersModule.DomainLayer;
 
 import SuppliersModule.DataLayer.DAO.SqliteSupplierDaysDAO;
-import SuppliersModule.DataLayer.DTO.SupplierDTO;
-import SuppliersModule.DataLayer.DTO.SupplierDaysDTO;
+import SuppliersModule.DataLayer.DTO.*;
 import SuppliersModule.DomainLayer.Enums.*;
 import SuppliersModule.DomainLayer.Repositories.*;
 
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-import static SuppliersModule.DomainLayer.OrderController.buildProductDataArray;
 
 public class SupplierController {
     OrderController orderController;
@@ -20,6 +18,7 @@ public class SupplierController {
     int numberOfSuppliers;
     ArrayList<SupplierDTO> suppliersArrayList;
     private final ISupplierDaysRepository supplierDaysRepo;
+    private final ISupplyContractRepository supplyContractRepo;
 
 
     public SupplierController() throws SQLException, IOException {
@@ -31,22 +30,13 @@ public class SupplierController {
         this.onDemandRepo = new OnDemandSupplierRepositoryImpl();
         this.suppliersArrayList = new ArrayList<>();
         this.supplierDaysRepo = new SupplierDaysRepositoryImpl();
+        this.supplyContractRepo = new SupplyContractRepositoryImpl();
         loadSuppliersIntoMemory();
     }
 
     // --------------------------- SUPPLIER FUNCTIONS ---------------------------
 
-    public int registerNewSupplier(SupplyMethod supplyMethod,
-                                   String supplierName,
-                                   ProductCategory productCategory,
-                                   DeliveringMethod deliveringMethod,
-                                   String phoneNumber,
-                                   String address,
-                                   String email,
-                                   String contactName,
-                                   String bankAccount,
-                                   PaymentMethod paymentMethod,
-                                   EnumSet<WeekDay> supplyDays) throws SQLException {
+    public int registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod, String phoneNumber, String address, String email, String contactName, String bankAccount, PaymentMethod paymentMethod, EnumSet<WeekDay> supplyDays) throws SQLException {
 
         // 1. Build domain objects
         ContactInfo supplierContactInfo = new ContactInfo(phoneNumber, address, email, contactName);
@@ -57,14 +47,12 @@ public class SupplierController {
 
         // 2. Build correct Supplier and save using the right repository
         if (supplyMethod == SupplyMethod.ON_DEMAND) {
-            supplier = new OnDemandSupplier(this.numberOfSuppliers, supplierName, productCategory,
-                    deliveringMethod, supplierContactInfo, supplierPaymentInfo);
+            supplier = new OnDemandSupplier(-1, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo);
 
             savedDTO = onDemandRepo.addSupplier(supplier.getSupplierDTO());
 
         } else if (supplyMethod == SupplyMethod.SCHEDULED) {
-            ScheduledSupplier scheduled = new ScheduledSupplier(this.numberOfSuppliers, supplierName, productCategory,
-                    deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
+            ScheduledSupplier scheduled = new ScheduledSupplier(-1, supplierName, productCategory, deliveringMethod, supplierContactInfo, supplierPaymentInfo, supplyDays);
 
             // Save supplier first
             savedDTO = scheduledRepo.addSupplier(scheduled.getSupplierDTO());
@@ -88,30 +76,71 @@ public class SupplierController {
 
     private SupplierDTO getSupplierBySupplierID(int supplierID) {
         for (SupplierDTO supplier : this.suppliersArrayList)
-            if (supplier.supplierID() == supplierID)
-                return supplier;
+            if (supplier.supplierID() == supplierID) return supplier;
 
         return null;
     }
+    private ArrayList<OrderProductDataDTO> buildProductDataArray(ArrayList<int[]> dataList, ArrayList<SupplyContractDTO> supplyContracts) {
+        ArrayList<OrderProductDataDTO> productDataList = new ArrayList<>();
+
+        for (int[] entry : dataList) {
+            int productId = entry[0];
+
+            SupplyContractDTO matchedContract = null;
+            for (SupplyContractDTO contract : supplyContracts) {
+                List<SupplyContractProductDataDTO> productDataListFromRepo =
+                        supplyContractRepo.getByContractId(contract.supplyContractID());
+
+                for (SupplyContractProductDataDTO data : productDataListFromRepo) {
+                    if (data.productID() == productId) {
+                        matchedContract = contract;
+                        break;
+                    }
+                }
+                if (matchedContract != null) break;
+            }
+
+            if (matchedContract == null) return null;
+
+            List<SupplyContractProductDataDTO> dataListFromRepo =
+                    supplyContractRepo.getByContractId(matchedContract.supplyContractID());
+
+            SupplyContractProductDataDTO data = dataListFromRepo.stream()
+                    .filter(d -> d.productID() == productId)
+                    .findFirst()
+                    .orElse(null);
+
+            if (data == null) return null;
+
+            int quantity = entry[1];
+            double price = data.productPrice();
+            if (quantity >= data.quantityForDiscount()) {
+                price *= (1 - data.discountPercentage() / 100);
+            }
+
+            productDataList.add(new OrderProductDataDTO(-1 ,productId, quantity, price));
+        }
+
+        return productDataList;
+    }
+
 
     private SupplierDTO getSupplierByProductsPrice(ArrayList<int[]> dataList, SupplyMethod neededSupplyMethod) throws SQLException {
         SupplierDTO cheapestSupplier = null;
         double cheapestPrice = Integer.MAX_VALUE;
 
         for (SupplierDTO supplier : this.suppliersArrayList) {
-            if (!supplier.supplyMethod().equalsIgnoreCase(neededSupplyMethod.name()))
-                continue;
+            if (!supplier.supplyMethod().equalsIgnoreCase(neededSupplyMethod.name())) continue;
 
             // Replace this with a proper method to get contracts by supplier ID
-            ArrayList<SupplyContract> supplyContracts = supplyContractController.getSupplierContracts(supplier.supplierID());
+            ArrayList<SupplyContractDTO> supplyContracts = supplyContractController.getSupplierContracts(supplier.supplierID());
 
-            ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
-            if (supplyContracts == null || orderProductData == null)
-                continue;
+            ArrayList<OrderProductDataDTO> orderProductData = buildProductDataArray(dataList, supplyContracts);
+            if (supplyContracts == null || orderProductData == null) continue;
 
             double sum = 0;
-            for (OrderProductData productData : orderProductData)
-                sum += productData.getTotalPrice();
+            for (OrderProductDataDTO productData : orderProductData)
+                sum += productData.productPrice();
 
             if (sum < cheapestPrice) {
                 cheapestSupplier = supplier;
@@ -125,20 +154,23 @@ public class SupplierController {
 
     public boolean deleteSupplier(int supplierID) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
         if (supplier.supplyMethod().equals(SupplyMethod.SCHEDULED.toString())) {
             try {
                 supplierDaysRepo.deleteAllDaysForSupplier(supplierID);
+            } catch (SQLException e) {
             }
-            catch (SQLException e) {}
         }
         try {
             scheduledRepo.deleteSupplier(supplierID);
+        } catch (Exception e) {
         }
-        catch (Exception e) {   }
         suppliersArrayList.remove(supplierID);
-        this.supplyContractController.removeAllSupplierContracts(supplierID);
+        try {
+            this.supplyContractController.removeAllSupplierContracts(supplierID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         this.orderController.removeAllSupplierOrders(supplierID);
         return true;
     }
@@ -147,23 +179,10 @@ public class SupplierController {
 
     public boolean updateSupplierName(int supplierID, String supplierName) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
         // Update the name
-        SupplierDTO updated = new SupplierDTO(
-                supplierID,
-                supplierName,
-                supplier.productCategory(),
-                supplier.deliveryMethod(),
-                supplier.contactName(),
-                supplier.phoneNumber(),
-                supplier.address(),
-                supplier.emailAddress(),
-                supplier.bankAccount(),
-                supplier.paymentMethod(),
-                supplier.supplyMethod()
-        );
+        SupplierDTO updated = new SupplierDTO(supplierID, supplierName, supplier.productCategory(), supplier.deliveryMethod(), supplier.contactName(), supplier.phoneNumber(), supplier.address(), supplier.emailAddress(), supplier.bankAccount(), supplier.paymentMethod(), supplier.supplyMethod());
 
         try {
             if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
@@ -186,22 +205,9 @@ public class SupplierController {
 
     public boolean updateSupplierDeliveringMethod(int supplierID, DeliveringMethod deliveringMethod) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
-        SupplierDTO updated = new SupplierDTO(
-                supplierID,
-                supplier.supplierName(),
-                supplier.productCategory(),
-                deliveringMethod.toString(),
-                supplier.contactName(),
-                supplier.phoneNumber(),
-                supplier.address(),
-                supplier.emailAddress(),
-                supplier.bankAccount(),
-                supplier.paymentMethod(),
-                supplier.supplyMethod()
-        );
+        SupplierDTO updated = new SupplierDTO(supplierID, supplier.supplierName(), supplier.productCategory(), deliveringMethod.toString(), supplier.contactName(), supplier.phoneNumber(), supplier.address(), supplier.emailAddress(), supplier.bankAccount(), supplier.paymentMethod(), supplier.supplyMethod());
 
         try {
             if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
@@ -224,22 +230,9 @@ public class SupplierController {
 
     public boolean updateSupplierContactInfo(int supplierID, String phoneNumber, String address, String email, String contactName) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
-        SupplierDTO updated = new SupplierDTO(
-                supplierID,
-                supplier.supplierName(),
-                supplier.productCategory(),
-                supplier.deliveryMethod().toString(),
-                contactName,
-                phoneNumber,
-                address,
-                email,
-                supplier.bankAccount(),
-                supplier.paymentMethod(),
-                supplier.supplyMethod()
-        );
+        SupplierDTO updated = new SupplierDTO(supplierID, supplier.supplierName(), supplier.productCategory(), supplier.deliveryMethod().toString(), contactName, phoneNumber, address, email, supplier.bankAccount(), supplier.paymentMethod(), supplier.supplyMethod());
 
         try {
             if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
@@ -262,22 +255,9 @@ public class SupplierController {
 
     public boolean updateSupplierPaymentInfo(int supplierID, String bankAccount, PaymentMethod paymentMethod) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
-        SupplierDTO updated = new SupplierDTO(
-                supplierID,
-                supplier.supplierName(),
-                supplier.productCategory(),
-                supplier.deliveryMethod().toString(),
-                supplier.contactName(),
-                supplier.phoneNumber(),
-                supplier.address(),
-                supplier.emailAddress(),
-                bankAccount,
-                paymentMethod.toString(),
-                supplier.supplyMethod()
-        );
+        SupplierDTO updated = new SupplierDTO(supplierID, supplier.supplierName(), supplier.productCategory(), supplier.deliveryMethod().toString(), supplier.contactName(), supplier.phoneNumber(), supplier.address(), supplier.emailAddress(), bankAccount, paymentMethod.toString(), supplier.supplyMethod());
 
         try {
             if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
@@ -302,23 +282,21 @@ public class SupplierController {
 
     public ProductCategory getSupplierProductCategory(int supplierID) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier != null)
-            return ProductCategory.valueOf(supplier.productCategory());
+        if (supplier != null) return ProductCategory.valueOf(supplier.productCategory());
         return null;
     }
 
 
     public DeliveringMethod getSupplierDeliveringMethod(int supplierID) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier != null)
-            return DeliveringMethod.valueOf(supplier.deliveryMethod());
+        if (supplier != null) return DeliveringMethod.valueOf(supplier.deliveryMethod());
         return null;
     }
 
 
     public ContactInfo getSupplierContactInfo(int supplierID) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier != null){
+        if (supplier != null) {
             ContactInfo contactInfo = new ContactInfo(supplier.phoneNumber(), supplier.address(), supplier.emailAddress(), supplier.contactName());
             return contactInfo;
         }
@@ -328,11 +306,10 @@ public class SupplierController {
 
     public SupplyMethod getSupplierSupplyMethod(int supplierID) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier != null){
+        if (supplier != null) {
             if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString()))
                 return SupplyMethod.SCHEDULED;
-            else
-                return SupplyMethod.ON_DEMAND;
+            else return SupplyMethod.ON_DEMAND;
         }
 
         return null;
@@ -350,8 +327,7 @@ public class SupplierController {
 
     public String getSupplierAsString(int supplierID) {
         SupplierDTO supplier = this.getSupplierBySupplierID(supplierID);
-        if (supplier != null)
-            return supplier.toString();
+        if (supplier != null) return supplier.toString();
         return null;
     }
 
@@ -359,28 +335,35 @@ public class SupplierController {
 
     public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
-        SupplyMethod supplyMethod = supplier.getSupplyMethod();
+        SupplyMethod supplyMethod = SupplyMethod.valueOf(supplier.supplyMethod());
 
-        SupplyContract contract = supplyContractController.registerNewContract(supplierID, dataList, supplyMethod);
+        try {
+            return  supplyContractController.registerNewContract(supplierID, dataList, supplyMethod);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        supplier.addSupplierContract(contract);
-
-        return true;
     }
 
     // ********** GETTERS FUNCTIONS **********
 
-    private ArrayList<SupplyContract> getAvailableContractsForOrder(int orderID) {
+    private ArrayList<SupplyContractDTO> getAvailableContractsForOrder(int orderID) {
         int supplierID = this.orderController.getOrderSupplierID(orderID);
-        Supplier supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return null;
 
-        return supplier.getSupplierContracts();
+        // Optional: validate supplier exists (not strictly necessary if controller handles it safely)
+        SupplierDTO supplier = getSupplierBySupplierID(supplierID);
+        if (supplier == null) return null;
+
+        // Retrieve the contracts from the SupplyContractController
+        try {
+            return this.supplyContractController.getSupplierContracts(supplierID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     // ********** OUTPUT FUNCTIONS **********
 
@@ -389,7 +372,7 @@ public class SupplierController {
     }
 
     public String[] getAvailableContractsForOrderAsString(int orderID) {
-        ArrayList<SupplyContract> supplyContractArrayList = this.getAvailableContractsForOrder(orderID);
+        ArrayList<SupplyContractDTO> supplyContractArrayList = this.getAvailableContractsForOrder(orderID);
 
         String[] result = new String[supplyContractArrayList.size()];
         for (int i = 0; i < supplyContractArrayList.size(); i++)
@@ -399,11 +382,16 @@ public class SupplierController {
     }
 
     public String[] GetSupplierContractsAsString(int supplierID) {
-        Supplier supplier = getSupplierBySupplierID(supplierID);
-        if (supplier == null)
-            return null;
+        SupplierDTO supplier = getSupplierBySupplierID(supplierID);
+        if (supplier == null) return null;
 
-        ArrayList<SupplyContract> supplyContractArrayList = supplier.getSupplierContracts();
+        ArrayList<SupplyContractDTO> supplyContractArrayList = null;
+        try {
+            supplyContractArrayList = this.supplyContractController.getSupplierContracts(supplierID);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (supplyContractArrayList == null) return null;
 
         String[] result = new String[supplyContractArrayList.size()];
         for (int i = 0; i < supplyContractArrayList.size(); i++)
@@ -412,52 +400,65 @@ public class SupplierController {
         return result;
     }
 
+
     public String[] getAllContractToStrings() {
         return this.supplyContractController.getAllContractToStrings();
     }
 
     public Set<Integer> getAllAvailableProductsInContracts() {
         Set<Integer> products = new HashSet<>();
-        for (SupplyContract supplyContract : this.supplyContractController.getAllAvailableContracts())
-            for (SupplyContractProductData supplyContractProductData : supplyContract.getSupplyContractProductData())
-                products.add(supplyContractProductData.getProductID());
+
+        List<SupplyContractDTO> scheduledContracts = scheduledRepo.getAllContracts();
+        List<SupplyContractDTO> onDemandContracts = onDemandRepo.getAllContracts();
+
+        List<SupplyContractDTO> allContracts = new ArrayList<>();
+        allContracts.addAll(scheduledContracts);
+        allContracts.addAll(onDemandContracts);
+
+        for (SupplyContractDTO contract : allContracts) {
+            List<SupplyContractProductDataDTO> productDataList =
+                    supplyContractRepo.getByContractId(contract.supplyContractID());
+
+            for (SupplyContractProductDataDTO data : productDataList)
+                products.add(data.productID());
+        }
 
         return products;
     }
 
+
+
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) throws SQLException {
         SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.ON_DEMAND);
-        if (supplier == null)
-            return false;
+        if (supplier == null) return false;
 
-        int supplierId = supplier.getSupplierId();
+        int supplierId = supplier.supplierID();
 
-        DeliveringMethod deliveringMethod = this.getSupplierDeliveringMethod(supplierId);
-        ContactInfo contactInfo = this.getSupplierContactInfo(supplierId);
-        SupplyMethod supplyMethod = this.getSupplierSupplyMethod(supplierId);
-        ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
+        DeliveringMethod deliveringMethod = DeliveringMethod.valueOf(supplier.deliveryMethod());
+        ContactInfo contactInfo = new ContactInfo(supplier.phoneNumber(), supplier.address(), supplier.emailAddress(), supplier.contactName());
+        SupplyMethod supplyMethod = SupplyMethod.valueOf(supplier.supplyMethod());
 
+        List<SupplyContractDTO> supplyContracts = supplyContractController.getSupplierContracts(supplierId);
         return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
     }
 
-    public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList) {
-        Supplier supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.SCHEDULED);
-        if (supplier == null)
-            return false;
 
-        ArrayList<SupplyContract> supplyContracts = supplier.getSupplierContracts();
-        ArrayList<OrderProductData> orderProductData = buildProductDataArray(dataList, supplyContracts);
+    public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList) throws SQLException {
+        SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.SCHEDULED);
+        if (supplier == null) return false;
 
-        ScheduledOrder scheduledOrder = new ScheduledOrder(supplier.supplierId, day, orderProductData);
-        scheduledOrder.Insert();
+        int supplierId = supplier.supplierID();
+        List<SupplyContractDTO> supplyContracts = supplyContractController.getSupplierContracts(supplierId);
 
-        ScheduledSupplier scheduledSupplier = ((ScheduledSupplier) supplier);
-        scheduledSupplier.addScheduledOrder(day, scheduledOrder);
-
+        ArrayList<OrderProductDataDTO> orderProductData = buildProductDataArray(dataList, new ArrayList<>(supplyContracts));
+        if (orderProductData == null) return false;
         return true;
+       //return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, )
     }
+
+
 
     public boolean deleteOrder(int orderID) {
         return this.orderController.deleteOrder(orderID);
@@ -482,7 +483,7 @@ public class SupplierController {
     }
 
     public boolean addProductsToOrder(int orderID, ArrayList<int[]> dataList) {
-        ArrayList<SupplyContract> supplyContracts = getAvailableContractsForOrder(orderID);
+        ArrayList<SupplyContractDTO> supplyContracts = getAvailableContractsForOrder(orderID);
         return this.orderController.addProductsToOrder(orderID, supplyContracts, dataList);
     }
 
@@ -506,19 +507,22 @@ public class SupplierController {
         return this.orderController.getAllOrdersAsString();
     }
 
-    public String[] getAllScheduledOrdersAsString() {
+    public String[] getAllScheduledOrdersAsString() throws SQLException {
         ArrayList<String> results = new ArrayList<>();
-        for (SupplierDTO supplier : this.suppliersArrayList)
-            if (supplier.getSupplyMethod() == SupplyMethod.SCHEDULED) {
-                ScheduledSupplier ScheduledSupplier = (ScheduledSupplier) supplier;
-                String res = ScheduledSupplier.getScheduledOrders().toString();
-                if (res.equals("{}"))
-                    continue;
-                results.add(ScheduledSupplier.getScheduledOrders().toString());
-            }
 
-        return results.toArray(new String[results.size()]);
+        for (SupplierDTO supplier : this.suppliersArrayList) {
+            if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
+                List<OrderDTO> orders = orderController.getOrdersBySupplierId(supplier.supplierID()); // Adjust if needed
+
+                if (orders == null || orders.isEmpty()) continue;
+
+                results.add(orders.toString()); // You can format better if needed
+            }
+        }
+
+        return results.toArray(new String[0]);
     }
+
 
     private void loadSuppliersIntoMemory() throws SQLException {
         List<SupplierDTO> scheduled = scheduledRepo.getAllSuppliers();

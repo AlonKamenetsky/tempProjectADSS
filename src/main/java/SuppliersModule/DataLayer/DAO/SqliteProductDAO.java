@@ -3,7 +3,10 @@ package SuppliersModule.DataLayer.DAO;
 import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.util.Database;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,10 @@ public class SqliteProductDAO {
             }
             return list;
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        }
     }
 
     public Optional<ProductDTO> findById(int productId) throws SQLException {
@@ -30,6 +37,14 @@ public class SqliteProductDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
@@ -40,29 +55,48 @@ public class SqliteProductDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 
     public ProductDTO insert(ProductDTO dto) throws SQLException {
         if (dto.productId() == null) {
             String sql = "INSERT INTO products(name, company_name, product_category) VALUES (?, ?, ?)";
-            try (PreparedStatement stmt = Database.getConnection()
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+            try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, dto.productName());
                 stmt.setString(2, dto.productCompanyName());
                 stmt.setString(3, dto.productCategory());
                 stmt.executeUpdate();
 
-                try (ResultSet keys = stmt.getGeneratedKeys()) {
-                    keys.next();
-                    return new ProductDTO(
-                            keys.getInt(1),
-                            dto.productName(),
-                            dto.productCompanyName(),
-                            dto.productCategory()
-                    );
+                // Get the generated ID using SQLite-specific syntax
+                try (Statement idStmt = Database.getConnection().createStatement();
+                     ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid()")) {
+                    if (rs.next()) {
+                        return new ProductDTO(
+                                rs.getInt(1),
+                                dto.productName(),
+                                dto.productCompanyName(),
+                                dto.productCategory()
+                        );
+                    } else {
+                        throw new SQLException("Failed to retrieve inserted product ID.");
+                    }
                 }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new SQLException();
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
             }
         } else {
             String sql = "UPDATE products SET name = ?, company_name = ?, product_category = ? WHERE id = ?";
@@ -74,14 +108,23 @@ public class SqliteProductDAO {
                 stmt.executeUpdate();
                 return dto;
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new SQLException();
+            }
         }
     }
+
 
     public void delete(int productId) throws SQLException {
         String sql = "DELETE FROM products WHERE id = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, productId);
             stmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
         }
     }
 

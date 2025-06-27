@@ -54,4 +54,25 @@ public class OrderRepositoryImpl implements IOrderRepository {
     public void deleteOrder(int orderId) throws SQLException {
         orderDAO.delete(orderId);
     }
+
+    @Override
+    public void update(OrderDTO updatedOrder) {
+
+    }
+
+    @Override
+    public Optional<OrderDTO> findById(int orderID) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<OrderDTO> findAll() {
+        return Optional.empty();
+    }
+
+    @Override
+    public void insertOrder(OrderDTO orderDTO) {
+
+    }
+
 }

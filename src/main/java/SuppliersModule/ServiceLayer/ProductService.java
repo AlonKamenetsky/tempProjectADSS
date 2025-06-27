@@ -3,14 +3,18 @@ package SuppliersModule.ServiceLayer;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
 
-import java.util.List;
+import java.sql.SQLException;
 
 
 public class ProductService {
     ProductController productController;
 
     public ProductService() {
-        this.productController = new ProductController();
+        try {
+            this.productController = new ProductController();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
