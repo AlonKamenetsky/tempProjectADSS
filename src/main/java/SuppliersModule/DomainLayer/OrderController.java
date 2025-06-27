@@ -7,10 +7,7 @@ import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
-import SuppliersModule.DomainLayer.Repositories.IOrderProductDataRepository;
-import SuppliersModule.DomainLayer.Repositories.IOrderRepository;
-import SuppliersModule.DomainLayer.Repositories.OrderProductDataRepositoryImpl;
-import SuppliersModule.DomainLayer.Repositories.OrderRepositoryImpl;
+import SuppliersModule.DomainLayer.Repositories.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -23,6 +20,7 @@ public class OrderController {
 
     private final IOrderRepository orderRepository;
     private final IOrderProductDataRepository orderProductDataRepository;
+    private final ISupplyContractProductDataRepository contractProductDataRepository;
 
 
     public OrderController() {
@@ -30,27 +28,11 @@ public class OrderController {
         this.ordersArrayList = new ArrayList<>();
         this.orderRepository = new OrderRepositoryImpl();
         this.orderProductDataRepository = new OrderProductDataRepositoryImpl();
+        this.contractProductDataRepository = new SupplyContractProductDataRepositoryImpl();
     }
 
 
-    private boolean validateProductInContracts(SupplyContractDTO supplyContract, int productID) {
-        List<SupplyContractProductDataDTO> productDataList =
-                orderProductDataRepository.findByContractId(supplyContract.supplyContractID());
-
-        for (SupplyContractProductDataDTO data : productDataList) {
-            if (data.productID().equals(productID)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-
-    public ArrayList<OrderProductDataDTO> buildProductDataArray(
-            ArrayList<int[]> dataList,
-            ArrayList<SupplyContractDTO> supplyContracts) {
+    public ArrayList<OrderProductDataDTO> buildProductDataArray(ArrayList<int[]> dataList, ArrayList<SupplyContractDTO> supplyContracts) {
 
         ArrayList<OrderProductDataDTO> productDataList = new ArrayList<>();
 
@@ -61,9 +43,12 @@ public class OrderController {
             boolean found = false;
 
             for (SupplyContractDTO contract : supplyContracts) {
-                List<SupplyContractProductDataDTO> productDataForContract =
-                        orderProductDataRepository.findContractProductsByContractId(contract.supplyContractID());
-
+                List<SupplyContractProductDataDTO> productDataForContract = null;
+                try {
+                    productDataForContract = contractProductDataRepository.findByContractId(contract.supplyContractID());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 for (SupplyContractProductDataDTO productData : productDataForContract) {
                     if (productData.productID().equals(productId)) {
                         double price = productData.productPrice();
@@ -71,11 +56,7 @@ public class OrderController {
                             price *= ((100 - productData.discountPercentage()) / 100.0);
                         }
 
-                        productDataList.add(new OrderProductDataDTO(
-                                contract.supplyContractID(),
-                                productId,
-                                quantity,
-                                 price // or `price` if your DTO takes `Double`
+                        productDataList.add(new OrderProductDataDTO(contract.supplyContractID(), productId, quantity, price // or `price` if your DTO takes `Double`
                         ));
                         found = true;
                         break;
@@ -93,7 +74,6 @@ public class OrderController {
     }
 
 
-
     private double calculateTotalPriceDTOs(List<OrderProductDataDTO> dataList) {
         double total = 0;
         for (OrderProductDataDTO dto : dataList) {
@@ -103,14 +83,7 @@ public class OrderController {
     }
 
 
-    public boolean registerNewOrder(int supplierId,
-                                    ArrayList<int[]> dataList,
-                                    List<SupplyContractDTO> supplyContracts,
-                                    Date creationDate,
-                                    Date deliveryDate,
-                                    DeliveringMethod deliveringMethod,
-                                    SupplyMethod supplyMethod,
-                                    ContactInfo supplierContactInfo) {
+    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, List<SupplyContractDTO> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         if (creationDate == null) {
             LocalDate today = LocalDate.now();
             creationDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -126,29 +99,12 @@ public class OrderController {
 
         double totalOrderValue = calculateTotalPriceDTOs(orderProductDataList);
 
-        OrderDTO orderDTO = new OrderDTO(
-                numOfOrders,
-                supplierId,
-                supplierContactInfo.phoneNumber,
-                supplierContactInfo.address,
-                supplierContactInfo.email,
-                supplierContactInfo.name,
-                deliveringMethod.toString(),
-                creationDate.toString(),
-                deliveryDate.toString(),
-                totalOrderValue,
-                OrderStatus.PENDING.toString(),
-                supplyMethod.toString()
-        );
+        OrderDTO orderDTO = new OrderDTO(numOfOrders, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString());
 
         orderRepository.insertOrder(orderDTO);
 
         for (OrderProductDataDTO data : orderProductDataList) {
-            OrderProductDataDTO dto = new OrderProductDataDTO(
-                    numOfOrders,
-                    data.productID(),
-                    data.productQuantity(),
-                    data.productPrice() // if needed
+            OrderProductDataDTO dto = new OrderProductDataDTO(numOfOrders, data.productID(), data.productQuantity(), data.productPrice() // if needed
             );
             orderProductDataRepository.insert(dto);
         }
@@ -158,7 +114,6 @@ public class OrderController {
         return true;
 
     }
-
 
 
     private OrderDTO getOrderByID(int orderID) {
@@ -399,9 +354,7 @@ public class OrderController {
     }
 
     public List<OrderDTO> getOrdersBySupplierId(Integer supplierId) {
-        return orderRepository.findAll().stream()
-                .filter(order -> order.supplierID().equals(supplierId))
-                .toList();
+        return orderRepository.findAll().stream().filter(order -> order.supplierID().equals(supplierId)).toList();
     }
 
 

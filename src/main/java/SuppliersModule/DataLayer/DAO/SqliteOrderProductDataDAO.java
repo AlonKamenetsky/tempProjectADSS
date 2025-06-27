@@ -122,4 +122,15 @@ public class SqliteOrderProductDataDAO {
                 rs.getDouble("price")
         );
     }
+    public void deleteAllByOrderId(int orderId) throws SQLException {
+        String sql = "DELETE FROM order_product_data WHERE order_id = ?";
+        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, orderId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Failed to delete all products from order ID " + orderId, e);
+        }
+    }
+
 }

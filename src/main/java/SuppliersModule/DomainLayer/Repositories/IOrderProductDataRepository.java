@@ -1,7 +1,6 @@
 package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DTO.OrderProductDataDTO;
-import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,7 +23,5 @@ public interface IOrderProductDataRepository {
 
     void insert(OrderProductDataDTO dto);
 
-    List<SupplyContractProductDataDTO> findByContractId(Integer integer);
 
-    List<SupplyContractProductDataDTO> findContractProductsByContractId(Integer integer);
 }

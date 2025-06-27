@@ -165,7 +165,7 @@ public class SupplierController {
             scheduledRepo.deleteSupplier(supplierID);
         } catch (Exception e) {
         }
-        suppliersArrayList.remove(supplierID);
+        suppliersArrayList.remove(supplier);
         try {
             this.supplyContractController.removeAllSupplierContracts(supplierID);
         } catch (SQLException e) {

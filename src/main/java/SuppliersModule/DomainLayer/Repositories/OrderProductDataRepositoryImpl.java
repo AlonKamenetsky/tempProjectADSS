@@ -2,7 +2,6 @@ package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DAO.SqliteOrderProductDataDAO;
 import SuppliersModule.DataLayer.DTO.OrderProductDataDTO;
-import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -43,26 +42,34 @@ public class OrderProductDataRepositoryImpl implements IOrderProductDataReposito
 
     @Override
     public List<OrderProductDataDTO> findByOrderId(int orderID) {
-        return List.of();
+        try {
+            return dao.findByOrderId(orderID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return List.of(); // Return empty list on error
+        }
     }
 
     @Override
     public void deleteAllByOrderId(int orderID) {
-
+        try {
+            dao.deleteAllByOrderId(orderID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public void insert(OrderProductDataDTO dto) {
-
+        try {
+            dao.insert(dto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public List<SupplyContractProductDataDTO> findByContractId(Integer integer) {
-        return List.of();
-    }
 
-    @Override
-    public List<SupplyContractProductDataDTO> findContractProductsByContractId(Integer integer) {
-        return List.of();
-    }
+
+
 }

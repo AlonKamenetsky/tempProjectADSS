@@ -235,7 +235,7 @@ public class SupplierCLI {
         if (this.serviceController.registerNewContract(supplierId, dataArray))
             System.out.println("Supplier contract registered successfully.");
         else
-            System.out.println("Error: No such contract exists.");
+            System.out.println("Error Creating Supplier contract");
 
     }
     private void deleteSupplyContract() {
