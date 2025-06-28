@@ -20,4 +20,13 @@ public class SupplierDaysRepositoryImpl implements ISupplierDaysRepository {
     public void deleteAllDaysForSupplier(int supplierId) throws SQLException {
         dao.deleteAllDaysForSupplier(supplierId);
     }
+
+    @Override
+    public void insert(SupplierDaysDTO daysDTO) {
+        try {
+            dao.insert(daysDTO);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

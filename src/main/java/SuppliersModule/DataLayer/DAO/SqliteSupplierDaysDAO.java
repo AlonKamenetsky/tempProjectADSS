@@ -52,7 +52,7 @@ public class SqliteSupplierDaysDAO {
     }
 
     public void insert(SupplierDaysDTO dto) throws SQLException {
-        String sql = "INSERT INTO suppliers_days(id, day) VALUES (?, ?)";
+        String sql = "INSERT INTO suppliers_days(supplier_id, day) VALUES (?, ?)";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, dto.supplierID());
             stmt.setString(2, dto.day());

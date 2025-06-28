@@ -7,6 +7,7 @@ import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Enums.WeekDay;
 import SuppliersModule.DomainLayer.Repositories.*;
 
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ public class OrderController {
     private final IOrderRepository orderRepository;
     private final IOrderProductDataRepository orderProductDataRepository;
     private final ISupplyContractProductDataRepository contractProductDataRepository;
+    private final IScheduledOrderRepository scheduledOrderRepository;
 
 
     public OrderController() {
@@ -29,6 +31,7 @@ public class OrderController {
         this.orderRepository = new OrderRepositoryImpl();
         this.orderProductDataRepository = new OrderProductDataRepositoryImpl();
         this.contractProductDataRepository = new SupplyContractProductDataRepositoryImpl();
+        this.scheduledOrderRepository = new ScheduledOrderRepositoryImpl();
     }
 
 
@@ -358,4 +361,11 @@ public class OrderController {
     }
 
 
+    public void dropData() {
+        ordersArrayList.clear();
+    }
+
+    public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList) {
+        int orderId
+    }
 }

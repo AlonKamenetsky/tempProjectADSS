@@ -1,21 +1,27 @@
 package SuppliersModule.DomainLayer.Repositories;
 
-import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
+import SuppliersModule.DataLayer.DTO.OrderDTO;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public interface IScheduledOrderRepository {
-    void addProductToContract(int contractId, int productId, double price, int quantityForDiscount, double discountPercentage) throws SQLException;
 
-    void updateProductInContract(SupplyContractProductDataDTO dto) throws SQLException;
 
-    void removeProductFromContract(int contractId, int productId) throws SQLException;
+    List<OrderDTO> getAllOrders() throws SQLException;
 
-    void clearContract(int contractId) throws SQLException;
+    Optional<OrderDTO> getOrderById(int orderId) throws SQLException;
 
-    List<SupplyContractProductDataDTO> getProductsInContract(int contractId) throws SQLException;
+    void updateOrder(OrderDTO order) throws SQLException;
 
-    Optional<SupplyContractProductDataDTO> getProductInContract(int contractId, int productId) throws SQLException;
+    void deleteOrder(int orderId) throws SQLException;
+
+    void update(OrderDTO updatedOrder);
+
+    Optional<OrderDTO> findById(int orderID);
+
+    Optional<OrderDTO> findAll();
+
+    void insertOrder(OrderDTO orderDTO);
 }

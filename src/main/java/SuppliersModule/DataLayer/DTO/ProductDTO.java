@@ -4,13 +4,18 @@ public record ProductDTO (
      Integer productId,
      String productName,
      String productCompanyName,
-     String productCategory
+     String productCategory,
+     Double productWeight
 ){
     @Override
     public String toString() {
-        return "Product ID: " + productId +
-                ", Name: " + productName +
-                ", Company: " + productCompanyName +
-                ", Category: " + productCategory;
+        return "ProductDTO{" +
+                "id=" + productId +
+                ", name=" + productName +
+                ", company_name=" + productCompanyName +
+                ", product_category=" + productCategory +
+                ", product_weight=" + productWeight +
+                '}';
     }
+
 }

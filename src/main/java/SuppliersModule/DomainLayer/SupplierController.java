@@ -1,6 +1,5 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.DAO.SqliteSupplierDaysDAO;
 import SuppliersModule.DataLayer.DTO.*;
 import SuppliersModule.DomainLayer.Enums.*;
 import SuppliersModule.DomainLayer.Repositories.*;
@@ -58,8 +57,9 @@ public class SupplierController {
             savedDTO = scheduledRepo.addSupplier(scheduled.getSupplierDTO());
 
             // Save supply days
-            for (SupplierDaysDTO dto : scheduled.getSupplierDaysDTOS()) {
-                new SqliteSupplierDaysDAO().insert(dto); // or use a ScheduledSupplierDaysRepository if you have one
+            for(WeekDay day: supplyDays){
+                SupplierDaysDTO daysDTO = new SupplierDaysDTO(savedDTO.supplierID(), day.toString());
+                supplierDaysRepo.insert(daysDTO);
             }
 
         } else {
@@ -333,7 +333,7 @@ public class SupplierController {
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
+    public boolean registerNewContract(int supplierID, ArrayList<double[]> dataList) {
         SupplierDTO supplier = getSupplierBySupplierID(supplierID);
         if (supplier == null) return false;
 
@@ -454,8 +454,7 @@ public class SupplierController {
 
         ArrayList<OrderProductDataDTO> orderProductData = buildProductDataArray(dataList, new ArrayList<>(supplyContracts));
         if (orderProductData == null) return false;
-        return true;
-       //return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, )
+        return this.orderController.registerNewScheduledOrder(supplierId, day, dataList);
     }
 
 
@@ -533,4 +532,16 @@ public class SupplierController {
     }
 
 
+    public void dropData() {
+        this.suppliersArrayList.clear();
+        supplyContractController.dropData();
+        orderController.dropData();
+    }
+    public String[] getAllSupplyContractProductsToString(){
+        try {
+            return this.supplyContractController.getAllSupplyContractProductsAsString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

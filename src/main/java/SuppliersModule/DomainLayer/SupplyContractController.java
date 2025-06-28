@@ -3,7 +3,9 @@ package SuppliersModule.DomainLayer;
 import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
 import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
+import SuppliersModule.DomainLayer.Repositories.ISupplyContractProductDataRepository;
 import SuppliersModule.DomainLayer.Repositories.ISupplyContractRepository;
+import SuppliersModule.DomainLayer.Repositories.SupplyContractProductDataRepositoryImpl;
 import SuppliersModule.DomainLayer.Repositories.SupplyContractRepositoryImpl;
 
 import java.sql.SQLException;
@@ -14,22 +16,26 @@ public class SupplyContractController {
 
     private final ISupplyContractRepository contractRepository;
     private final List<SupplyContractDTO> supplyContractsList;
+    private final ISupplyContractProductDataRepository supplyContractProductDataRepository;
 
     public SupplyContractController() throws SQLException {
         this.contractRepository = new SupplyContractRepositoryImpl();
         this.supplyContractsList = contractRepository.getAllSupplyContracts();
+        this.supplyContractProductDataRepository = new SupplyContractProductDataRepositoryImpl();
     }
 
-    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList, SupplyMethod method) throws SQLException {
+    public boolean registerNewContract(int supplierID, ArrayList<double[]> dataList, SupplyMethod method) throws SQLException {
         // Step 1: Create and insert a new contract
         SupplyContractDTO newContract = new SupplyContractDTO(null, supplierID);
         int contractId = contractRepository.insertSupplyContract(newContract);
+        SupplyContractDTO supplyContractDTO = new SupplyContractDTO(contractId, supplierID);
+        contractRepository.updateContract(supplyContractDTO);
 
         // Step 2: For each product data, create DTO and persist it
-        for (int[] data : dataList) {
-            int productID = data[0];
+        for (double[] data : dataList) {
+            int productID = (int) data[0];
             double price = data[1];
-            int quantityForDiscount = data[2];
+            int quantityForDiscount = (int) data[2];
             double discountPercentage = data[3];
 
             SupplyContractProductDataDTO productDataDTO = new SupplyContractProductDataDTO(
@@ -126,4 +132,15 @@ public class SupplyContractController {
         return contracts;
     }
 
+    public void dropData() {
+        this.supplyContractsList.clear();
+    }
+    public String[] getAllSupplyContractProductsAsString() throws SQLException {
+        List<SupplyContractProductDataDTO> allContractsProducts = this.supplyContractProductDataRepository.findAll();
+        String[] supplyContractProductsAsString = new String[allContractsProducts.size()];
+        for(int i = 0; i < supplyContractProductsAsString.length; i++){
+            supplyContractProductsAsString[i] = allContractsProducts.get(i).toString();
+        }
+        return supplyContractProductsAsString;
+    }
 }

@@ -1,7 +1,7 @@
 package SuppliersModule.DomainLayer.Repositories;
 
-import SuppliersModule.DataLayer.DAO.SqliteSupplyContractProductDataDAO;
-import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
+import SuppliersModule.DataLayer.DAO.SqliteOrderDAO;
+import SuppliersModule.DataLayer.DTO.OrderDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,39 +9,50 @@ import java.util.Optional;
 
 public class ScheduledOrderRepositoryImpl implements IScheduledOrderRepository {
 
-    private final SqliteSupplyContractProductDataDAO dao;
+    private final SqliteOrderDAO orderDAO;
 
     public ScheduledOrderRepositoryImpl() {
-        this.dao = new SqliteSupplyContractProductDataDAO();
+        this.orderDAO = new SqliteOrderDAO();
+    }
+
+
+    @Override
+    public List<OrderDTO> getAllOrders() throws SQLException {
+        return orderDAO.findAll();
     }
 
     @Override
-    public void addProductToContract(int contractId, int productId, double price, int quantityForDiscount, double discountPercentage) throws SQLException {
-        dao.insert(new SupplyContractProductDataDTO(contractId, productId, price, quantityForDiscount, discountPercentage));
+    public Optional<OrderDTO> getOrderById(int orderId) throws SQLException {
+        return orderDAO.findById(orderId);
     }
 
     @Override
-    public void updateProductInContract(SupplyContractProductDataDTO dto) throws SQLException {
-        dao.update(dto);
+    public void updateOrder(OrderDTO order) throws SQLException {
+        orderDAO.update(order);
     }
 
     @Override
-    public void removeProductFromContract(int contractId, int productId) throws SQLException {
-        dao.delete(contractId, productId);
+    public void deleteOrder(int orderId) throws SQLException {
+        orderDAO.delete(orderId);
     }
 
     @Override
-    public void clearContract(int contractId) throws SQLException {
-        dao.deleteAllByContractId(contractId);
+    public void update(OrderDTO updatedOrder) {
+
     }
 
     @Override
-    public List<SupplyContractProductDataDTO> getProductsInContract(int contractId) throws SQLException {
-        return dao.findByContractId(contractId);
+    public Optional<OrderDTO> findById(int orderID) {
+        return Optional.empty();
     }
 
     @Override
-    public Optional<SupplyContractProductDataDTO> getProductInContract(int contractId, int productId) throws SQLException {
-        return dao.findByContractAndProduct(contractId, productId);
+    public Optional<OrderDTO> findAll() {
+        return Optional.empty();
+    }
+
+    @Override
+    public void insertOrder(OrderDTO orderDTO) {
+
     }
 }

@@ -27,9 +27,9 @@ public class ProductController {
         return null;
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
         try {
-            ProductDTO dto = productRepository.addProduct(productName, productCompanyName, productCategory.name());
+            ProductDTO dto = productRepository.addProduct(productName, productCompanyName, productCategory.name(),  productWeight);
             this.productsArrayList.add(dto);
             return dto.productId();
         } catch (SQLException e) {
@@ -39,7 +39,7 @@ public class ProductController {
     }
 
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
         try {
             ProductDTO existing = getProductByID(productID);
             if (existing == null)
@@ -49,7 +49,8 @@ public class ProductController {
                     productID,
                     productName,
                     productCompanyName,
-                    existing.productCategory() // keep the original category
+                    existing.productCategory(),
+                    productWeight
             );
 
             productRepository.updateProduct(updated);
@@ -112,4 +113,7 @@ public class ProductController {
     }
 
 
+    public void dropData() {
+        this.productsArrayList.clear();
+    }
 }

@@ -23,5 +23,11 @@ public class SupplyContractProductDataRepositoryImpl implements ISupplyContractP
     public void deleteAllByContractId(int contractId) throws SQLException {
         dao.deleteAllByContractId(contractId);
     }
+
+    @Override
+    public List<SupplyContractProductDataDTO> findAll() throws SQLException {
+        return dao.findAll();
+    }
+
 }
 

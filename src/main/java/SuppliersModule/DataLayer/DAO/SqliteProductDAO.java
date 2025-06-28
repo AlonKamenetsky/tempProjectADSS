@@ -14,7 +14,7 @@ import java.util.Optional;
 public class SqliteProductDAO {
 
     public List<ProductDTO> findAll() throws SQLException {
-        String sql = "SELECT id, name, company_name, product_category FROM products";
+        String sql = "SELECT id, name, company_name, product_category, product_weight FROM products";
         try (Statement stmt = Database.getConnection().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -31,7 +31,7 @@ public class SqliteProductDAO {
     }
 
     public Optional<ProductDTO> findById(int productId) throws SQLException {
-        String sql = "SELECT id, name, company_name, product_category FROM products WHERE id = ?";
+        String sql = "SELECT id, name, company_name, product_category, product_weight FROM products WHERE id = ?";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, productId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -49,7 +49,7 @@ public class SqliteProductDAO {
     }
 
     public Optional<ProductDTO> findByName(String productName) throws SQLException {
-        String sql = "SELECT id, name, company_name, product_category FROM products WHERE name = ? COLLATE NOCASE";
+        String sql = "SELECT id, name, company_name, product_category, product_weight FROM products WHERE name = ? COLLATE NOCASE";
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
             stmt.setString(1, productName);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -68,11 +68,12 @@ public class SqliteProductDAO {
 
     public ProductDTO insert(ProductDTO dto) throws SQLException {
         if (dto.productId() == null) {
-            String sql = "INSERT INTO products(name, company_name, product_category) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO products(name, company_name, product_category, product_weight) VALUES (?, ?, ?, ?)";
             try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, dto.productName());
                 stmt.setString(2, dto.productCompanyName());
                 stmt.setString(3, dto.productCategory());
+                stmt.setDouble(4, dto.productWeight());
                 stmt.executeUpdate();
 
                 // Get the generated ID using SQLite-specific syntax
@@ -83,7 +84,8 @@ public class SqliteProductDAO {
                                 rs.getInt(1),
                                 dto.productName(),
                                 dto.productCompanyName(),
-                                dto.productCategory()
+                                dto.productCategory(),
+                                dto.productWeight()
                         );
                     } else {
                         throw new SQLException("Failed to retrieve inserted product ID.");
@@ -99,12 +101,13 @@ public class SqliteProductDAO {
                 throw new SQLException();
             }
         } else {
-            String sql = "UPDATE products SET name = ?, company_name = ?, product_category = ? WHERE id = ?";
+            String sql = "UPDATE products SET name = ?, company_name = ?, product_category = ?, product_weight = ? WHERE id = ?";
             try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, dto.productName());
                 stmt.setString(2, dto.productCompanyName());
                 stmt.setString(3, dto.productCategory());
-                stmt.setInt(4, dto.productId());
+                stmt.setDouble(4, dto.productWeight());
+                stmt.setInt(5, dto.productId());
                 stmt.executeUpdate();
                 return dto;
             }
@@ -133,7 +136,8 @@ public class SqliteProductDAO {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("company_name"),
-                rs.getString("product_category")
+                rs.getString("product_category"),
+                rs.getDouble("product_weight")
         );
     }
 }

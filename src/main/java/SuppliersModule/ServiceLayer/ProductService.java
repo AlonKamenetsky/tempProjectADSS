@@ -17,12 +17,12 @@ public class ProductService {
         }
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
-        return this.productController.registerNewProduct(productName, productCompanyName, productCategory);
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
+        return this.productController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName) {
-        return this.productController.updateProduct(productID, productName, productCompanyName);
+    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+        return this.productController.updateProduct(productID, productName, productCompanyName, productWeight);
     }
 
     public boolean deleteProduct(int productID) {
@@ -39,6 +39,10 @@ public class ProductService {
 
     public ProductCategory getProductCategory(int productID) {
         return this.productController.getProductCategory(productID);
+    }
+
+    public void dropData() {
+        productController.dropData();
     }
 }
 

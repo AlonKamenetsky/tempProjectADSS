@@ -9,4 +9,5 @@ public interface ISupplyContractProductDataRepository {
     List<SupplyContractProductDataDTO> findByContractId(int contractId) throws SQLException;
     void insert(SupplyContractProductDataDTO dto) throws SQLException;
     void deleteAllByContractId(int contractId) throws SQLException;
+    List<SupplyContractProductDataDTO> findAll() throws SQLException;
 }

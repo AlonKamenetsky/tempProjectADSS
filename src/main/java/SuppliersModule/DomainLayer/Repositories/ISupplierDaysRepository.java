@@ -9,4 +9,6 @@ public interface ISupplierDaysRepository {
     void addDaysForSupplier(List<SupplierDaysDTO> days) throws SQLException;
 
     void deleteAllDaysForSupplier(int supplierId) throws SQLException;
+
+    void insert(SupplierDaysDTO daysDTO);
 }
