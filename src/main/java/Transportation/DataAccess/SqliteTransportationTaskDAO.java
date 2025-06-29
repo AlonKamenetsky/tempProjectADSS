@@ -234,10 +234,25 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                 .orElseThrow(() -> new SQLException("Task not found"));
     }
 
+
     @Override
     public TransportationTaskDTO assignWhWorker(int taskId, String whwId) throws SQLException {
-        return null;
+        String sql = "UPDATE TransportationTasks SET warehouse_worker_id = ? WHERE task_id = ?";
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, whwId);
+            ps.setInt(2, taskId);
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("No task found with ID: " + taskId);
+            }
+        }
+        // Return the updated task
+        return findById(taskId)
+                .orElseThrow(() -> new SQLException("Task not found"));
     }
+
+
 
 
 // ----------- Helper Methods ----------
