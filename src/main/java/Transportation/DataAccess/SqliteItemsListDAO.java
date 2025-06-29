@@ -1,12 +1,10 @@
 package Transportation.DataAccess;
 
 import Transportation.DTO.ItemsListDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SqliteItemsListDAO implements ItemsListDAO {
