@@ -8,20 +8,14 @@ import java.util.Optional;
 
 public interface SupplierInterface {
 
-//    static ServiceController GetInstance() {
-//        return null;
-//    }
-
-    // What about Add product?
-
     List<ProductDTO> getAllProducts();
 
-    Optional<ProductDTO> getProductById(int productId);
+    ProductDTO getProductById(int productId);
 
-    Optional<Float> getWeightByProductId(int productId);
+    Double getWeightByProductId(int productId);
 
     Optional<ProductDTO> getProductByName(String productName);
 
     // with this method inventory module will ask supplier module to order a single product that is out of stock
-    void placeUrgentOrderSingleProduct(int ItemID, int quantity);
+    //void placeUrgentOrderSingleProduct(int ItemID, int quantity);
 }

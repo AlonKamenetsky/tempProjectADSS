@@ -19,7 +19,7 @@ public class ProductController {
         this.productsArrayList = productRepository.getAllProducts();
     }
 
-    private ProductDTO getProductByID(int id) {
+    public ProductDTO getProductByID(int id) {
         for (ProductDTO product : this.productsArrayList)
             if (product.productId() == id)
                 return product;
@@ -115,5 +115,9 @@ public class ProductController {
 
     public void dropData() {
         this.productsArrayList.clear();
+    }
+
+    public List<ProductDTO> getAllProducts() {
+        return this.productsArrayList;
     }
 }
