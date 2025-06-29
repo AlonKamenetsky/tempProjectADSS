@@ -1,8 +1,7 @@
 package Transportation.DataAccess;
 
-import Transportation.DTO.DriverAvailabilityDTO;
 import Transportation.DTO.TransportationTaskDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -119,17 +118,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                     WHERE t.source_site_address = ?
                 """;
 
-        List<TransportationTaskDTO> list = new ArrayList<>();
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, sourceSiteAddress);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(buildDTOFromResultSet(rs));
-                }
-            }
-        }
-
-        return list;
+        return getTransportationTaskDTOS(sourceSiteAddress, sql);
     }
 
     @Override
@@ -141,6 +130,10 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                     WHERE driver_id = ?
                 """;
 
+        return getTransportationTaskDTOS(driverId, sql);
+    }
+
+    private List<TransportationTaskDTO> getTransportationTaskDTOS(String driverId, String sql) throws SQLException {
         List<TransportationTaskDTO> list = new ArrayList<>();
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, driverId);
@@ -238,39 +231,6 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         // Return the updated task
         return findById(taskId)
                 .orElseThrow(() -> new SQLException("Task not found"));
-    }
-
-    public DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        String sql = "INSERT INTO drivers_in_tasks(shift_id, driver_id) VALUES (?, ?)";
-
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, shiftId);
-            ps.setString(2, driverId);
-            ps.executeUpdate();
-        }
-
-        return new DriverAvailabilityDTO(shiftId, driverId);
-    }
-
-    public void removeOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        String sql = "DELETE FROM drivers_in_tasks WHERE shift_id = ? AND driver_id = ?";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, shiftId);
-            ps.setString(2, driverId);
-            ps.executeUpdate();
-        }
-    }
-
-    @Override
-    public boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        String sql = "SELECT 1 FROM drivers_in_tasks WHERE shift_id = ? AND driver_id = ?";
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, shiftId);
-            stmt.setString(2, driverId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); // returns true if a row exists
-            }
-        }
     }
 
 
