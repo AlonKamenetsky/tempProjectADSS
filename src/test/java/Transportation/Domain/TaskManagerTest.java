@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith(MockitoExtension.class)
 class TaskManagerTest {
+
     private TaskManager taskManager;
     private TransportationDocRepository docRepo;
     private TransportationTaskRepository taskRepo;
@@ -39,7 +40,7 @@ class TaskManagerTest {
         itemManager = mock(ItemManager.class);
         DriverManager driverManager = mock(DriverManager.class);
 
-        taskManager = new TaskManager(siteManager, truckManager,driverManager, itemManager, docRepo, taskRepo);
+        taskManager = new TaskManager(siteManager, truckManager, driverManager, itemManager, docRepo, taskRepo, new ArrayList<>());
     }
 
     @Test
@@ -51,7 +52,9 @@ class TaskManagerTest {
 
         SiteDTO sourceSite = new SiteDTO(1, source, "a", "1", 1);
         SiteDTO destSite = new SiteDTO(2, dest, "b", "2", 1);
-        TransportationTaskDTO taskDTO = new TransportationTaskDTO(1, date, time,source,new ArrayList<>() ,"", "", 0);
+
+        TransportationTaskDTO taskDTO = new TransportationTaskDTO(
+                1, date, time, source, new ArrayList<>(), "", "", "", 0);
 
         when(siteManager.findSiteByAddress(source)).thenReturn(Optional.of(sourceSite));
         when(siteManager.findSiteByAddress(dest)).thenReturn(Optional.of(destSite));
@@ -75,7 +78,9 @@ class TaskManagerTest {
         int taskId = 1;
 
         SiteDTO sourceSite = new SiteDTO(10, source, "c", "3", 1);
-        TransportationTaskDTO taskDTO = new TransportationTaskDTO(taskId, date, time,source,new ArrayList<>() ,"", "", 0);
+        TransportationTaskDTO taskDTO = new TransportationTaskDTO(
+                taskId, date, time, source, new ArrayList<>(), "", "", "", 0);
+
         TransportationDocDTO doc = new TransportationDocDTO(101, 10, 20, 1);
 
         when(siteManager.findSiteByAddress(source)).thenReturn(Optional.of(sourceSite));
@@ -83,7 +88,10 @@ class TaskManagerTest {
         when(docRepo.findDocByTaskId(taskId)).thenReturn(List.of(doc));
         when(docRepo.findDocItemsListId(doc.docId())).thenReturn(20);
         when(itemManager.findWeightList(20)).thenReturn(100.0f);
-        when(taskRepo.updateWeight(taskId, 100.0f)).thenReturn( new TransportationTaskDTO(1, date, time,source,new ArrayList<>() ,"", "", 100f));
+
+        when(taskRepo.updateWeight(taskId, 100.0f))
+                .thenReturn(new TransportationTaskDTO(
+                        1, date, time, source, new ArrayList<>(), "", "", "", 100f));
 
         TransportationTaskDTO result = taskManager.updateWeightForTask(date, time, source);
 

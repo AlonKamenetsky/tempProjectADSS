@@ -13,6 +13,7 @@ public class TransportationTask {
     private final ArrayList<Site> destinationSites;
     private float weightBeforeLeaving;
     private String driverId;
+    private String wareHouseWorkerId;
     private final HashMap<Integer, TransportationDoc> taskDocs;
 
     public TransportationTask(int _taskId, LocalDate _taskDate, LocalTime _departureTime, Site _sourceSite) {
@@ -20,6 +21,7 @@ public class TransportationTask {
         taskDate = _taskDate;
         truckLicenseNumber = ""; // "" = unassigned
         driverId = "";
+        wareHouseWorkerId = "";
         departureTime = _departureTime;
         sourceSite = _sourceSite;
         weightBeforeLeaving = 0;
@@ -33,6 +35,10 @@ public class TransportationTask {
 
     public String getDriverId() {
         return driverId;
+    }
+
+    public String getWareHouseId(){
+        return wareHouseWorkerId;
     }
 
     public int getTaskId() {
@@ -77,6 +83,10 @@ public class TransportationTask {
         this.driverId = driverId;
     }
 
+    public void assignWareHouseWorker(String wareHouseWorkerId) {
+        this.wareHouseWorkerId = wareHouseWorkerId;
+    }
+
     public void assignTruck(String truckLicenseNumber) {
         this.truckLicenseNumber = truckLicenseNumber;
     }
@@ -93,6 +103,7 @@ public class TransportationTask {
         sb.append("Departure Date: ").append(taskDate).append("\n");
         sb.append("Departure Time: ").append(departureTime).append("\n");
         sb.append("Driver Assigned: ").append(driverId).append("\n");
+        sb.append("Warehouse Worker ID: ").append(wareHouseWorkerId).append("\n");
         sb.append("Truck Assigned: ").append(truckLicenseNumber).append("\n");
         sb.append("Weight Before Leaving: ").append(weightBeforeLeaving).append("\n");
         sb.append("Destinations:\n");

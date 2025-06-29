@@ -11,6 +11,7 @@ public record TransportationTaskDTO(
         String sourceSiteAddress,
         List<String> destinationsAddresses,
         String driverId,
+        String whwId,
         String truckLicenseNumber,
         float weightBeforeLeaving
 ) {

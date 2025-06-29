@@ -21,4 +21,6 @@ public interface TransportationTaskRepository {
     TransportationTaskDTO updateWeight(int taskId, float weight) throws SQLException;
     TransportationTaskDTO assignTruckToTask(int taskId, String truckLicenseNumber) throws SQLException;
     TransportationTaskDTO assignDriverToTask(int taskId, String driverId) throws SQLException;
+    void assignWarehouseWorkerToTask(int taskId, String hwId) throws SQLException;
+
 }

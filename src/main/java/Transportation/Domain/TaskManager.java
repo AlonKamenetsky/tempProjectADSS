@@ -16,6 +16,7 @@ public class TaskManager {
     private final ItemManager itemManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
+    private final List<WarehouseWorker> warehouseWorkers;
 
     public TaskManager() {
         docRepository = new TransportationDocRepositoryImpli();
@@ -24,15 +25,18 @@ public class TaskManager {
         truckManager = new TruckManager();
         driverManager = new DriverManager();
         itemManager = new ItemManager();
+        warehouseWorkers = new ArrayList<>();
     }
 
-    public TaskManager(SiteManager siteManager, TruckManager truckManager, DriverManager driverManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository) {
+
+    public TaskManager(SiteManager siteManager, TruckManager truckManager, DriverManager driverManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, List<WarehouseWorker> warehouseWorkers) {
         this.siteManager = siteManager;
         this.truckManager = truckManager;
         this.driverManager = driverManager;
         this.itemManager = itemManager;
         this.docRepository = docRepository;
         this.taskRepository = taskRepository;
+        this.warehouseWorkers = warehouseWorkers;
     }
 
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
@@ -87,7 +91,7 @@ public class TaskManager {
         }
     }
 
-    public boolean assignDriverAndTruckToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException {
+    public boolean assignWorkersAndTruckToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite) throws SQLException {
         Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, taskSourceSite);
         if (task.isPresent()) {
             Optional<TruckDTO> nextAvailableTruck = truckManager.getNextTruckAvailable(task.get().weightBeforeLeaving());
@@ -103,18 +107,26 @@ public class TaskManager {
             }
 
             // assign warehouse worker
-//            boolean availableWarehouseWorker = employeeProvider.findAvailableWarehouseWorkers(shiftDate, shiftTime);
-//
-//
-//            if (!availableWarehouseWorker) {
-//                throw new NoSuchElementException("No warehouse workers available for this task");
-//            }
+            WarehouseWorker availableWarehouseWorker = null;
+            for (WarehouseWorker w : warehouseWorkers) {
+                if (w.isAvailable()) {
+                    w.setAvailable(false);
+                    availableWarehouseWorker = w;
+                    break;
+                }
+            }
+           if (availableWarehouseWorker == null) {
+                throw new NoSuchElementException("No warehouse workers available for this task");
+           }
 
             // All good → assign
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
             taskRepository.assignDriverToTask(task.get().taskId(), availableDriver.get().driverId());
             driverManager.setDriverAvailability(task.get().driverId(), false);
+            taskRepository.assignWarehouseWorkerToTask(task.get().taskId(), availableWarehouseWorker.getHwId());
+
+
 
             return true;
         } else {
@@ -129,6 +141,7 @@ public class TaskManager {
         sb.append("Departure Date: ").append(t.taskDate()).append("\n");
         sb.append("Departure Time: ").append(t.departureTime()).append("\n");
         sb.append("Driver Assigned: ").append(t.driverId()).append("\n");
+        sb.append("Warehouse Worker Assigned: ").append(t.whwId()).append("\n");
         sb.append("Truck Assigned: ").append(t.truckLicenseNumber()).append("\n");
         sb.append("Weight Before Leaving: ").append(t.weightBeforeLeaving()).append(" kg\n");
         sb.append("Destinations:\n");

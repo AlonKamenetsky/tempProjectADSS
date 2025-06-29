@@ -1,8 +1,8 @@
 package Transportation.DataAccess;
 
-import Transportation.DTO.DriverAvailabilityDTO;
+//import Transportation.DTO.DriverAvailabilityDTO;
 import Transportation.DTO.TransportationTaskDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     public TransportationTaskDTO insert(TransportationTaskDTO task) throws SQLException {
         // INSERT
         String sql = """
-                    INSERT INTO transportation_tasks(task_date, departure_time, source_site_address, driver_id, truck_license_number, weight_before_leaving)
+                    INSERT INTO transportation_tasks(task_date, departure_time, source_site_address, driver_id,warehouse_worker_id, truck_license_number, weight_before_leaving)
                     VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
@@ -27,11 +27,12 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
             ps.setString(3, task.sourceSiteAddress());
             ps.setString(4, "");
             ps.setString(5, "");
-            ps.setFloat(6, -1);
+            ps.setString(6, "");
+            ps.setFloat(7, -1);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 keys.next();
-                return new TransportationTaskDTO(keys.getInt(1), task.taskDate(), task.departureTime(), task.sourceSiteAddress(), new ArrayList<>(), "", "", -1);
+                return new TransportationTaskDTO(keys.getInt(1), task.taskDate(), task.departureTime(), task.sourceSiteAddress(), new ArrayList<>(), "","" ,"", -1);
             }
         }
     }
@@ -48,7 +49,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     @Override
     public Optional<TransportationTaskDTO> findById(int taskId) throws SQLException {
         String sql = """
-                    SELECT t.task_id, t.task_date, t.departure_time, t.driver_id, t.truck_license_number,
+                    SELECT t.task_id, t.task_date, t.departure_time, t.driver_id,t.warehouse_worker_id, t.truck_license_number,
                            t.weight_before_leaving, s.address AS source_address
                     FROM transportation_tasks t
                     JOIN sites s ON t.source_site_address = s.address
@@ -240,17 +241,34 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                 .orElseThrow(() -> new SQLException("Task not found"));
     }
 
-    public DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        String sql = "INSERT INTO drivers_in_tasks(shift_id, driver_id) VALUES (?, ?)";
-
+    @Override
+    public TransportationTaskDTO assignWhWorker(int taskId, String whwId) throws SQLException {
+        String sql = "UPDATE TransportationTasks SET warehouse_worker_id = ? WHERE task_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, shiftId);
-            ps.setString(2, driverId);
-            ps.executeUpdate();
-        }
+            ps.setString(1, whwId);
+            ps.setInt(2, taskId);
 
-        return new DriverAvailabilityDTO(shiftId, driverId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("No task found with ID: " + taskId);
+            }
+        }
+        // Return the updated task
+        return findById(taskId)
+                .orElseThrow(() -> new SQLException("Task not found"));
     }
+
+//    public DriverAvailabilityDTO addOccupiedDriver(String shiftId, String driverId) throws SQLException {
+//        String sql = "INSERT INTO drivers_in_tasks(shift_id, driver_id) VALUES (?, ?)";
+//
+//        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+//            ps.setString(1, shiftId);
+//            ps.setString(2, driverId);
+//            ps.executeUpdate();
+//        }
+//
+//        return new DriverAvailabilityDTO(shiftId, driverId);
+//    }
 
     public void removeOccupiedDriver(String shiftId, String driverId) throws SQLException {
         String sql = "DELETE FROM drivers_in_tasks WHERE shift_id = ? AND driver_id = ?";
@@ -261,17 +279,17 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         }
     }
 
-    @Override
-    public boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException {
-        String sql = "SELECT 1 FROM drivers_in_tasks WHERE shift_id = ? AND driver_id = ?";
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, shiftId);
-            stmt.setString(2, driverId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); // returns true if a row exists
-            }
-        }
-    }
+//    @Override
+//    public boolean hasOccupiedDriver(String shiftId, String driverId) throws SQLException {
+//        String sql = "SELECT 1 FROM drivers_in_tasks WHERE shift_id = ? AND driver_id = ?";
+//        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+//            stmt.setString(1, shiftId);
+//            stmt.setString(2, driverId);
+//            try (ResultSet rs = stmt.executeQuery()) {
+//                return rs.next(); // returns true if a row exists
+//            }
+//        }
+//    }
 
 
 // ----------- Helper Methods ----------
@@ -305,6 +323,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                 rs.getString("source_address"),
                 getDestinationAddresses(taskId),
                 rs.getString("driver_id"),
+                rs.getString("warehouse_worker_id"),
                 rs.getString("truck_license_number"),
                 rs.getFloat("weight_before_leaving")
         );

@@ -36,6 +36,7 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
                 new ArrayList<>(),
                 "",
                 "",
+                "",
                 0
         );
         return taskDAO.insert(newTask);
@@ -91,6 +92,12 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
         return taskDAO.assignDriver(taskId, driverId);
     }
 
+    @Override
+    public void assignWarehouseWorkerToTask(int taskId, String hwId) throws SQLException {
+        taskDAO.assignWhWorker(taskId,hwId);
+
+    }
+
     //helper methods
 
 
@@ -104,6 +111,7 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
                         .map(Site::getAddress)
                         .collect(Collectors.toCollection(ArrayList::new)),
                 task.getDriverId(),
+                task.getWareHouseId(),
                 task.getTruckLicenseNumber(),
                 task.getWeightBeforeLeaving()
         );
