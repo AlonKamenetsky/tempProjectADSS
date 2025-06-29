@@ -10,8 +10,8 @@ public class TManagerRoleMenu {
     private final SiteMenu SiteMenuUI;
     private final ZoneMenu ZoneMenuUI;
 
-    public TManagerRoleMenu( TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, ItemService itemService, SiteZoneService siteZoneService) {
-        TaskMenuUI = new TaskMenu(taskService, itemService, this);
+    public TManagerRoleMenu( TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService) {
+        TaskMenuUI = new TaskMenu(taskService, this);
         TruckMenuUI = new TruckMenu(this);
         SiteMenuUI = new SiteMenu(this);
         ZoneMenuUI = new ZoneMenu(this);

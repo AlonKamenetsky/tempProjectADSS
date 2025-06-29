@@ -5,7 +5,7 @@ public record ProductDTO (
      String productName,
      String productCompanyName,
      String productCategory,
-     Double productWeight
+     Float productWeight
 ){
     @Override
     public String toString() {

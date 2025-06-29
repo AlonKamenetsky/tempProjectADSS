@@ -7,12 +7,12 @@ public class Product {
     int productId;
     String productName;
     String productCompanyName;
-    double productWeight;
+    float productWeight;
     ProductCategory productCategory;
 
 
 
-    public Product(int productId, String productName, String productCompanyName, ProductCategory productCategory,  double productWeight) {
+    public Product(int productId, String productName, String productCompanyName, ProductCategory productCategory,  float productWeight) {
         this.productId = productId;
         this.productName = productName;
         this.productCompanyName = productCompanyName;
@@ -68,5 +68,9 @@ public class Product {
 
     public String toString() {
         return this.productId + "\t" + this.productName + "\t" + this.productCompanyName + "\t" + this.productCategory;
+    }
+
+    public float getWeight() {
+        return productWeight;
     }
 }

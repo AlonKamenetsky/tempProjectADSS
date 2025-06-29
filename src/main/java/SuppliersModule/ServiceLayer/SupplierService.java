@@ -1,6 +1,5 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.*;
 import SuppliersModule.DomainLayer.SupplierController;
 

@@ -12,7 +12,7 @@ public interface SupplierInterface {
 
     ProductDTO getProductById(int productId);
 
-    Double getWeightByProductId(int productId);
+    Float getWeightByProductId(int productId);
 
     Optional<ProductDTO> getProductByName(String productName);
 

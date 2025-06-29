@@ -1,5 +1,7 @@
 package Transportation.Domain;
 
+import SuppliersModule.DomainLayer.Product;
+
 public class TransportationDoc {
     private final int docId;
     private final int taskId;
@@ -13,7 +15,7 @@ public class TransportationDoc {
         docItems = new ItemsList(itemsListId);
     }
 
-    public void addItem(Item newItem, int quantity) {
+    public void addItem(Product newItem, int quantity) {
         docItems.addItemToList(newItem, quantity);
     }
 
@@ -35,7 +37,7 @@ public class TransportationDoc {
         return taskId;
     }
 
-    public void removeItemFromDocList(Item removeItem) {
+    public void removeItemFromDocList(Product removeItem) {
         docItems.removeItemFromList(removeItem);
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductRepository {
-    ProductDTO addProduct(String name, String companyName, String category,double weight) throws SQLException;
+    ProductDTO addProduct(String name, String companyName, String category, float weight) throws SQLException;
 
     List<ProductDTO> getAllProducts() throws SQLException;
 

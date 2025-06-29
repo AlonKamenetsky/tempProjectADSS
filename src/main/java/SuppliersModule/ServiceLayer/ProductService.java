@@ -20,11 +20,11 @@ public class ProductService {
         }
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, float productWeight) {
         return this.productController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, float productWeight) {
         return this.productController.updateProduct(productID, productName, productCompanyName, productWeight);
     }
 
@@ -58,4 +58,3 @@ public class ProductService {
         return productController.getProductByName(productName);
     }
 }
-

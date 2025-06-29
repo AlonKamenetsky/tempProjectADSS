@@ -8,9 +8,8 @@ public class TransportationMenu {
     private final Scanner input;
 
     public TransportationMenu( TruckService truckService, TaskService taskService,
-                               ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService,
-                               ItemService itemService) {
-        this.TManagerMenuUI = new TManagerRoleMenu(truckService, taskService, zoneService, siteService, itemService, siteZoneService);
+                               ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService) {
+        this.TManagerMenuUI = new TManagerRoleMenu(truckService, taskService, zoneService, siteService, siteZoneService);
         this.input = new Scanner(System.in);
     }
 

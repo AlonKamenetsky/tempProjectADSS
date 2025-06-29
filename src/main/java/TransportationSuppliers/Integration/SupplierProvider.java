@@ -24,7 +24,7 @@ public class SupplierProvider implements SupplierInterface{
     }
 
     @Override
-    public Double getWeightByProductId(int productId) {
+    public Float getWeightByProductId(int productId) {
         return serviceController.getWeightByProductId(productId);
     }
 

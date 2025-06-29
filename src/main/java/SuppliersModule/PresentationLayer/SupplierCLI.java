@@ -31,7 +31,7 @@ public class SupplierCLI {
         this.printProductCategoryMethods();
         int productCategory = readInt();
         System.out.println("Enter product weight: ");
-        double productWeight = sc.nextDouble();
+        float productWeight = sc.nextFloat();
 
         int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
         if (productID != -1) System.out.println("Product added successfully.");
@@ -49,7 +49,7 @@ public class SupplierCLI {
         System.out.println("Enter new product company: ");
         String newProductCompany = sc.nextLine();
         System.out.println("Enter new product weight: ");
-        double newProductWeight = sc.nextDouble();
+        float newProductWeight = sc.nextFloat();
 
         boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany,  newProductWeight);
         if (result)

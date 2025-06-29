@@ -1,10 +1,12 @@
 package Transportation.Domain;
 
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 import Transportation.DTO.SiteDTO;
 import Transportation.DTO.TransportationDocDTO;
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.Domain.Repositories.TransportationDocRepository;
 import Transportation.Domain.Repositories.TransportationTaskRepository;
+import Transportation.Service.ProductAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -29,7 +31,7 @@ class TaskManagerTest {
     private TransportationDocRepository docRepo;
     private TransportationTaskRepository taskRepo;
     private SiteManager siteManager;
-    private ItemManager itemManager;
+    private ItemListManager itemListManager;
 
     @BeforeEach
     void setUp() {
@@ -37,10 +39,10 @@ class TaskManagerTest {
         taskRepo = mock(TransportationTaskRepository.class);
         siteManager = mock(SiteManager.class);
         TruckManager truckManager = mock(TruckManager.class);
-        itemManager = mock(ItemManager.class);
+        itemListManager = mock(ItemListManager.class);
         DriverManager driverManager = mock(DriverManager.class);
 
-        taskManager = new TaskManager(siteManager, truckManager, driverManager, itemManager, docRepo, taskRepo, new ArrayList<>());
+        taskManager = new TaskManager(siteManager, truckManager, driverManager, itemListManager, docRepo, taskRepo, new ArrayList<>(), new ProductAdapter());
     }
 
     @Test
@@ -59,10 +61,10 @@ class TaskManagerTest {
         when(siteManager.findSiteByAddress(source)).thenReturn(Optional.of(sourceSite));
         when(siteManager.findSiteByAddress(dest)).thenReturn(Optional.of(destSite));
         when(taskRepo.findTaskByDateTimeAndSource(date, time, source)).thenReturn(Optional.of(taskDTO));
-        when(itemManager.makeList(any())).thenReturn(100);
+        when(itemListManager.makeList(any())).thenReturn(100);
 
-        HashMap<String, Integer> items = new HashMap<>();
-        items.put("apple", 5);
+        HashMap<ProductDTO, Integer> items = new HashMap<>();
+        items.put(new ProductDTO(1, "apple", "Osem", "ABC", 30F), 5);
 
         taskManager.addDocToTask(date, time, source, dest, items);
 
@@ -87,7 +89,7 @@ class TaskManagerTest {
         when(taskRepo.findTaskByDateTimeAndSource(date, time, source)).thenReturn(Optional.of(taskDTO));
         when(docRepo.findDocByTaskId(taskId)).thenReturn(List.of(doc));
         when(docRepo.findDocItemsListId(doc.docId())).thenReturn(20);
-        when(itemManager.findWeightList(20)).thenReturn(100.0f);
+        when(itemListManager.findWeightList(20)).thenReturn(100.0f);
 
         when(taskRepo.updateWeight(taskId, 100.0f))
                 .thenReturn(new TransportationTaskDTO(

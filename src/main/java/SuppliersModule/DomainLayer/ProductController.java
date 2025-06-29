@@ -28,7 +28,7 @@ public class ProductController {
         return null;
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, float productWeight) {
         try {
             ProductDTO dto = productRepository.addProduct(productName, productCompanyName, productCategory.name(),  productWeight);
             this.productsArrayList.add(dto);
@@ -40,7 +40,7 @@ public class ProductController {
     }
 
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, float productWeight) {
         try {
             ProductDTO existing = getProductByID(productID);
             if (existing == null)

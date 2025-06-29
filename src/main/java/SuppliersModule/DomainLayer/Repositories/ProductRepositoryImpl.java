@@ -16,8 +16,8 @@ public class ProductRepositoryImpl implements IProductRepository {
     }
 
     @Override
-    public ProductDTO addProduct(String name, String companyName, String category, double weight) throws SQLException {
-        ProductDTO newProduct = new ProductDTO(null, name, companyName, category,weight );
+    public ProductDTO addProduct(String name, String companyName, String category, float weight) throws SQLException {
+        ProductDTO newProduct = new ProductDTO(null, name, companyName, category, weight);
         return productDAO.insert(newProduct);
     }
 

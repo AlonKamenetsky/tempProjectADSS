@@ -1,5 +1,6 @@
 package Transportation.Domain;
 
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 import Transportation.DTO.*;
 import Transportation.Domain.Repositories.*;
 
@@ -13,30 +14,33 @@ public class TaskManager {
     private final SiteManager siteManager;
     private final TruckManager truckManager;
     private final DriverManager driverManager;
-    private final ItemManager itemManager;
+    private final ItemListManager itemListManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
     private final List<WarehouseWorker> warehouseWorkers;
+    private final ProductProvider productProvider;
 
-    public TaskManager() {
+    public TaskManager(ProductProvider productProvider) {
+        this.productProvider = productProvider;
         docRepository = new TransportationDocRepositoryImpli();
         taskRepository = new TransportationTaskRepositoryImpli(new SiteRepositoryImpli());
         siteManager = new SiteManager();
         truckManager = new TruckManager();
         driverManager = new DriverManager();
-        itemManager = new ItemManager();
+        itemListManager = new ItemListManager();
         warehouseWorkers = new ArrayList<>();
     }
 
 
-    public TaskManager(SiteManager siteManager, TruckManager truckManager, DriverManager driverManager, ItemManager itemManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, List<WarehouseWorker> warehouseWorkers) {
+    public TaskManager(SiteManager siteManager, TruckManager truckManager, DriverManager driverManager, ItemListManager itemListManager, TransportationDocRepository docRepository, TransportationTaskRepository taskRepository, List<WarehouseWorker> warehouseWorkers, ProductProvider productProvider) {
         this.siteManager = siteManager;
         this.truckManager = truckManager;
         this.driverManager = driverManager;
-        this.itemManager = itemManager;
+        this.itemListManager = itemListManager;
         this.docRepository = docRepository;
         this.taskRepository = taskRepository;
         this.warehouseWorkers = warehouseWorkers;
+        this.productProvider = productProvider;
     }
 
     public TransportationTaskDTO addTask(LocalDate _taskDate, LocalTime _departureTime, String taskSourceSite) throws ParseException, SQLException {
@@ -62,11 +66,11 @@ public class TaskManager {
 
 
     public void addDocToTask(LocalDate taskDate, LocalTime taskDeparture, String taskSourceSite,
-                             String destinationSite, HashMap<String, Integer> itemsChosen) throws SQLException {
+                             String destinationSite, HashMap<ProductDTO, Integer> itemsChosen) throws SQLException {
         Optional<TransportationTaskDTO> task = taskRepository.findTaskByDateTimeAndSource(taskDate, taskDeparture, taskSourceSite);
         if (task.isPresent()) {
             //Create itemList and push it to database
-            int listId = itemManager.makeList(itemsChosen);
+            int listId = itemListManager.makeList(itemsChosen);
             //Create doc (creating mapping between list and destination) and push it to database
             int destinationSiteId = siteManager.findSiteByAddress(destinationSite).get().siteId();
             docRepository.createDoc(task.get().taskId(), destinationSiteId, listId);
@@ -83,7 +87,7 @@ public class TaskManager {
             List<TransportationDocDTO> taskDocs = docRepository.findDocByTaskId(task.get().taskId());
             for (TransportationDocDTO doc : taskDocs) {
                 int itemsListId = docRepository.findDocItemsListId(doc.docId());
-                weight += itemManager.findWeightList(itemsListId);
+                weight += itemListManager.findWeightList(itemsListId);
             }
             return taskRepository.updateWeight(task.get().taskId(), weight);
         } else {
@@ -151,9 +155,9 @@ public class TaskManager {
                     .orElseThrow(() -> new SQLException("Destination site not found")).siteAddress();
             sb.append("  - Destination: ").append(destinationAddress).append("\n");
 
-            ItemsListDTO list = itemManager.getItemsList(docRepository.findDocItemsListId(doc.docId()));
+            ItemsListDTO list = itemListManager.getItemsList(docRepository.findDocItemsListId(doc.docId()));
             for (Map.Entry<Integer, Integer> entry : list.items().entrySet()) {
-                String itemName = itemManager.getItemById(entry.getKey()).itemName();
+                String itemName = productProvider.getItemById(entry.getKey());
                 int quantity = entry.getValue();
 
                 sb.append("    • ").append(itemName).append(" — Quantity: ").append(quantity).append("\n");

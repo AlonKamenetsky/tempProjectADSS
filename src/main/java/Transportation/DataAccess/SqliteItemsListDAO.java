@@ -46,9 +46,9 @@ public class SqliteItemsListDAO implements ItemsListDAO {
     @Override
     public float findWeight(int listId) throws SQLException {
         String sql = """
-        SELECT SUM(iil.quantity * i.weight) AS total_weight
+        SELECT SUM(iil.quantity * p.product_weight) AS total_weight
         FROM items_in_list iil
-        JOIN items i ON iil.item_id = i.item_id
+        JOIN products p ON iil.item_id = p.id
         WHERE iil.list_id = ?
     """;
 

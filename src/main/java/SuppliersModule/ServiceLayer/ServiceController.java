@@ -92,7 +92,7 @@ public class ServiceController implements SupplierInterface {
             String productName = row[0];
             String productCompanyName = row[1];
             String productCategory = row[2];
-            double productWeight = Double.parseDouble(row[3]);
+            float productWeight = Float.parseFloat(row[3]);
             ProductCategory pc =  ProductCategory.valueOf(productCategory);
             productService.registerNewProduct(productName, productCompanyName, pc, productWeight);
         }
@@ -134,7 +134,7 @@ public class ServiceController implements SupplierInterface {
     }
 
     @Override
-    public Double getWeightByProductId(int productId) {
+    public Float getWeightByProductId(int productId) {
         return getProductById(productId).productWeight();
     }
 
@@ -221,13 +221,13 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
-    public int registerNewProduct(String productName, String productCompanyName, int productCategory, double productWeight) {
+    public int registerNewProduct(String productName, String productCompanyName, int productCategory, float productWeight) {
         if (validateProductCategory(productCategory))
             return this.productService.registerNewProduct(productName, productCompanyName, ProductCategory.values()[productCategory],  productWeight);
         return -1;
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, float productWeight) {
         return this.productService.updateProduct(productID, productName, productCompanyName,  productWeight);
     }
 

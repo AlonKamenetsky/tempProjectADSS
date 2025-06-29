@@ -1,7 +1,7 @@
 package Transportation.Presentation;
 
-import Transportation.DTO.ItemDTO;
-import Transportation.Service.ItemService;
+import SuppliersModule.DataLayer.DTO.ProductDTO;
+import Transportation.Service.ProductAdapter;
 import Transportation.Service.TaskService;
 
 import java.text.ParseException;
@@ -14,13 +14,13 @@ import java.util.Scanner;
 
 public class TaskMenu {
     private final TaskService TasksHandler;
-    private final ItemService ItemHandler;
+    private final ProductAdapter ProductsHandler;
     private final TManagerRoleMenu managerRoleMenu;
     private final Scanner input;
 
-    public TaskMenu(TaskService taskService, ItemService itemService, TManagerRoleMenu managerRoleMenu) {
+    public TaskMenu(TaskService taskService, TManagerRoleMenu managerRoleMenu) {
         TasksHandler = taskService;
-        ItemHandler = itemService;
+        ProductsHandler = new ProductAdapter();
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }
@@ -140,7 +140,7 @@ public class TaskMenu {
                         viewAllItems();
                         System.out.println("Enter name of item you would like you add.");
                         String itemName = input.nextLine();
-                        if (!ItemHandler.doesItemExist(itemName)) {
+                        if (ProductsHandler.doesItemExist(itemName)) {
                             System.out.println("Given item doesn't exist.");
                             continue;
                         }
@@ -221,17 +221,17 @@ public class TaskMenu {
     }
 
     private void viewAllItems() {
-        List<ItemDTO> allItems = ItemHandler.viewAllItems();
+        List<ProductDTO> allItems = ProductsHandler.viewAllProducts();
 
         System.out.println("All Items:");
         int counter = 1;
 
-        for (ItemDTO i : allItems) {
+        for (ProductDTO i : allItems) {
             System.out.printf(
                     "%d. Item name: %s\n   Item weight: %.2f\n----------------------%n",
                     counter++,
-                    i.itemName(),
-                    i.itemWeight()
+                    i.productName(),
+                    i.productWeight()
             );
         }
     }

@@ -64,13 +64,13 @@ public final class Database {
                         FOREIGN KEY (zone_id) REFERENCES zones(zone_id)
                     );
                 """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS items (
-                        item_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-                        item_name TEXT    NOT NULL,
-                        weight    REAL    NOT NULL
-                    );
-                """);
+//                st.executeUpdate("""
+//                    CREATE TABLE IF NOT EXISTS items (
+//                        item_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+//                        item_name TEXT    NOT NULL,
+//                        weight    REAL    NOT NULL
+//                    );
+//                """);
                 st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS items_lists (
                         list_id INTEGER PRIMARY KEY AUTOINCREMENT
@@ -83,7 +83,7 @@ public final class Database {
                         quantity  INTEGER NOT NULL,
                         PRIMARY KEY (list_id, item_id),
                         FOREIGN KEY (list_id) REFERENCES items_lists(list_id),
-                        FOREIGN KEY (item_id) REFERENCES items(item_id)
+                        FOREIGN KEY (item_id) REFERENCES products(id)
                     );
                 """);
                 st.executeUpdate("""
@@ -121,15 +121,15 @@ public final class Database {
                         FOREIGN KEY (site_id) REFERENCES sites(site_id)
                     );
                 """);
-                st.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS drivers_in_tasks (
-                        task_id       TEXT NOT NULL,
-                        driver_id      TEXT NOT NULL,
-                        PRIMARY KEY (shift_id, driver_id),
-                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
-                        FOREIGN KEY (driver_id) REFERENCES employees(id)
-                    );
-                """);
+//                st.executeUpdate("""
+//                    CREATE TABLE IF NOT EXISTS drivers_in_tasks (
+//                        task_id       TEXT NOT NULL,
+//                        driver_id      TEXT NOT NULL,
+//                        PRIMARY KEY (shift_id, driver_id),
+//                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
+//                        FOREIGN KEY (driver_id) REFERENCES employees(id)
+//                    );
+//                """);
 
                 //Suppliers Tables:
                 st.executeUpdate("""
