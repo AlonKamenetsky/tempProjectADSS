@@ -122,6 +122,20 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         return getTransportationTaskDTOS(sourceSiteAddress, sql);
     }
 
+    private List<TransportationTaskDTO> getTransportationTaskDTOS(String sourceSiteAddress, String sql) throws SQLException {
+        List<TransportationTaskDTO> list = new ArrayList<>();
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, sourceSiteAddress);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(buildDTOFromResultSet(rs));
+                }
+            }
+        }
+
+        return list;
+    }
+
     @Override
     public List<TransportationTaskDTO> findByDriverId(String driverId) throws SQLException {
         String sql = """
@@ -131,17 +145,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
                     WHERE driver_id = ?
                 """;
 
-        List<TransportationTaskDTO> list = new ArrayList<>();
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
-            ps.setString(1, driverId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(buildDTOFromResultSet(rs));
-                }
-            }
-        }
-
-        return list;
+        return getTransportationTaskDTOS(driverId, sql);
     }
 
     public boolean hasDestination(int taskId, int siteId) throws SQLException {
@@ -228,6 +232,11 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
         // Return the updated task
         return findById(taskId)
                 .orElseThrow(() -> new SQLException("Task not found"));
+    }
+
+    @Override
+    public TransportationTaskDTO assignWhWorker(int taskId, String whwId) throws SQLException {
+        return null;
     }
 
 
