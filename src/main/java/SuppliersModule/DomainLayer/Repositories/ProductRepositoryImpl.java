@@ -26,6 +26,7 @@ public class ProductRepositoryImpl implements IProductRepository {
         return productDAO.findAll();
     }
 
+
     @Override
     public Optional<ProductDTO> getProductById(int productId) throws SQLException {
         return productDAO.findById(productId);

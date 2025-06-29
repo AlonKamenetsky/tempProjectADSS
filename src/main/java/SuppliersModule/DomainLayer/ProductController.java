@@ -8,6 +8,7 @@ import SuppliersModule.DomainLayer.Repositories.ProductRepositoryImpl;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductController {
 
@@ -119,5 +120,13 @@ public class ProductController {
 
     public List<ProductDTO> getAllProducts() {
         return this.productsArrayList;
+    }
+
+    public Optional<ProductDTO> getProductByName(String productName) {
+        try {
+            return productRepository.getProductByName(productName);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

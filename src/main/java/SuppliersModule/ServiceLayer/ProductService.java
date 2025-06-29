@@ -6,6 +6,7 @@ import SuppliersModule.DomainLayer.ProductController;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 
 public class ProductService {
@@ -51,6 +52,10 @@ public class ProductService {
     }
     public ProductDTO getProduct(int productID) {
         return productController.getProductByID(productID);
+    }
+
+    public Optional<ProductDTO> getProductByName(String productName) {
+        return productController.getProductByName(productName);
     }
 }
 

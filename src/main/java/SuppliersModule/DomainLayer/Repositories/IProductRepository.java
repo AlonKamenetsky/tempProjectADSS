@@ -18,4 +18,5 @@ public interface IProductRepository {
     void updateProduct(ProductDTO product) throws SQLException;
 
     void deleteProduct(int productId) throws SQLException;
+
 }

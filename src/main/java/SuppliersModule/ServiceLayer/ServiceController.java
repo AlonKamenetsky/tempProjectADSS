@@ -140,13 +140,8 @@ public class ServiceController implements SupplierInterface {
 
     @Override
     public Optional<ProductDTO> getProductByName(String productName) {
-        List<ProductDTO> products = productService.getAllProducts();
-        for (ProductDTO product : products) {
-            if(product.productName().equals(productName)) {
-                return Optional.of(product);
-            }
-        }
-        return Optional.empty();
+        Optional<ProductDTO> product = productService.getProductByName(productName);
+        return product;
     }
 
 //    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
