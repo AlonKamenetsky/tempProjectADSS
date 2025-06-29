@@ -132,7 +132,92 @@ public final class Database {
                 """);
 
                 //Suppliers Tables:
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS products (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    company_name TEXT,
+                    product_category TEXT,
+                    product_weight REAL NOT NULL
+                );
+            """);
 
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    supplier_id INTEGER NOT NULL,
+                    delivering_method TEXT NOT NULL,
+                    order_date TEXT NOT NULL,
+                    supply_date TEXT NOT NULL,
+                    total_price REAL NOT NULL,
+                    supply_method TEXT NOT NULL,
+                    order_status TEXT NOT NULL,
+                    FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+                );
+            """);
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS order_product_for_scheduled_order_data (
+                    order_id INTEGER NOT NULL,
+                    product_id INTEGER NOT NULL,
+                    product_quantity INTEGER NOT NULL,
+                    day TEXT NOT NULL
+                );
+            """);
+
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS order_product_data (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    order_id INTEGER NOT NULL,
+                    product_id INTEGER NOT NULL,
+                    quantity INTEGER NOT NULL,
+                    price REAL NOT NULL,
+                    FOREIGN KEY (order_id) REFERENCES orders(id),
+                    FOREIGN KEY (product_id) REFERENCES products(id)
+                );
+            """);
+
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS suppliers (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    product_category TEXT NOT NULL,
+                    delivering_method TEXT NOT NULL,
+                    contact_name TEXT NOT NULL,
+                    phone_number TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    bank_account TEXT NOT NULL,
+                    payment_method TEXT NOT NULL,
+                    supply_method TEXT NOT NULL
+                );
+            """);
+
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS suppliers_days (
+                    supplier_id INTEGER NOT NULL,
+                    day TEXT NOT NULL,
+                    PRIMARY KEY (supplier_id, day)
+                );
+            """);
+
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS supply_contracts (
+                    id INTEGER PRIMARY KEY,
+                    supplier_id INTEGER NOT NULL,
+                    FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
+                );
+            """);
+
+                st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS supply_contract_product_data (
+                    contract_id INTEGER NOT NULL,
+                    product_id INTEGER NOT NULL,
+                    product_price REAL NOT NULL,
+                    quantity_for_discount INTEGER NOT NULL,
+                    discount_percentage REAL NOT NULL,
+                    FOREIGN KEY (contract_id) REFERENCES supply_contracts(id)
+                );
+            """);
 
 
             }
