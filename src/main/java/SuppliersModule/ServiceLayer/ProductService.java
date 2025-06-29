@@ -3,22 +3,26 @@ package SuppliersModule.ServiceLayer;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
 
-import java.util.List;
+import java.sql.SQLException;
 
 
 public class ProductService {
     ProductController productController;
 
     public ProductService() {
-        this.productController = new ProductController();
+        try {
+            this.productController = new ProductController();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory) {
-        return this.productController.registerNewProduct(productName, productCompanyName, productCategory);
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
+        return this.productController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName) {
-        return this.productController.updateProduct(productID, productName, productCompanyName);
+    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+        return this.productController.updateProduct(productID, productName, productCompanyName, productWeight);
     }
 
     public boolean deleteProduct(int productID) {
@@ -35,6 +39,10 @@ public class ProductService {
 
     public ProductCategory getProductCategory(int productID) {
         return this.productController.getProductCategory(productID);
+    }
+
+    public void dropData() {
+        productController.dropData();
     }
 }
 

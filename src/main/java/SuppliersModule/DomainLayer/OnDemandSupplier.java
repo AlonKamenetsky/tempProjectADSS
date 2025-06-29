@@ -4,7 +4,6 @@ import SuppliersModule.DataLayer.DTO.SupplierDTO;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
-import SuppliersModule.DomainLayer.Enums.WeekDay;
 
 import java.util.ArrayList;
 

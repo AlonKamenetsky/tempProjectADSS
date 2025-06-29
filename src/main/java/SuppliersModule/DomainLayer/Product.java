@@ -7,15 +7,17 @@ public class Product {
     int productId;
     String productName;
     String productCompanyName;
+    double productWeight;
     ProductCategory productCategory;
 
 
-    public Product(int productId, String productName, String productCompanyName, ProductCategory productCategory) {
+
+    public Product(int productId, String productName, String productCompanyName, ProductCategory productCategory,  double productWeight) {
         this.productId = productId;
         this.productName = productName;
         this.productCompanyName = productCompanyName;
         this.productCategory = productCategory;
-
+        this.productWeight = productWeight;
 
     }
 
@@ -24,6 +26,7 @@ public class Product {
         this.productName = dto.productName();
         this.productCompanyName = dto.productCompanyName();
         this.productCategory = ProductCategory.valueOf(dto.productCategory());
+        this.productWeight = dto.productWeight();
 
     }
 

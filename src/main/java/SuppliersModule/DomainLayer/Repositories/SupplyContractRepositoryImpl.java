@@ -2,6 +2,7 @@ package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DAO.SqliteSupplyContractDAO;
 import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -43,5 +44,49 @@ public class SupplyContractRepositoryImpl implements ISupplyContractRepository {
     @Override
     public void deleteContract(int contractId) throws SQLException {
         dao.delete(contractId);
+    }
+
+    @Override
+    public void deleteAllBySupplierId(int supplierID) {
+        try {
+            dao.deleteAllBySupplierId(supplierID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete contracts for supplier " + supplierID, e);
+        }
+    }
+
+    @Override
+    public int getSupplyContractProductDataByContractId(int contractID) {
+        return dao.getSupplyContractProductDataByContractId(contractID);
+    }
+
+    @Override
+    public List<SupplyContractDTO> getContractsBySupplierId(int supplierId) {
+        return dao.getContractsBySupplierId(supplierId);
+    }
+
+    @Override
+    public List<SupplyContractDTO> getAllSupplyContracts() {
+        return dao.getAllSupplyContracts();
+    }
+
+    @Override
+    public int insertSupplyContract(SupplyContractDTO newContract) {
+        try {
+            return dao.insertSupplyContract(newContract);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void addProductToContract(int contractId, SupplyContractProductDataDTO productDataDTO) {
+        dao.addProductToContract(contractId, productDataDTO);
+    }
+
+    @Override
+    public List<SupplyContractProductDataDTO> getByContractId(Integer contractId) {
+        return dao.getByContractId(contractId);
     }
 }

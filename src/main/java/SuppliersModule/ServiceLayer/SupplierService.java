@@ -1,9 +1,9 @@
 package SuppliersModule.ServiceLayer;
 
-import SuppliersModule.DomainLayer.*;
-
 import SuppliersModule.DomainLayer.Enums.*;
+import SuppliersModule.DomainLayer.SupplierController;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class SupplierService {
@@ -32,7 +32,28 @@ public class SupplierService {
                 sd.add(WeekDay.values()[day - 1]);
         }
 
-        return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm, sd);
+        try {
+            return this.supplierController.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, email, contactName, bankAccount, pm, sd);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void registerNewSupplier(SupplyMethod supplyMethod, String supplierName, ProductCategory productCategory, DeliveringMethod deliveringMethod,
+                                    String phoneNumber, String address, String email, String contactName,
+                                    String bankAccount, PaymentMethod paymentMethod, ArrayList<Integer> supplyDays) {
+        EnumSet<WeekDay> sd = null;
+        if (supplyDays != null) {
+            sd = EnumSet.noneOf(WeekDay.class);
+            for (int day : supplyDays)
+                sd.add(WeekDay.values()[day - 1]);
+        }
+
+        try {
+             this.supplierController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, sd);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public boolean updateSupplierName(int supplierID, String supplierName) {
@@ -75,7 +96,7 @@ public class SupplierService {
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
+    public boolean registerNewContract(int supplierID, ArrayList<double[]> dataList) {
         return this.supplierController.registerNewContract(supplierID, dataList);
     }
 
@@ -102,12 +123,20 @@ public class SupplierService {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
-        return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
+        try {
+            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
         WeekDay d = WeekDay.values()[day - 1];
-        return this.supplierController.registerNewScheduledOrder(d, dataList);
+        try {
+            return this.supplierController.registerNewScheduledOrder(d, dataList);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean updateOrderContactInfo(int orderId, String phoneNumber, String address, String email, String contactName){
@@ -130,6 +159,9 @@ public class SupplierService {
     public boolean removeProductsFromOrder(int orderID, ArrayList<Integer> dataList) {
         return this.supplierController.removeProductsFromOrder(orderID, dataList);
     }
+    public String[] getAllSupplyContractProductsAsString(){
+        return supplierController.getAllSupplyContractProductsToString();
+    }
 
     public boolean deleteOrder(int orderID) {
         return this.supplierController.deleteOrder(orderID);
@@ -148,10 +180,18 @@ public class SupplierService {
     }
 
     public String[] getAllScheduledOrdersAsString() {
-        return this.supplierController.getAllScheduledOrdersAsString();
+        try {
+            return this.supplierController.getAllScheduledOrdersAsString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean orderExists(int orderID) {
         return this.supplierController.orderExists(orderID);
+    }
+    public void dropSuppliersData(){
+        supplierController.dropData();
+
     }
 }

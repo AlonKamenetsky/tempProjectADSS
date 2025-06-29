@@ -1,8 +1,11 @@
 package SuppliersModule.ServiceLayer;
 
 
+import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.*;
-import TransportationSuppliers.Interfaces.SupplierInterface;
+import SuppliersModule.util.CSVReader;
+import SuppliersModule.util.Initializers;
+import TransportationSuppliers.Integration.SupplierInterface;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,8 +18,94 @@ public class ServiceController implements SupplierInterface {
         return null;
     }
 
+    public void loadData() {
+        dropData();
+        loadProducts();
+        loadSuppliers();
+        loadSupplyContract();
+    }
+
+    private void loadSupplyContract() {
+        List<String[]> rows = List.of();
+        try {
+            rows = CSVReader.loadCSV("data/contracts_data.csv");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+        for (String[] row : rows) {
+            ArrayList<double[]> dataList =   new ArrayList<>();
+            int SupplierID = Integer.parseInt(row[0]);
+            int ProductID = Integer.parseInt(row[1]);
+            double productPrice = Double.parseDouble(row[2]);
+            int quantity = Integer.parseInt(row[3]);
+            int discount = Integer.parseInt(row[4]);
+            double[] data = {ProductID, productPrice, quantity, discount};
+            dataList.add(data);
+            supplierService.registerNewContract(SupplierID, dataList);
+        }
+    }
+
+    private  void loadSuppliers() {
+        List<String[]> rows = List.of();
+        try {
+             rows = CSVReader.loadCSV("data/suppliers_data.csv");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+        for (String[] row : rows) {
+            String supplyMethod = row[0];
+            String supplierName = row[1];
+            String productCategory = row[2];
+            String deliveryMethod = row[3];
+            String phoneNumber = row[4];
+            String address = row[5];
+            String contactName = row[6];
+            String emailAddress = row[7];
+            String bankAcount = row[8];
+            String paymentMethod = row[9];
+            SupplyMethod sm = SupplyMethod.valueOf(supplyMethod);
+            ProductCategory pc =  ProductCategory.valueOf(productCategory);
+            DeliveringMethod dm = DeliveringMethod.valueOf(deliveryMethod);
+            PaymentMethod pm = PaymentMethod.valueOf(paymentMethod);
+            ArrayList<Integer> supplyDays = null;
+            if(SupplyMethod.SCHEDULED == sm) {
+                continue;
+            }
+            supplierService.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, emailAddress, contactName, bankAcount, pm, supplyDays);
+            // Add to your repository or controller
+        }
+    }
+    private void loadProducts() {
+        List<String[]> rows = List.of();
+        try {
+            rows = CSVReader.loadCSV("data/products_data2.csv");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+        for (String[] row : rows) {
+            String productName = row[0];
+            String productCompanyName = row[1];
+            String productCategory = row[2];
+            double productWeight = Double.parseDouble(row[3]);
+            ProductCategory pc =  ProductCategory.valueOf(productCategory);
+            productService.registerNewProduct(productName, productCompanyName, pc, productWeight);
+        }
+    }
+
     private static class ServiceControllerHelper {
         private static final ServiceController INSTANCE = new ServiceController();
+    }
+    public void dropData(){
+        Initializers.dropAllTables();
+        supplierService.dropSuppliersData();
+        productService.dropData();
+
     }
 
     public static ServiceController getInstance() {
@@ -36,7 +125,25 @@ public class ServiceController implements SupplierInterface {
     // --------------------------- SHARED FUNCTIONS ---------------------------
 
 
+    @Override
+    public List<ProductDTO> getAllProducts() {
+        return List.of();
+    }
 
+    @Override
+    public Optional<ProductDTO> getProductById(int productId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Float> getWeightByProductId(int productId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ProductDTO> getProductByName(String productName) {
+        return Optional.empty();
+    }
 
     public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
         ArrayList<int[]> dataList = new ArrayList<>();
@@ -68,7 +175,7 @@ public class ServiceController implements SupplierInterface {
         return this.supplierService.getSupplierProductCategory(supplierID) == this.productService.getProductCategory(productID);
     }
 
-    private boolean validateContractProductData(int price, int quantityForDiscount, int discountPercentage) {
+    private boolean validateContractProductData(double price, double quantityForDiscount, double discountPercentage) {
         return price > 0 || quantityForDiscount > 0 || (discountPercentage > 0 && discountPercentage < 100);
     }
 
@@ -115,14 +222,14 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
-    public int registerNewProduct(String productName, String productCompanyName, int productCategory) {
+    public int registerNewProduct(String productName, String productCompanyName, int productCategory, double productWeight) {
         if (validateProductCategory(productCategory))
-            return this.productService.registerNewProduct(productName, productCompanyName, ProductCategory.values()[productCategory]);
+            return this.productService.registerNewProduct(productName, productCompanyName, ProductCategory.values()[productCategory],  productWeight);
         return -1;
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName) {
-        return this.productService.updateProduct(productID, productName, productCompanyName);
+    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+        return this.productService.updateProduct(productID, productName, productCompanyName,  productWeight);
     }
 
     public boolean deleteProduct(int productID) {
@@ -184,10 +291,10 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
-    public boolean registerNewContract(int supplierID, ArrayList<int[]> dataList) {
-        for (int[] data : dataList)
-            if (!validateSupplierAndProduct(supplierID, data[0]) || !validateContractProductData(data[1], data[2], data[3])) {
-                System.out.println(validateSupplierAndProduct(supplierID, data[0]));
+    public boolean registerNewContract(int supplierID, ArrayList<double[]> dataList) {
+        for (double[] data : dataList)
+            if (!validateSupplierAndProduct(supplierID, (int) data[0]) || !validateContractProductData(data[1], data[2], data[3])) {
+                System.out.println(validateSupplierAndProduct(supplierID, (int) data[0]));
                 System.out.println(validateContractProductData(data[1], data[2], data[3]));
                 return false;
             }
@@ -209,6 +316,98 @@ public class ServiceController implements SupplierInterface {
     public String[] getAllContractToStrings(){
         return this.supplierService.getAllContractToStrings();
     }
+    public String[] getAllSupplyContractProductsAsString(){
+        return supplierService.getAllSupplyContractProductsAsString();
+    }
+    public void printSupplyContractDetails() {
+        String[] supplyContractDTOs = getAllContractToStrings();
+        String[] productDTOs = getAllProductsAsStrings();
+        String[] supplyContractProductDataDTOs = getAllSupplyContractProductsAsString();
+
+        for (String contractStr : supplyContractDTOs) {
+            int contractId = extractIntValue(contractStr, "supplyContractID");
+            int supplierId = extractIntValue(contractStr, "supplierID");
+            String supplier = getSupplierAsString(supplierId);
+            String supplyMethod = extractStringValue(supplier, "supplyMethod");
+            String result = contractStr.substring(0, contractStr.length() - 1);
+            result = result + ", " + supplyMethod + "}";
+            System.out.println(result);
+            for (String productDataStr : supplyContractProductDataDTOs) {
+                if (extractIntValue(productDataStr, "supplyContractID") == contractId) {
+                    int productId = extractIntValue(productDataStr, "productID");
+
+                    // Match the product
+                    for (String productStr : productDTOs) {
+                    //    System.out.println("Looking for productId: " + productId);
+                      //  System.out.println("Matching against: " + productStr);
+
+                        if (extractIntValue(productStr, "id") == productId) {
+                            String name = extractStringValue(productStr, "name");
+                            String company = extractStringValue(productStr, "company_name");
+                            String category = extractStringValue(productStr, "product_category");
+                            double weight = extractDoubleValue(productStr, "product_weight");
+
+                            System.out.println("  Product ID: " + productId +
+                                    ", Name: " + name +
+                                    ", Company: " + company +
+                                    ", Category: " + category +
+                                    ", Weight: " + weight);
+                            break;
+                        }
+                    }
+
+                    // Print discount info
+                    double price = extractDoubleValue(productDataStr, "productPrice");
+                    int quantity = extractIntValue(productDataStr, "quantityForDiscount");
+                    double discount = extractDoubleValue(productDataStr, "discountPercentage");
+
+                    System.out.println("    Price: " + price +
+                            ", Quantity for Discount: " + quantity +
+                            ", Discount: " + discount + "%");
+                }
+            }
+            System.out.println(); // space between contracts
+        }
+    }
+
+
+    private static String extractStringValue(String line, String label) {
+        try {
+            int startIndex = line.indexOf(label + "=");
+            if (startIndex == -1) return "";
+            startIndex += label.length() + 1;
+            int endIndex = line.indexOf(",", startIndex);
+            if(label.equals("supplierID") || label.equals("supplyMethod"))
+                endIndex = line.indexOf("}", startIndex);
+            if(label.equals("product_weight") || label.equals("discountPercentage")) {
+                endIndex = line.indexOf("}", startIndex);
+            }
+
+            if (endIndex == -1) endIndex = line.length();
+            return line.substring(startIndex, endIndex).trim();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+
+
+    private static int extractIntValue(String line, String key) {
+        try {
+            return Integer.parseInt(extractStringValue(line, key));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private static double extractDoubleValue(String line, String key) {
+        try {
+            return Double.parseDouble(extractStringValue(line, key));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 

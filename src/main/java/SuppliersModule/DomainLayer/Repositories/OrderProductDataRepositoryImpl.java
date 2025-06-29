@@ -16,7 +16,7 @@ public class OrderProductDataRepositoryImpl implements IOrderProductDataReposito
     }
 
     @Override
-    public void addProductToOrder(int orderId, int productId, int quantity, int price) throws SQLException {
+    public void addProductToOrder(int orderId, int productId, int quantity, double price) throws SQLException {
         dao.insert(new OrderProductDataDTO(orderId, productId, quantity, price));
     }
 
@@ -39,4 +39,37 @@ public class OrderProductDataRepositoryImpl implements IOrderProductDataReposito
     public Optional<OrderProductDataDTO> getProductInOrder(int orderId, int productId) throws SQLException {
         return dao.findByOrderAndProduct(orderId, productId);
     }
+
+    @Override
+    public List<OrderProductDataDTO> findByOrderId(int orderID) {
+        try {
+            return dao.findByOrderId(orderID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return List.of(); // Return empty list on error
+        }
+    }
+
+    @Override
+    public void deleteAllByOrderId(int orderID) {
+        try {
+            dao.deleteAllByOrderId(orderID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void insert(OrderProductDataDTO dto) {
+        try {
+            dao.insert(dto);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 }

@@ -3,7 +3,10 @@ package SuppliersModule.DataLayer.DAO;
 import SuppliersModule.DataLayer.DTO.OrderDTO;
 import SuppliersModule.util.Database;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +30,11 @@ public class SqliteOrderDAO {
                 list.add(mapResultSetToDTO(rs));
             }
             return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
+
     }
 
     public Optional<OrderDTO> findById(int orderId) throws SQLException {
@@ -45,6 +52,14 @@ public class SqliteOrderDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next() ? Optional.of(mapResultSetToDTO(rs)) : Optional.empty();
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -85,6 +100,14 @@ public class SqliteOrderDAO {
                         dto.supplyMethod()
                 );
             }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -108,6 +131,10 @@ public class SqliteOrderDAO {
             ps.executeUpdate();
             return dto;
         }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void delete(int orderId) throws SQLException {
@@ -115,6 +142,10 @@ public class SqliteOrderDAO {
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, orderId);
             ps.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+
         }
     }
 

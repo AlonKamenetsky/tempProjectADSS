@@ -1,6 +1,7 @@
 package SuppliersModule.DomainLayer.Repositories;
 
 import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
+import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,4 +19,18 @@ public interface ISupplyContractRepository {
     void updateContract(SupplyContractDTO contract) throws SQLException;
 
     void deleteContract(int contractId) throws SQLException;
+
+    void deleteAllBySupplierId(int supplierID);
+
+    int getSupplyContractProductDataByContractId(int contractID);
+
+    List<SupplyContractDTO> getContractsBySupplierId(int supplierId);
+
+    List<SupplyContractDTO> getAllSupplyContracts();
+
+    int insertSupplyContract(SupplyContractDTO newContract);
+
+    void addProductToContract(int contractId, SupplyContractProductDataDTO productDataDTO);
+
+    List<SupplyContractProductDataDTO> getByContractId(Integer integer);
 }

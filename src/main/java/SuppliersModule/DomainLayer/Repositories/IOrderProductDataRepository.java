@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IOrderProductDataRepository {
-    void addProductToOrder(int orderId, int productId, int quantity, int price) throws SQLException;
+    void addProductToOrder(int orderId, int productId, int quantity, double price) throws SQLException;
 
     void updateProductInOrder(OrderProductDataDTO dto) throws SQLException;
 
@@ -16,4 +16,12 @@ public interface IOrderProductDataRepository {
     List<OrderProductDataDTO> getProductsInOrder(int orderId) throws SQLException;
 
     Optional<OrderProductDataDTO> getProductInOrder(int orderId, int productId) throws SQLException;
+
+    List<OrderProductDataDTO> findByOrderId(int orderID);
+
+    void deleteAllByOrderId(int orderID);
+
+    void insert(OrderProductDataDTO dto);
+
+
 }

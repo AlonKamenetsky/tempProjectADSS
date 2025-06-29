@@ -1,8 +1,10 @@
 package SuppliersModule.PresentationLayer;
 
+import SuppliersModule.ServiceLayer.ServiceController;
+import SuppliersModule.util.Initializers;
+
 import java.time.Instant;
 import java.util.*;
-import SuppliersModule.ServiceLayer.ServiceController;
 
 
 public class SupplierCLI {
@@ -28,8 +30,10 @@ public class SupplierCLI {
         System.out.println("Enter product category (0-6): ");
         this.printProductCategoryMethods();
         int productCategory = readInt();
+        System.out.println("Enter product weight: ");
+        double productWeight = sc.nextDouble();
 
-        int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory);
+        int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
         if (productID != -1) System.out.println("Product added successfully.");
         else System.out.println("Error registering product.");
 
@@ -44,8 +48,10 @@ public class SupplierCLI {
 
         System.out.println("Enter new product company: ");
         String newProductCompany = sc.nextLine();
+        System.out.println("Enter new product weight: ");
+        double newProductWeight = sc.nextDouble();
 
-        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany);
+        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany,  newProductWeight);
         if (result)
             System.out.println("Product updated successfully.");
         else
@@ -216,25 +222,25 @@ public class SupplierCLI {
     // --------------------------- CONTRACT FUNCTIONS ---------------------------
 
     private void registerNewContract(int supplierId) {
-        ArrayList<int[]> dataArray = new ArrayList<>();
+        ArrayList<double[]> dataArray = new ArrayList<>();
         while (true) {
             System.out.println("Enter product ID (Enter -1 for exit): ");
             int productID = readInt();
             if (productID == -1) break;
             System.out.println("Enter product price: ");
-            int price = readInt();
+            double price = readInt();
             System.out.println("Enter quantity for discount: ");
             int quantityForDiscount = readInt();
             System.out.println("Enter discount percentage: ");
             int discountPercentage = readInt();
 
-            int[] data = {productID, price, quantityForDiscount, discountPercentage};
+            double[] data = {productID, price, quantityForDiscount, discountPercentage};
             dataArray.add(data);
         }
         if (this.serviceController.registerNewContract(supplierId, dataArray))
             System.out.println("Supplier contract registered successfully.");
         else
-            System.out.println("Error: No such contract exists.");
+            System.out.println("Error Creating Supplier contract");
 
     }
     private void deleteSupplyContract() {
@@ -248,10 +254,9 @@ public class SupplierCLI {
     }
 
     private void printAllSupplyContracts() {
-        String[] contracts = serviceController.getAllContractToStrings();
-        for(String contract : contracts){
-            System.out.println(contract);
-        }
+      //  String[] contracts = serviceController.getAllContractToStrings();
+       // String[] productData = serviceController.getAllSupplyContractProductsAsString();
+        serviceController.printSupplyContractDetails();
     }
     private void printSupplierContracts(int supplierId) {
         String[] result = this.serviceController.getSupplierContractsAsString(supplierId);
@@ -277,8 +282,12 @@ public class SupplierCLI {
                 break;
             System.out.println("Enter quantity");
             int quantity = readInt();
-            int data[] = {productID, quantity};
+            int[] data = {productID, quantity};
             dataArray.add(data);
+        }
+        if(dataArray.isEmpty()){
+            System.out.println("No items were added. Aborting.");
+            return;
         }
 
         System.out.println("enter delivery date: (Enter T for tomorrow)");
@@ -299,8 +308,12 @@ public class SupplierCLI {
                 break;
             System.out.println("Enter quantity");
             int quantity = readInt();
-            int data[] = {productID, quantity};
+            int[] data = {productID, quantity};
             dataArray.add(data);
+        }
+        if(dataArray.isEmpty()){
+            System.out.println("No items were added. Aborting.");
+            return;
         }
 
         System.out.println("enter regular day to be ordered");
@@ -463,6 +476,8 @@ public class SupplierCLI {
     // ------------------- CLI print Functions -------------------
 
     public void printMenuOptions() {
+        if(dataRead)
+            System.out.println("0. Erase all data from Database");
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
         System.out.println("3. Supplier contract section");
@@ -665,7 +680,7 @@ public class SupplierCLI {
         }
     }
     public int chooseSupplyMethod(){
-        int supplyMethod = -1;
+        int supplyMethod;
         while(true){
             System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
             supplyMethod = readInt();
@@ -698,12 +713,24 @@ public class SupplierCLI {
 
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
-
+        if(!dataRead){
+            System.out.println("Do you want to read data from csv files? y/n");
+            String option = sc.nextLine();
+            if (option.equalsIgnoreCase("y")) {
+                loadData();
+                dataRead = true;
+            }
+        }
         while (true) {
             printMenuOptions();
             System.out.println("Please select an option: ");
             int userInput = readInt();
             switch (userInput) {
+                case 0:
+                    Initializers.dropAllTables();
+                    serviceController.dropData();
+                    dataRead = false;
+                    break;
                 case 1:
                     printProductOptions();
                     userInput = readInt();
@@ -731,6 +758,11 @@ public class SupplierCLI {
                     System.out.println("Invalid option, please choose again");
             }
         }
+
+    }
+    public void loadData(){
+        this.serviceController.loadData();
+
     }
 
 

@@ -59,12 +59,6 @@ public class ScheduledOrder {
         this.productsData.addAll(productsData);
     }
 
-    public void Insert() {
-        for (OrderProductData odp : productsData) {
-            ScheduledOrderDataDTO scheduledOrderDataDTO = new ScheduledOrderDataDTO(supplierID, day.toString(), odp.getProductID(), odp.getProductQuantity());
-            scheduledOrderDataDTO.Insert();
-        }
-    }
 
     @Override
     public String toString() {

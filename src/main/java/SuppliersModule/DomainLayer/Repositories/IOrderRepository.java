@@ -17,4 +17,13 @@ public interface IOrderRepository {
     void updateOrder(OrderDTO order) throws SQLException;
 
     void deleteOrder(int orderId) throws SQLException;
+
+    void update(OrderDTO updatedOrder);
+
+    Optional<OrderDTO> findById(int orderID);
+
+    Optional<OrderDTO> findAll();
+
+    void insertOrder(OrderDTO orderDTO);
+
 }

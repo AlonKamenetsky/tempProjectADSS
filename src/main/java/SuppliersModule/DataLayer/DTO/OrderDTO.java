@@ -1,7 +1,5 @@
 package SuppliersModule.DataLayer.DTO;
 
-import SuppliersModule.DomainLayer.Order;
-
 public record OrderDTO (
     Integer orderID,
     Integer supplierID,
@@ -15,6 +13,25 @@ public record OrderDTO (
      double totalPrice,
      String orderStatus,
      String supplyMethod
-){}
+){
+    @Override
+    public String toString() {
+        return "OrderDTO{" +
+                "orderID=" + orderID +
+                ", supplierID=" + supplierID +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", physicalAddress='" + physicalAddress + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", deliveryMethod='" + deliveryMethod + '\'' +
+                ", orderDate='" + orderDate + '\'' +
+                ", deliveryDate='" + deliveryDate + '\'' +
+                ", totalPrice=" + totalPrice +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", supplyMethod='" + supplyMethod + '\'' +
+                '}';
+    }
+
+}
 
 
