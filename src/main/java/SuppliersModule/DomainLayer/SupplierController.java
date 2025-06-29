@@ -507,19 +507,7 @@ public class SupplierController {
     }
 
     public String[] getAllScheduledOrdersAsString() throws SQLException {
-        ArrayList<String> results = new ArrayList<>();
-
-        for (SupplierDTO supplier : this.suppliersArrayList) {
-            if (supplier.supplyMethod().equalsIgnoreCase(SupplyMethod.SCHEDULED.toString())) {
-                List<OrderDTO> orders = orderController.getOrdersBySupplierId(supplier.supplierID()); // Adjust if needed
-
-                if (orders == null || orders.isEmpty()) continue;
-
-                results.add(orders.toString()); // You can format better if needed
-            }
-        }
-
-        return results.toArray(new String[0]);
+        return orderController.getAllScheduledOrdersAsString();
     }
 
 

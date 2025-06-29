@@ -79,6 +79,14 @@ public final class Database {
                     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
                 );
             """);
+            stmt.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS order_product_for_scheduled_order_data (
+                    order_id INTEGER NOT NULL,
+                    product_id INTEGER NOT NULL,
+                    product_quantity INTEGER NOT NULL,
+                    day TEXT NOT NULL
+                );
+            """);
 
             stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS order_product_data (
