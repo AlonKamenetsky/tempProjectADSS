@@ -122,7 +122,7 @@ public class SupplierService {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
         try {
             return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
         } catch (SQLException e) {
@@ -196,4 +196,7 @@ public class SupplierService {
     }
 
 
+    public String getOrderDepartureAdress(int id) {
+
+    }
 }

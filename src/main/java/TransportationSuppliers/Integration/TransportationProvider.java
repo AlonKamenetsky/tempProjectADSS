@@ -13,7 +13,7 @@ public class TransportationProvider implements TransportationInterface {
     private final SiteService siteService;
     private final TaskService taskService;
 
-    TransportationProvider() {
+    public TransportationProvider() {
         siteService = new SiteService();
         taskService = new TaskService();
     }

@@ -430,9 +430,9 @@ public class SupplierController {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) throws SQLException {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) throws SQLException {
         SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.ON_DEMAND);
-        if (supplier == null) return false;
+        if (supplier == null) return -1;
 
         int supplierId = supplier.supplierID();
 

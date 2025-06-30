@@ -3,6 +3,7 @@ package SuppliersModule.ServiceLayer;
 import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
+import SuppliersModule.PresentationLayer.Main;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -43,6 +44,8 @@ public class ProductService {
     public ProductCategory getProductCategory(int productID) {
         return this.productController.getProductCategory(productID);
     }
+
+
     public List<ProductDTO> getAllProducts(){
         return this.productController.getAllProducts();
     }

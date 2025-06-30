@@ -292,7 +292,7 @@ public class SupplierCLI {
 
         System.out.println("enter delivery date: (Enter T for tomorrow)");
         String deliveryDate = sc.nextLine();
-        if (serviceController.registerNewOrder(dataArray, today, deliveryDate)) {
+        if (serviceController.registerNewOrder(dataArray, today, deliveryDate) != -1) {
             System.out.println("Order registered successfully.");
         } else {
             System.out.println("Error: Failed to register new order.");

@@ -1,8 +1,8 @@
-package Transportation.DB;
+package Transportation.Tests.DB;
 
 import Transportation.DataAccess.SqliteSiteDAO;
 import Transportation.DTO.SiteDTO;
-import TransportationSuppliers.data.Util.Database;
+import Util.Database;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
