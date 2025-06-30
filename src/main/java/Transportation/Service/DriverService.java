@@ -56,6 +56,14 @@ public class DriverService {
         }
     }
 
+    public boolean hasLicense(String driverId, String licenseType) throws SQLException {
+        if (driverId == null || licenseType == null) {
+            return false;
+        }
+        return driverManager.hasLicenseType(driverId, licenseType);
+    }
+
+
     public void AddLicense(String driverId, String licenseType) throws NullPointerException {
         if (driverId == null || licenseType == null) {
             throw new NullPointerException();
