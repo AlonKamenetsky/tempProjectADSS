@@ -137,7 +137,7 @@ public class SqliteProductDAO {
                 rs.getString("name"),
                 rs.getString("company_name"),
                 rs.getString("product_category"),
-                rs.getDouble("product_weight")
+                rs.getFloat("product_weight")
         );
     }
 

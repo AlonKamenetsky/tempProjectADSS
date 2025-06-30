@@ -15,25 +15,6 @@ public class OrderRepositoryImpl implements IOrderRepository {
         this.orderDAO = new SqliteOrderDAO();
     }
 
-    @Override
-    public OrderDTO createOrder(int supplierId, String deliveryMethod, String orderDate, String deliveryDate,
-                                double totalPrice, String orderStatus, String supplyMethod) throws SQLException {
-        OrderDTO newOrder = new OrderDTO(
-                null,            // orderID will be auto-generated
-                supplierId,
-                null,            // phoneNumber (loaded on read only)
-                null,            // physicalAddress
-                null,            // emailAddress
-                null,            // contactName
-                deliveryMethod,
-                orderDate,
-                deliveryDate,
-                totalPrice,
-                orderStatus,
-                supplyMethod
-        );
-        return orderDAO.insert(newOrder);
-    }
 
     @Override
     public List<OrderDTO> getAllOrders() throws SQLException {
@@ -72,7 +53,11 @@ public class OrderRepositoryImpl implements IOrderRepository {
 
     @Override
     public void insertOrder(OrderDTO orderDTO) {
-
+        try {
+            orderDAO.insert(orderDTO);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

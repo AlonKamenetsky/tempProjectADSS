@@ -13,7 +13,6 @@ import java.time.ZoneId;
 import java.util.*;
 
 public class OrderController {
-    private int numOfOrders;
     private final List<OrderDTO> ordersArrayList;
     private Map<Integer, List<OrderProductForScheduledOrderDataDTO>> scheduledOrdersMap;
 
@@ -24,14 +23,12 @@ public class OrderController {
 
 
     public OrderController() {
-        this.numOfOrders = 0;
         this.ordersArrayList = new ArrayList<>();
         this.orderRepository = new OrderRepositoryImpl();
         this.orderProductDataRepository = new OrderProductDataRepositoryImpl();
         this.contractProductDataRepository = new SupplyContractProductDataRepositoryImpl();
         this.orderProductForScheduledOrderDataRepository = new OrderProductForScheduledOrderDataRepository();
         this.scheduledOrdersMap = new HashMap<>();
-
         this.loadAllOnDemandOrders();
         this.loadAllScheduledOrders();
     }
@@ -114,7 +111,7 @@ public class OrderController {
     }
 
 
-    public boolean registerNewOrder(int supplierId, ArrayList<int[]> dataList, List<SupplyContractDTO> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+    public int registerNewOrder(int supplierId, ArrayList<int[]> dataList, List<SupplyContractDTO> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
         if (creationDate == null) {
             LocalDate today = LocalDate.now();
             creationDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -126,23 +123,22 @@ public class OrderController {
         }
 
         ArrayList<OrderProductDataDTO> orderProductDataList = buildProductDataArray(dataList, (ArrayList<SupplyContractDTO>) supplyContracts);
-        if (orderProductDataList == null) return false;
+        if (orderProductDataList == null) return -1;
 
         double totalOrderValue = calculateTotalPriceDTOs(orderProductDataList);
 
-        OrderDTO orderDTO = new OrderDTO(numOfOrders, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString());
-
+        OrderDTO orderDTO = new OrderDTO(-1, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString());
+        int orderID = orderDTO.orderID();
         orderRepository.insertOrder(orderDTO);
 
         for (OrderProductDataDTO data : orderProductDataList) {
-            OrderProductDataDTO dto = new OrderProductDataDTO(numOfOrders, data.productID(), data.productQuantity(), data.productPrice() // if needed
+            OrderProductDataDTO dto = new OrderProductDataDTO(orderID, data.productID(), data.productQuantity(), data.productPrice() // if needed
             );
             orderProductDataRepository.insert(dto);
         }
 
         ordersArrayList.add(orderDTO);
-        numOfOrders++;
-        return true;
+        return orderID;
 
     }
 

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IOrderRepository {
-    OrderDTO createOrder(int supplierId, String deliveryMethod, String orderDate, String deliveryDate,
-                         double totalPrice, String orderStatus, String supplyMethod) throws SQLException;
 
     List<OrderDTO> getAllOrders() throws SQLException;
 

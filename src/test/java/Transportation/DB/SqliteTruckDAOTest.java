@@ -1,4 +1,4 @@
-package Transportation.Tests.DB;
+package Transportation.DB;
 
 import Transportation.DataAccess.SqliteTruckDAO;
 import Transportation.DTO.TruckDTO;
@@ -21,7 +21,7 @@ class SqliteTruckDAOTest {
     }
 
     void clearTrucksTable() throws SQLException {
-        try (Statement st = Util.Database.getConnection().createStatement()) {
+        try (Statement st = TransportationSuppliers.data.Util.Database.getConnection().createStatement()) {
             st.executeUpdate("DELETE FROM trucks");
         }
     }

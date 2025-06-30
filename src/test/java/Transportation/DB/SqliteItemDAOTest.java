@@ -22,7 +22,7 @@ class SqliteItemDAOTest {
     }
 
     void clearItemsTable() throws SQLException {
-        try (Statement st = Util.Database.getConnection().createStatement()) {
+        try (Statement st = TransportationSuppliers.data.Util.Database.getConnection().createStatement()) {
             st.executeUpdate("DELETE FROM items");
         }
     }
