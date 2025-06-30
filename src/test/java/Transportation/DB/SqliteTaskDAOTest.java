@@ -1,4 +1,4 @@
-package Transportation.Tests.DB;
+package Transportation.DB;
 
 import Transportation.DataAccess.SqliteTransportationTaskDAO;
 import Transportation.DataAccess.SqliteSiteDAO;
@@ -6,7 +6,7 @@ import Transportation.DataAccess.SqliteSiteDAO;
 
 import Transportation.DTO.TransportationTaskDTO;
 import Transportation.DTO.SiteDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -67,7 +67,7 @@ public class SqliteTaskDAOTest {
     @Test
     void insertAndFindTask() throws SQLException {
         SiteDTO site = siteDAO.insert(new SiteDTO(0, "Warehouse A", "John", "050-0000000", 1));
-        TransportationTaskDTO newTask = new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(10, 0), site.siteAddress(), List.of(), "", "", -1);
+        TransportationTaskDTO newTask = new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(10, 0), site.siteAddress(), List.of(), "", "", "ABC",-1);
         TransportationTaskDTO inserted = taskDAO.insert(newTask);
 
         Optional<TransportationTaskDTO> retrieved = taskDAO.findById(inserted.taskId());
@@ -78,8 +78,8 @@ public class SqliteTaskDAOTest {
     @Test
     void findAllTasks_ReturnsCorrectAmount() throws SQLException {
         SiteDTO site = siteDAO.insert(new SiteDTO(0, "Depot", "Anna", "050-9999999", 2));
-        taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(9, 0), site.siteAddress(), List.of(), "", "", -1));
-        taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(11, 0), site.siteAddress(), List.of(), "", "", -1));
+        taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(9, 0), site.siteAddress(), List.of(), "", "", "", -1));
+        taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(11, 0), site.siteAddress(), List.of(), "", "", "", -1));
 
         List<TransportationTaskDTO> allTasks = taskDAO.findAll();
         assertEquals(2, allTasks.size());
@@ -88,7 +88,7 @@ public class SqliteTaskDAOTest {
     @Test
     void deleteTask_RemovesTask() throws SQLException {
         SiteDTO site = siteDAO.insert(new SiteDTO(0, "Temp Site", "Eve", "050-8888888", 3));
-        TransportationTaskDTO task = taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(12, 0), site.siteAddress(), List.of(), "", "", -1));
+        TransportationTaskDTO task = taskDAO.insert(new TransportationTaskDTO(0, LocalDate.now(), LocalTime.of(12, 0), site.siteAddress(), List.of(), "", "", "", -1));
         taskDAO.delete(task.taskId());
 
         Optional<TransportationTaskDTO> result = taskDAO.findById(task.taskId());

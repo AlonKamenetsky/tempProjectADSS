@@ -4,6 +4,7 @@ import Transportation.Service.SiteService;
 import Transportation.Service.TaskService;
 
 import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -79,5 +80,15 @@ public class TransportationProvider implements TransportationInterface {
         catch (Exception e) {
             throw new InstanceAlreadyExistsException("Supplier site already exists");
         }
+    }
+
+    @Override
+    public void removesSupplierSite(String supplierAddress) throws InstanceNotFoundException {
+        return;
+    }
+
+    @Override
+    public void updateSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceNotFoundException {
+        return;
     }
 }

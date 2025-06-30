@@ -67,7 +67,7 @@ class TaskManagerTest {
         items.put(new ProductDTO(1, "apple", "Osem", "ABC", 30F), 5);
 
         taskManager.addDocToTask(date, time, source, dest, items);
-
+ 
         verify(docRepo).createDoc(eq(1), eq(2), eq(100));
         verify(taskRepo).addDestination(1, 2);
     }

@@ -1,9 +1,9 @@
-package Transportation.Tests.DB;
+package Transportation.DB;
 
 import Transportation.DataAccess.SqliteZoneDAO;
 
 import Transportation.DTO.ZoneDTO;
-import Util.Database;
+import TransportationSuppliers.data.Util.Database;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
