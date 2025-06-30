@@ -15,5 +15,4 @@ public interface TransportationInterface {
     void removesSupplierSite(String supplierAddress) throws InstanceNotFoundException;
 
     void updateSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceNotFoundException;
-
 }
