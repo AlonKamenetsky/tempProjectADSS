@@ -4,7 +4,7 @@ package SuppliersModule.ServiceLayer;
 import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.*;
 import SuppliersModule.util.CSVReader;
-import SuppliersModule.util.Initializers;
+import SuppliersModule.util.Database;
 import TransportationSuppliers.Integration.SupplierInterface;
 
 import java.text.ParseException;
@@ -92,7 +92,7 @@ public class ServiceController implements SupplierInterface {
             String productName = row[0];
             String productCompanyName = row[1];
             String productCategory = row[2];
-            double productWeight = Double.parseDouble(row[3]);
+            float productWeight = Float.parseFloat(row[3]);
             ProductCategory pc =  ProductCategory.valueOf(productCategory);
             productService.registerNewProduct(productName, productCompanyName, pc, productWeight);
         }
@@ -102,10 +102,8 @@ public class ServiceController implements SupplierInterface {
         private static final ServiceController INSTANCE = new ServiceController();
     }
     public void dropData(){
-        Initializers.dropAllTables();
-        supplierService.dropSuppliersData();
-        productService.dropData();
-
+        Database.dropAllTables();
+        Database.initializeSchema();
     }
 
     public static ServiceController getInstance() {
@@ -127,31 +125,32 @@ public class ServiceController implements SupplierInterface {
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        return List.of();
+        return this.productService.getAllProducts();
     }
 
     @Override
-    public Optional<ProductDTO> getProductById(int productId) {
-        return Optional.empty();
+    public ProductDTO getProductById(int productId) {
+        return productService.getProduct(productId);
     }
 
     @Override
-    public Optional<Float> getWeightByProductId(int productId) {
-        return Optional.empty();
+    public Float getWeightByProductId(int productId) {
+        return getProductById(productId).productWeight();
     }
 
     @Override
     public Optional<ProductDTO> getProductByName(String productName) {
-        return Optional.empty();
+        Optional<ProductDTO> product = productService.getProductByName(productName);
+        return product;
     }
 
-    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
-        ArrayList<int[]> dataList = new ArrayList<>();
-        dataList.add(new int[]{ItemID, quantity});
-
-        // null, null will send it as urgent for tommorow.
-        this.supplierService.registerNewOrder(dataList, null, null);
-    }
+//    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
+//        ArrayList<int[]> dataList = new ArrayList<>();
+//        dataList.add(new int[]{ItemID, quantity});
+//
+//        // null, null will send it as urgent for tommorow.
+//        this.supplierService.registerNewOrder(dataList, null, null);
+//    }
 
     // --------------------------- VALIDATION FUNCTIONS ---------------------------
 
@@ -222,13 +221,13 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- PRODUCT FUNCTIONS ---------------------------
 
-    public int registerNewProduct(String productName, String productCompanyName, int productCategory, double productWeight) {
+    public int registerNewProduct(String productName, String productCompanyName, int productCategory, float productWeight) {
         if (validateProductCategory(productCategory))
             return this.productService.registerNewProduct(productName, productCompanyName, ProductCategory.values()[productCategory],  productWeight);
         return -1;
     }
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, float productWeight) {
         return this.productService.updateProduct(productID, productName, productCompanyName,  productWeight);
     }
 
@@ -476,7 +475,9 @@ public class ServiceController implements SupplierInterface {
     public String[] getAllScheduledOrdersAsString() {
         return this.supplierService.getAllScheduledOrdersAsString();
     }
-//    public boolean loadData(){
-//        return DbController.loadDate();
-//    }
+    // supplier interface
+
+
+
+
 }

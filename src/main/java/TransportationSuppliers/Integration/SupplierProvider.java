@@ -1,33 +1,40 @@
 package TransportationSuppliers.Integration;
 
 import SuppliersModule.DataLayer.DTO.ProductDTO;
+import SuppliersModule.ServiceLayer.ServiceController;
 
 import java.util.List;
 import java.util.Optional;
 
 public class SupplierProvider implements SupplierInterface{
+    private final ServiceController serviceController;
+    public SupplierProvider() {
+        this.serviceController = ServiceController.getInstance();
+    }
     @Override
     public List<ProductDTO> getAllProducts() {
-        return List.of();
+        return serviceController.getAllProducts();
+
     }
 
     @Override
-    public Optional<ProductDTO> getProductById(int productId) {
-        return Optional.empty();
+    public ProductDTO getProductById(int productId) {
+
+        return serviceController.getProductById(productId);
     }
 
     @Override
-    public Optional<Float> getWeightByProductId(int productId) {
-        return Optional.empty();
+    public Float getWeightByProductId(int productId) {
+        return serviceController.getWeightByProductId(productId);
     }
 
     @Override
     public Optional<ProductDTO> getProductByName(String productName) {
-        return Optional.empty();
+        return serviceController.getProductByName(productName);
     }
 
-    @Override
-    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
-
-    }
+//    @Override
+//    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
+//
+//    }
 }

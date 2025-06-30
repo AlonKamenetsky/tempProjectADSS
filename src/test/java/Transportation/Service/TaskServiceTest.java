@@ -35,7 +35,7 @@ public class TaskServiceTest {
         String address = "test address";
         LocalDate date = LocalDate.of(2025, 6, 1);
         LocalTime time = LocalTime.of(14, 0);
-        TransportationTaskDTO dto = new TransportationTaskDTO(1, date, time, address, null, "","",0);
+        TransportationTaskDTO dto = new TransportationTaskDTO(1, date, time, address, null, "","","",0);
 
         when(taskManager.addTask(date, time, address)).thenReturn(dto);
 
@@ -72,7 +72,7 @@ public class TaskServiceTest {
 
     @Test
     void assignDriverAndTruckToTask_ReturnsTrue() throws Exception {
-        when(taskManager.assignDriverAndTruckToTask(any(), any(), any())).thenReturn(true);
+        when(taskManager.assignWorkersAndTruckToTask(any(), any(), any())).thenReturn(true);
         boolean result = taskService.assignDriverAndTruckToTask("01/06/2025", "14:00", "site");
         assertTrue(result);
     }

@@ -8,6 +8,7 @@ import SuppliersModule.DomainLayer.Repositories.ProductRepositoryImpl;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductController {
 
@@ -19,7 +20,7 @@ public class ProductController {
         this.productsArrayList = productRepository.getAllProducts();
     }
 
-    private ProductDTO getProductByID(int id) {
+    public ProductDTO getProductByID(int id) {
         for (ProductDTO product : this.productsArrayList)
             if (product.productId() == id)
                 return product;
@@ -27,7 +28,7 @@ public class ProductController {
         return null;
     }
 
-    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, double productWeight) {
+    public int registerNewProduct(String productName, String productCompanyName, ProductCategory productCategory, float productWeight) {
         try {
             ProductDTO dto = productRepository.addProduct(productName, productCompanyName, productCategory.name(),  productWeight);
             this.productsArrayList.add(dto);
@@ -39,7 +40,7 @@ public class ProductController {
     }
 
 
-    public boolean updateProduct(int productID, String productName, String productCompanyName, double productWeight) {
+    public boolean updateProduct(int productID, String productName, String productCompanyName, float productWeight) {
         try {
             ProductDTO existing = getProductByID(productID);
             if (existing == null)
@@ -115,5 +116,17 @@ public class ProductController {
 
     public void dropData() {
         this.productsArrayList.clear();
+    }
+
+    public List<ProductDTO> getAllProducts() {
+        return this.productsArrayList;
+    }
+
+    public Optional<ProductDTO> getProductByName(String productName) {
+        try {
+            return productRepository.getProductByName(productName);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

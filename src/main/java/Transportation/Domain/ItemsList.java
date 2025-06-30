@@ -1,17 +1,19 @@
 package Transportation.Domain;
 
+import SuppliersModule.DomainLayer.Product;
+
 import java.util.HashMap;
 
 public class ItemsList {
     private final int listId;
-    private final HashMap<Item, Integer> itemsList;
+    private final HashMap<Product, Integer> itemsList;
 
     public ItemsList(int listId) {
         this.listId = listId;
         itemsList = new HashMap<>();
     }
 
-    public void addItemToList(Item newItem, int quantity) {
+    public void addItemToList(Product newItem, int quantity) {
         itemsList.put(newItem, quantity);
     }
 
@@ -19,11 +21,11 @@ public class ItemsList {
         return listId;
     }
 
-    public HashMap<Item, Integer> getItemsMap() {
+    public HashMap<Product, Integer> getItemsMap() {
         return itemsList;
     }
 
-    public void removeItemFromList(Item removeItem) {
+    public void removeItemFromList(Product removeItem) {
         itemsList.remove(removeItem);
     }
 

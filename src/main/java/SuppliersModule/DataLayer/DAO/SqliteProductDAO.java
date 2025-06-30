@@ -140,4 +140,5 @@ public class SqliteProductDAO {
                 rs.getDouble("product_weight")
         );
     }
+
 }

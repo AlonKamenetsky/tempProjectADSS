@@ -1,9 +1,6 @@
 package SuppliersModule.DomainLayer;
 
-import SuppliersModule.DataLayer.DTO.OrderDTO;
-import SuppliersModule.DataLayer.DTO.OrderProductDataDTO;
-import SuppliersModule.DataLayer.DTO.SupplyContractDTO;
-import SuppliersModule.DataLayer.DTO.SupplyContractProductDataDTO;
+import SuppliersModule.DataLayer.DTO.*;
 import SuppliersModule.DomainLayer.Enums.DeliveringMethod;
 import SuppliersModule.DomainLayer.Enums.OrderStatus;
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
@@ -18,11 +15,12 @@ import java.util.*;
 public class OrderController {
     private int numOfOrders;
     private final List<OrderDTO> ordersArrayList;
+    private Map<Integer, List<OrderProductForScheduledOrderDataDTO>> scheduledOrdersMap;
 
     private final IOrderRepository orderRepository;
     private final IOrderProductDataRepository orderProductDataRepository;
     private final ISupplyContractProductDataRepository contractProductDataRepository;
-    private final IScheduledOrderRepository scheduledOrderRepository;
+    private final IOrderProductForScheduledOrderDataRepository orderProductForScheduledOrderDataRepository;
 
 
     public OrderController() {
@@ -31,7 +29,37 @@ public class OrderController {
         this.orderRepository = new OrderRepositoryImpl();
         this.orderProductDataRepository = new OrderProductDataRepositoryImpl();
         this.contractProductDataRepository = new SupplyContractProductDataRepositoryImpl();
-        this.scheduledOrderRepository = new ScheduledOrderRepositoryImpl();
+        this.orderProductForScheduledOrderDataRepository = new OrderProductForScheduledOrderDataRepository();
+        this.scheduledOrdersMap = new HashMap<>();
+
+        this.loadAllOnDemandOrders();
+        this.loadAllScheduledOrders();
+    }
+
+    private void loadAllScheduledOrders() {
+        int numberOfOrders = 0;
+        try {
+            numberOfOrders = orderProductForScheduledOrderDataRepository.getNumberOfOrders();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 1; i <= numberOfOrders; i++) {
+            List<OrderProductForScheduledOrderDataDTO> orders;
+            try {
+                 orders = orderProductForScheduledOrderDataRepository.getAllByOrderId(i);
+                 scheduledOrdersMap.put(i, orders);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+    private void loadAllOnDemandOrders() {
+        try {
+            this.ordersArrayList.addAll(orderRepository.getAllOrders());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -366,6 +394,39 @@ public class OrderController {
     }
 
     public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList) {
-        int orderId
+        List<OrderProductForScheduledOrderDataDTO> lst = new ArrayList<>();
+        int orderID;
+        for (int[] data : dataList) {
+            int productID = data[0];
+            int quantity = data[1];
+            try {
+                orderID = this.orderProductForScheduledOrderDataRepository.generateNextOrderId();
+                this.orderProductForScheduledOrderDataRepository.addProductToOrder(orderID, productID, quantity, day.toString());
+                lst.add(orderProductForScheduledOrderDataRepository.getByOrderIDProductID(orderID, productID));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            scheduledOrdersMap.put(orderID, lst);
+        }
+        return true;
     }
+
+    public String[] getAllScheduledOrdersAsString() {
+        List<String> result = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<OrderProductForScheduledOrderDataDTO>> entry : scheduledOrdersMap.entrySet()) {
+            int orderId = entry.getKey();
+            List<OrderProductForScheduledOrderDataDTO> products = entry.getValue();
+
+            result.add("Order ID: " + orderId);
+            for (OrderProductForScheduledOrderDataDTO product : products) {
+                result.add("    Product ID: " + product.productID() +
+                        ", Quantity: " + product.productQuantity() +
+                        ", Day: " + product.day());
+            }
+        }
+
+        return result.toArray(new String[0]);
+    }
+
 }
