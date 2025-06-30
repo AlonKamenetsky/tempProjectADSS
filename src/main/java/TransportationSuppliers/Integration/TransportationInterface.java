@@ -11,6 +11,8 @@ public interface TransportationInterface {
     void addTransportationAssignment(String sourceSite, String destinationSite, String taskDate, HashMap<String, Integer> itemsNeeded) throws ParseException;
 
     void addSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceAlreadyExistsException;
-    public void updateSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceNotFoundException;
-    public void removesSupplierSite(String supplierAddress) throws InstanceNotFoundException;
+
+    void removesSupplierSite(String supplierAddress) throws InstanceNotFoundException;
+
+    void updateSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceNotFoundException;
 }

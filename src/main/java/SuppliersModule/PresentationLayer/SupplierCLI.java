@@ -753,7 +753,7 @@ public class SupplierCLI {
                     break;
                 case 5:
                     System.out.println("Logging out Supplier returning to main menu");
-                    System.exit(0);
+                    return;
                 default:
                     System.out.println("Invalid option, please choose again");
             }

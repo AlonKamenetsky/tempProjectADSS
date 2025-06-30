@@ -1,6 +1,7 @@
 package Transportation.Presentation.cli;
 
 import Transportation.Service.*;
+import TransportationSuppliers.Main;
 
 import java.util.Scanner;
 
@@ -43,9 +44,16 @@ public class TManagerRoleMenu {
                     ZoneMenuUI.show();
                     break;
                 case "0":
-                    System.out.println("Bye!");
-                    System.exit(0);
-                    return;
+                    System.out.println("""
+                            Logging out of Transportation Menu
+                            Returning to main menu..
+                            """);
+                    try {
+                        Main.main(new String[0]);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 default:
                     System.out.println("Invalid input.");
             }
