@@ -111,7 +111,7 @@ public class TransportationTaskRepositoryImpli implements TransportationTaskRepo
                         .map(Site::getAddress)
                         .collect(Collectors.toCollection(ArrayList::new)),
                 task.getDriverId(),
-                task.getWareHouseId(),
+                task.getWarehouseId(),
                 task.getTruckLicenseNumber(),
                 task.getWeightBeforeLeaving()
         );

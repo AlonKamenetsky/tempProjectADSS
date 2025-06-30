@@ -10,12 +10,14 @@ public class TManagerRoleMenu {
     private final TruckMenu TruckMenuUI;
     private final SiteMenu SiteMenuUI;
     private final ZoneMenu ZoneMenuUI;
+    private final DriverMenu DriverMenuUI;
 
-    public TManagerRoleMenu( TruckService truckService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService) {
+    public TManagerRoleMenu( TruckService truckService,DriverService driverService, TaskService taskService, ZoneService zoneService, SiteService siteService, SiteZoneService siteZoneService) {
         TaskMenuUI = new TaskMenu(taskService, this);
         TruckMenuUI = new TruckMenu(this);
         SiteMenuUI = new SiteMenu(this);
         ZoneMenuUI = new ZoneMenu(this);
+        DriverMenuUI = new DriverMenu(this);
     }
 
     public void show() {
@@ -23,11 +25,13 @@ public class TManagerRoleMenu {
         while (true) {
             System.out.println("""
                     What would you like to use?
-                    
+                   
                     1. Truck Menu
-                    2. Task Menu
-                    3. Site Menu
-                    4. Zone Menu
+                    2. Driver Menu
+                    3. Task Menu
+                    4. Site Menu
+                    5. Zone Menu
+        
                     0. Logout""");
             String choiceManager = input.nextLine();
             switch (choiceManager) {
@@ -35,12 +39,14 @@ public class TManagerRoleMenu {
                     TruckMenuUI.show();
                     break;
                 case "2":
+                    DriverMenuUI.show();
+                case "3":
                     TaskMenuUI.show();
                     break;
-                case "3":
+                case "4":
                     SiteMenuUI.show();
                     break;
-                case "4":
+                case "5":
                     ZoneMenuUI.show();
                     break;
                 case "0":

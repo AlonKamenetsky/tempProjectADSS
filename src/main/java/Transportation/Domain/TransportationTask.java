@@ -37,7 +37,7 @@ public class TransportationTask {
         return driverId;
     }
 
-    public String getWareHouseId(){
+    public String getWarehouseId(){
         return wareHouseWorkerId;
     }
 

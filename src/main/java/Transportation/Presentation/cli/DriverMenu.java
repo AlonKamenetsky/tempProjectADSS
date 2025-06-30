@@ -13,8 +13,8 @@ public class DriverMenu {
     private final Scanner input;
 
 
-    public DriverMenu(DriverService driverService, TManagerRoleMenu managerRoleMenu) {
-        DriversHandler = driverService;
+    public DriverMenu( TManagerRoleMenu managerRoleMenu) {
+        DriversHandler = new DriverService();
         this.managerRoleMenu = managerRoleMenu;
         input = new Scanner(System.in);
     }

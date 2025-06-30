@@ -10,12 +10,13 @@ public class SystemInitializer {
         ItemListManager itemListManager = new ItemListManager();
         // === Services (pass managers) ===
         TruckService truckService = new TruckService();
+        DriverService driverService = new DriverService();
         TaskService taskService = new TaskService();
         SiteService siteService = new SiteService();
         ZoneService zoneService = new ZoneService();
         SiteZoneService siteZoneService = new SiteZoneService();
 
         // === Transportation Menu ===
-        return new TransportationMenu(truckService, taskService, zoneService, siteService, siteZoneService);
+        return new TransportationMenu(truckService,driverService ,taskService, zoneService, siteService, siteZoneService);
     }
 }

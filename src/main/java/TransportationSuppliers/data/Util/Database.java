@@ -95,7 +95,7 @@ public final class Database {
                         departure_time        TEXT    NOT NULL,
                         source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
-                        driver_id             TEXT, NOT NULL,
+                        driver_id TEXT NOT NULL,
                         FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
                         FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
