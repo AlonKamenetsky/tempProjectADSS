@@ -5,6 +5,7 @@ import Transportation.Domain.TruckManager;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -50,6 +51,15 @@ public class TruckService {
             throw new RuntimeException("Database access error - View all trucks failed");
         }
     }
+
+    public List<TruckDTO> getAllTrucks() {
+        try {
+            return truckManager.getAllTrucks();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database access error - Getting all trucks failed");
+        }
+    }
+
 
     public String getTruckByLicenseNumber(String licenseNumber) throws NullPointerException, NoSuchElementException {
         if (licenseNumber == null) {

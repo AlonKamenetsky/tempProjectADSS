@@ -9,7 +9,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             xmlns="http://javafx.com/javafx/17.0.12"
-            fx:controller="Transportation.Presentation.gui.SiteMenuView"
+            fx:controller="Transportation.Presentation.gui.SiteMenuController"
             prefWidth="500" prefHeight="500">
 
     <top>

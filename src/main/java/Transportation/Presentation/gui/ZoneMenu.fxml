@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            fx:controller="Transportation.Presentation.gui.ZoneMenuController"
+            prefWidth="500" prefHeight="600">
+
+    <top>
+        <Text text="Zone Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="viewAllZonesButton"
+                        text="View All Zones"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewAllZones"/>
+
+                <Button fx:id="viewSitesByZoneButton"
+                        text="View Sites By Zone"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewSitesByZone"/>
+
+                <Button fx:id="addZoneButton"
+                        text="Add Zone"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddZone"/>
+
+                <Button fx:id="showModifyZoneButton"
+                        text="Modify Zone"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onShowModifyZone"/>
+
+                <VBox fx:id="modifyZoneBox"
+                      visible="false"
+                      spacing="10" alignment="CENTER"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <ComboBox fx:id="zoneComboBox" prefWidth="200"/>
+
+                        <Button text="Change Zone Name"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onChangeZoneName"/>
+
+                        <Button text="Map Site to Zone"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onMapSiteToZone"/>
+
+                        <Button text="Remove Site Mapping"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onRemoveSiteMapping"/>
+                    </children>
+                </VBox>
+
+                <Button fx:id="showRemoveZoneButton"
+                        text="Remove Zone"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onShowRemoveZone"/>
+
+                <VBox fx:id="removeZoneBox"
+                      visible="false"
+                      spacing="10" alignment="CENTER"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <ComboBox fx:id="removeZoneComboBox" prefWidth="200"/>
+                        <Button text="Confirm Remove"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onRemoveZone"/>
+                    </children>
+                </VBox>
+
+                <Button fx:id="backButton"
+                        text="Return to Main Menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

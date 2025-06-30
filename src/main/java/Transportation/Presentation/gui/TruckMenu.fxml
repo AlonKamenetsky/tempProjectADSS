@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Transportation.Presentation.gui.TruckMenuView"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            fx:controller="Transportation.Presentation.gui.TruckMenuController"
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <!-- כותרת -->
+    <top>
+        <Text text="Truck Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+
+    <!-- תוכן עיקרי -->
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="viewAllTrucksButton"
+                        text="View All Trucks"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewAllTrucks"/>
+
+                <Button fx:id="viewTruckByLicenseButton"
+                        text="View Truck By License"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewTruckByLicense"/>
+
+                <Button fx:id="setTruckAvailabilityButton"
+                        text="Set Truck Availability"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onSetTruckAvailability"/>
+
+                <Button fx:id="addTruckButton"
+                        text="Add Truck"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddTruck"/>
+
+                <Button fx:id="showRemoveTruckButton"
+                        text="Remove Truck"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onShowRemoveTruck"/>
+
+                <VBox fx:id="removeTruckBox"
+                      visible="false"
+                      spacing="10" alignment="CENTER"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <ComboBox fx:id="truckComboBox" prefWidth="200"/>
+                        <Button text="Confirm Remove"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onRemoveTruck"/>
+                    </children>
+                </VBox>
+
+                <Button fx:id="backButton"
+                        text="Back to Main Menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

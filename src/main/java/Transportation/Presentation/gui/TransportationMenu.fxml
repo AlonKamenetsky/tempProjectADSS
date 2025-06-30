@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      fx:controller="Transportation.Presentation.gui.TransportationMenuController"
+      alignment="CENTER" spacing="20" prefWidth="400" prefHeight="300">
+
+    <children>
+        <Text text="Transportation Main Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+        <Button fx:id="taskButton" text="Task Menu" onAction="#onTaskMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="driverButton" text="Driver Menu" onAction="#onDriverMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="truckButton" text="Truck Menu" onAction="#onTruckMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="siteButton" text="Site Menu" onAction="#onSiteMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="zoneButton" text="Zone Menu" onAction="#onZoneMenu" prefWidth="200" prefHeight="40"/>
+    </children>
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+</VBox>
