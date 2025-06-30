@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Transportation.Presentation.gui.SiteMenuView"
-            prefHeight="400.0" prefWidth="600.0">
-</AnchorPane>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="500" prefWidth="500" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Transportation.Presentation.gui.SiteMenuView">
+
+    <top>
+        <VBox alignment="CENTER" spacing="15" BorderPane.alignment="CENTER">
+            <children>
+
+                <Text text="Site Management Menu"
+                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"/>
+
+                <!-- כפתורים עיקריים -->
+                <Button fx:id="viewAllSitesButton"
+                        text="View All Sites"
+                        maxWidth="200"
+                        prefHeight="40"
+                        onAction="#onViewAllSites"/>
+
+                <Button fx:id="viewSiteByAddressButton"
+                        text="View Site By Address"
+                        maxWidth="200"
+                        prefHeight="40"
+                        onAction="#onViewSiteByAddress"/>
+
+                <Button fx:id="addSiteButton"
+                        text="Add Site"
+                        maxWidth="200"
+                        prefHeight="40"
+                        onAction="#onAddSite"/>
+
+                <TitledPane text="Remove Site" expanded="false" maxWidth="200">
+                    <VBox spacing="10" alignment="CENTER" padding="10">
+                        <ComboBox fx:id="siteComboBox" prefWidth="180"/>
+                        <Button text="Remove Selected Site" prefWidth="180" onAction="#onRemoveSite"/>
+                    </VBox>
+                </TitledPane>
+
+                <Button fx:id="backButton"
+                        text="Return to Main Menu"
+                        maxWidth="200"
+                        prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </top>
+
+</BorderPane>
