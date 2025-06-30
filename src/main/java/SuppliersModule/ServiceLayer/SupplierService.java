@@ -197,6 +197,6 @@ public class SupplierService {
 
 
     public String getOrderDepartureAdress(int id) {
-
+        return "";
     }
 }

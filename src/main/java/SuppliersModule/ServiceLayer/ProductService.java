@@ -3,7 +3,7 @@ package SuppliersModule.ServiceLayer;
 import SuppliersModule.DataLayer.DTO.ProductDTO;
 import SuppliersModule.DomainLayer.Enums.ProductCategory;
 import SuppliersModule.DomainLayer.ProductController;
-import SuppliersModule.PresentationLayer.Main;
+
 
 import java.sql.SQLException;
 import java.util.List;
