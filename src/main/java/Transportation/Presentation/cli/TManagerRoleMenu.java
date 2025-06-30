@@ -1,4 +1,4 @@
-package Transportation.Presentation;
+package Transportation.Presentation.cli;
 
 import Transportation.Service.*;
 

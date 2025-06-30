@@ -1,6 +1,6 @@
 package Transportation.Presentation;
 
-import Transportation.Presentation.TransportationMenu;
+import Transportation.Presentation.cli.TransportationMenu;
 import Transportation.SystemInitializer.SystemInitializer;
 
 public class TransportationMain {

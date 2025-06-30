@@ -1,4 +1,4 @@
-package Transportation.Presentation;
+package Transportation.Presentation.cli;
 
 import Transportation.DTO.SiteDTO;
 import Transportation.Service.SiteService;

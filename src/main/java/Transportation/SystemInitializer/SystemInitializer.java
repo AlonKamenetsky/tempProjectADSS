@@ -1,7 +1,7 @@
 package Transportation.SystemInitializer;
 
 import Transportation.Domain.*;
-import Transportation.Presentation.TransportationMenu;
+import Transportation.Presentation.cli.TransportationMenu;
 import Transportation.Service.*;
 
 public class SystemInitializer {
