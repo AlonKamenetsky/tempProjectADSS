@@ -165,4 +165,17 @@ public class SqliteOrderDAO {
                 rs.getString("supply_method")
         );
     }
+    public int getNextOrderId() throws SQLException {
+        String sql = "SELECT MAX(id) AS last_id FROM orders";
+        try (Statement stmt = Database.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("last_id") + 1;
+            } else {
+                return 1; // No orders yet
+            }
+        }
+    }
+
 }

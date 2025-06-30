@@ -1,8 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="Transportation.Presentation.gui.SiteMenuView"
-            prefHeight="400.0" prefWidth="600.0">
-</AnchorPane>
+            prefWidth="500" prefHeight="500">
+
+    <top>
+        <Text text="Site Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="viewAllSitesButton"
+                        text="View All Sites"
+                        maxWidth="200" prefHeight="40"
+                        onAction="#onViewAllSites"/>
+
+                <Button fx:id="viewSiteByAddressButton"
+                        text="View Site By Address"
+                        maxWidth="200" prefHeight="40"
+                        onAction="#onViewSiteByAddress"/>
+
+                <Button fx:id="addSiteButton"
+                        text="Add Site"
+                        maxWidth="200" prefHeight="40"
+                        onAction="#onAddSite"/>
+
+                <Button fx:id="showRemoveSiteButton"
+                        text="Remove Site"
+                        maxWidth="200" prefHeight="40"
+                        onAction="#onShowRemoveSite"/>
+
+                <VBox fx:id="removeSiteBox"
+                      spacing="10" alignment="CENTER"
+                      visible="false"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <ComboBox fx:id="siteComboBox" prefWidth="200"/>
+                        <Button text="Confirm Remove"
+                                maxWidth="200" prefHeight="40"
+                                onAction="#onRemoveSite"/>
+                    </children>
+                </VBox>
+
+                <Button fx:id="backButton"
+                        text="Return to Main Menu"
+                        maxWidth="200" prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

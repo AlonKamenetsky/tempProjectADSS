@@ -6,7 +6,10 @@ import SuppliersModule.DomainLayer.Enums.*;
 import SuppliersModule.util.CSVReader;
 import SuppliersModule.util.Database;
 import TransportationSuppliers.Integration.SupplierInterface;
+import TransportationSuppliers.Integration.TransportationInterface;
+import TransportationSuppliers.Integration.TransportationProvider;
 
+import javax.management.InstanceAlreadyExistsException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -16,6 +19,17 @@ import java.util.*;
 public class ServiceController implements SupplierInterface {
     public HashMap<Integer, Integer> updateOrderStatus(int orderID, int status) {
         return null;
+    }
+    private final SupplierService supplierService;
+    private final ProductService productService;
+    private final TransportationInterface transportation;
+    private String superAddress;
+
+    public ServiceController() {
+        this.supplierService = new SupplierService();
+        this.productService = new ProductService();
+        this.transportation = new TransportationProvider();
+        this.superAddress = "Ben Gurion";
     }
 
     public void loadData() {
@@ -76,6 +90,7 @@ public class ServiceController implements SupplierInterface {
                 continue;
             }
             supplierService.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, emailAddress, contactName, bankAcount, pm, supplyDays);
+
             // Add to your repository or controller
         }
     }
@@ -112,13 +127,7 @@ public class ServiceController implements SupplierInterface {
 
 
 
-    private SupplierService supplierService;
-    private ProductService productService;
 
-    public ServiceController() {
-        this.supplierService = new SupplierService();
-        this.productService = new ProductService();
-    }
 
     // --------------------------- SHARED FUNCTIONS ---------------------------
 
@@ -250,8 +259,14 @@ public class ServiceController implements SupplierInterface {
                                     String phoneNumber, String address, String email, String contactName,
                                     String bankAccount, int paymentMethod, ArrayList<Integer> supplyDays) {
         if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) &&
-                this.validatePaymentMethod(paymentMethod) && validateDays(supplyDays))
+                this.validatePaymentMethod(paymentMethod) && validateDays(supplyDays)) {
+            try {
+                this.transportation.addSupplierSite(address, contactName, phoneNumber);
+            } catch (InstanceAlreadyExistsException e) {
+                throw new RuntimeException(e);
+            }
             return this.supplierService.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, supplyDays);
+        }
         return -1;
     }
 
@@ -410,7 +425,7 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public boolean registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate) {
         Date deliveryDateAsDate;
         if (deliveryDate.equalsIgnoreCase("t"))
             deliveryDateAsDate = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -418,11 +433,24 @@ public class ServiceController implements SupplierInterface {
             deliveryDateAsDate = this.validateOrderDated(deliveryDate);
 
         if (deliveryDateAsDate == null)
-            return false;
+            return -1;
         if (deliveryDateAsDate.before(creationDate))
-            return false;
-
-        return this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate);
+            return -1;
+        try{
+        //    transportation. need to find a way to have the supplier at this class
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate);
+        if(id != -1) {
+            return id;
+        }
+        else{
+            String sourceSite = supplierService.getOrderDepartureAdress(id);
+            //transportation.addTransportationAssignment(sourceSite, superAddress, deliveryDate, );
+            return id;
+        }
     }
 
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
