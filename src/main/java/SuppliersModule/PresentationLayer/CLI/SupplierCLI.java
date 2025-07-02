@@ -1,4 +1,4 @@
-package SuppliersModule.PresentationLayer;
+package SuppliersModule.PresentationLayer.CLI;
 
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.ServiceLayer.ServiceController;

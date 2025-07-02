@@ -1,6 +1,6 @@
 package TransportationSuppliers;
 
-import SuppliersModule.PresentationLayer.SupplierCLI;
+import SuppliersModule.PresentationLayer.CLI.SupplierCLI;
 import Transportation.Presentation.TransportationMain;
 import TransportationSuppliers.data.Util.Database;
 import TransportationSuppliers.data.Util.DatabaseInitializer;
