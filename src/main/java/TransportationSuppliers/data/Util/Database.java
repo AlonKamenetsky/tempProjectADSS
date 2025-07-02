@@ -15,7 +15,6 @@ public final class Database {
             Path dbFile = Paths.get("SuperLee.db");
             if (Files.exists(dbFile)) {
                 Files.delete(dbFile);
-                System.out.println("for lidor");
             }
 
             Class.forName("org.sqlite.JDBC");
@@ -90,6 +89,7 @@ public final class Database {
                         source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
                         driver_id TEXT NOT NULL,
+                        warehouse_worker_id TEXT NOT NULL,
                         FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
                         FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
@@ -318,7 +318,7 @@ public final class Database {
                         source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
                         driver_id TEXT ,
-                         warehouse_worker_id TEXT ,
+                        warehouse_worker_id TEXT NOT NULL,
                         FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
                         FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)

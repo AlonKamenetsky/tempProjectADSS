@@ -55,11 +55,6 @@ public class DatabaseInitializer {
         DriverDTO driver1 = driverDAO.insert(new DriverDTO("207271966", "Liel", List.of("B"), true));
         DriverDTO driver2 = driverDAO.insert(new DriverDTO("2005666356","Lidor", new ArrayList<>(Arrays.asList("B","C")), true));
 
-
-
-        //Adding WarehouseId
-
-
         //Adding Task
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date = LocalDate.parse("01/06/2025", dateFormatter);
@@ -72,12 +67,15 @@ public class DatabaseInitializer {
                         time,                    // departureTime
                         site1.siteAddress(),     // sourceSiteAddress
                         List.of(site2.siteAddress()), // destinationsAddresses
-                        driver1.driverId(),      // driverId
+                        "",      // driverId
                         "1",                    // whwId
-                        truck1.licenseNumber(),  // truckLicenseNumber
+                        "",  // truckLicenseNumber
                         120f                     // weightBeforeLeaving
                 )
         );
+        taskDAO.assignDriver(task1.taskId(), driver1.driverId());
+        taskDAO.assignTruck(task1.taskId(), truck1.licenseNumber());
+        taskDAO.assignWhWorker(task1.taskId(), "1");
 
     }
 
