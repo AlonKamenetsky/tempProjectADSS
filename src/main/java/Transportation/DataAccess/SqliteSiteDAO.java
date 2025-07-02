@@ -130,12 +130,11 @@ public class SqliteSiteDAO implements SiteDAO {
             ps.setInt(1, zoneId);
             ps.setInt(2, site.siteId());
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                return new SiteDTO(keys.getInt(1), site.siteAddress(), site.contactName(), site.phoneNumber(), zoneId);
-            }
+            // Just return the updated object
+            return new SiteDTO(site.siteId(), site.siteAddress(), site.contactName(), site.phoneNumber(), zoneId);
         }
     }
+
 
     // helper method
     private int getSiteIdByAddress(String address) throws SQLException {
