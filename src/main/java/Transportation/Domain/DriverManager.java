@@ -64,7 +64,8 @@ public class DriverManager {
         if (driverToChange.isPresent()) {
             driverRepository.updateAvailability(driverId, status);
         } else {
-            throw new NoSuchElementException();
+            System.out.println("there is no driver with that id" + driverId);
+            throw new NoSuchElementException("there is no driver with that id" + driverId);
         }
     }
 

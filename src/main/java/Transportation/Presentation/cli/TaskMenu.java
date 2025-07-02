@@ -140,7 +140,7 @@ public class TaskMenu {
                         viewAllItems();
                         System.out.println("Enter name of item you would like you add.");
                         String itemName = input.nextLine();
-                        if (ProductsHandler.doesItemExist(itemName)) {
+                        if (!ProductsHandler.doesItemExist(itemName)) {
                             System.out.println("Given item doesn't exist.");
                             continue;
                         }

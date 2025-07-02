@@ -66,7 +66,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
     @Override
     public Optional<TransportationTaskDTO> findById(int taskId) throws SQLException {
         String sql = """
-                    SELECT t.task_id, t.task_date, t.departure_time, t.driver_id, t.truck_license_number,
+                    SELECT t.task_id, t.task_date, t.departure_time, t.driver_id, t.truck_license_number, t.warehouse_worker_id,
                            t.weight_before_leaving, s.address AS source_address
                     FROM transportation_tasks t
                     JOIN sites s ON t.source_site_address = s.address
