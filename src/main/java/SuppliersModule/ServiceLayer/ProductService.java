@@ -60,4 +60,8 @@ public class ProductService {
     public Optional<ProductDTO> getProductByName(String productName) {
         return productController.getProductByName(productName);
     }
+
+    public String getProductName(int id) {
+        return productController.getProductName(id);
+    }
 }

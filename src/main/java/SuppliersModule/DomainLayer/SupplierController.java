@@ -534,7 +534,15 @@ public class SupplierController {
         }
     }
 
-    public ArrayList<String[]> executeScheduledOrders() {
+    public List<Integer> executeScheduledOrders() {
         return orderController.executeScheduledOrders();
+    }
+
+    public String[] getScheduledOrderDataForExecution(Integer orderID) {
+        return orderController.getScheduledOrderDataForExecution(orderID);
+    }
+
+    public String getOrderDepartureAddress(int id) {
+        return orderController.getOrderDepartureAddress(id);
     }
 }

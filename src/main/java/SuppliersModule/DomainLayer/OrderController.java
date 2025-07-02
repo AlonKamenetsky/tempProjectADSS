@@ -426,16 +426,18 @@ public class OrderController {
         return result.toArray(new String[0]);
     }
 
-    public ArrayList<String[]> executeScheduledOrders() {
+    public List<Integer> executeScheduledOrders() {
+        List<Integer> ordersToExecute = new ArrayList<>();
         DayOfWeek today = LocalDate.now().getDayOfWeek();
+
         for (Map.Entry<Integer, List<OrderProductForScheduledOrderDataDTO>> entry : scheduledOrdersMap.entrySet()) {
             Integer id = entry.getKey();
             List<OrderProductForScheduledOrderDataDTO> dtos = entry.getValue();
             if(checkDay(today.toString(), dtos.get(0).day().toString())){
-
+                ordersToExecute.add(id);
             }
         }
-        return null;
+       return ordersToExecute;
     }
     private boolean checkDay(String today, String tomorrow) {
         switch (today) {
@@ -491,4 +493,18 @@ public class OrderController {
         return false;
     }
 
+    public String[] getScheduledOrderDataForExecution(Integer orderID) {
+        List<OrderProductForScheduledOrderDataDTO> dtos = scheduledOrdersMap.get(orderID);
+        OrderProductForScheduledOrderDataDTO dto = dtos.get(0);
+        return new String[] {dto.orderID().toString(), dto.productID().toString(), dto.productQuantity().toString(), dto.day().toString()};
+    }
+
+    public String getOrderDepartureAddress(int id) {
+        for(int i = 0; i < ordersArrayList.size(); i++) {
+            if (ordersArrayList.get(i).orderID() == id) {
+                return ordersArrayList.get(i).physicalAddress().toString();
+            }
+        }
+        return "";
+    }
 }

@@ -123,10 +123,15 @@ public class ProductController {
     }
 
     public Optional<ProductDTO> getProductByName(String productName) {
-        try {
-            return productRepository.getProductByName(productName);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+       for(ProductDTO product : this.productsArrayList){
+           if(product.productName().toString().equals(productName))
+               return Optional.of(product);
+       }
+       return Optional.empty();
+    }
+
+    public String getProductName(int id) {
+        ProductDTO product = this.getProductByID(id);
+        return product.productName().toString();
     }
 }

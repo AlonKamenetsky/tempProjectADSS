@@ -196,11 +196,17 @@ public class SupplierService {
     }
 
 
-    public String getOrderDepartureAdress(int id) {
-        return "";
+    public String getOrderDepartureAddress(int id) {
+        return supplierController.getOrderDepartureAddress(id);
     }
 
-    public ArrayList<String[]> executeScheduledOrders() {
+    public List<Integer> executeScheduledOrders() {
         return supplierController.executeScheduledOrders();
     }
+
+    public String[] getScheduledOrderDataForExecution(Integer orderID) {
+        return supplierController.getScheduledOrderDataForExecution(orderID);
+    }
+
+
 }

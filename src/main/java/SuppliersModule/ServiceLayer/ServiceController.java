@@ -8,7 +8,6 @@ import TransportationSuppliers.Integration.SupplierInterface;
 import TransportationSuppliers.Integration.TransportationInterface;
 import TransportationSuppliers.Integration.TransportationProvider;
 
-import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,8 +37,32 @@ public class ServiceController implements SupplierInterface {
         loadSupplyContract();
     }
     private void executeScheduledOrders(){
-        ArrayList<String[]> infoForOrder = new ArrayList<>();
-        infoForOrder = supplierService.executeScheduledOrders();
+        List<Integer> ordersToExecute = supplierService.executeScheduledOrders();
+        for (Integer orderID : ordersToExecute) {
+            String [] orderData = supplierService.getScheduledOrderDataForExecution(orderID);
+            ArrayList<int[]> dataList = new ArrayList<>();
+            int[] data = {Integer.parseInt(orderData[1]), Integer.parseInt(orderData[2]) };
+            dataList.add(data);
+            Date today = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 1); // add 1 day
+            String tomorrow = cal.getTime().toString();
+            try {
+                int order = this.registerNewOrder(dataList, today, tomorrow,SupplyMethod.SCHEDULED.toString());
+                String departureAddress = supplierService.getOrderDepartureAddress(order);
+                String destinationAddress = this.superAddress;
+                HashMap<String, Integer> map = new HashMap<>();
+                String productName = productService.getProductName(Integer.parseInt(orderData[1]));
+                map.put(productName ,Integer.parseInt(orderData[2]));
+                try {
+                    transportation.addTransportationAssignment(departureAddress, destinationAddress, tomorrow, map);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void loadSupplyContract() {
@@ -157,8 +180,7 @@ public class ServiceController implements SupplierInterface {
 
     @Override
     public Optional<ProductDTO> getProductByName(String productName) {
-        Optional<ProductDTO> product = productService.getProductByName(productName);
-        return product;
+        return productService.getProductByName(productName);
     }
 
 //    public void placeUrgentOrderSingleProduct(int ItemID, int quantity) {
@@ -459,7 +481,7 @@ public class ServiceController implements SupplierInterface {
             return id;
         }
         else{
-            String sourceSite = supplierService.getOrderDepartureAdress(id);
+            String sourceSite = supplierService.getOrderDepartureAddress(id);
             //transportation.addTransportationAssignment(sourceSite, superAddress, deliveryDate, );
             return id;
         }
