@@ -94,19 +94,26 @@ public class SqliteSiteDAO implements SiteDAO {
     @Override
     public SiteDTO insert(SiteDTO site) throws SQLException {
         String sql = "INSERT INTO sites(address, contact_name, phone_number, zone_id) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = Database.getConnection()
-                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, site.siteAddress());
             ps.setString(2, site.contactName());
             ps.setString(3, site.phoneNumber());
             ps.setInt(4, site.zoneId());
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
+        }
+
+        String query = "SELECT last_insert_rowid()";
+        try (Statement st = Database.getConnection().createStatement();
+             ResultSet keys = st.executeQuery(query)) {
+            if (keys.next()) {
                 return new SiteDTO(keys.getInt(1), site.siteAddress(), site.contactName(), site.phoneNumber(), site.zoneId());
+            } else {
+                throw new SQLException("Failed to retrieve generated site ID.");
             }
         }
     }
+
 
     @Override
     public void delete(int siteId) throws SQLException {

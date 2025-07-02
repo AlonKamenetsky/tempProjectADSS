@@ -11,17 +11,18 @@ import java.util.Optional;
 public class SqliteDriverDAO implements DriverDAO {
     @Override
     public DriverDTO insert(DriverDTO driver) throws SQLException {
+        Connection conn = Database.getConnection();
+
         String insertDriverSQL = "INSERT INTO drivers (driver_id, driver_name, is_available) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(insertDriverSQL)) {
-            ps.setString(1, driver.driverId());
+        try (PreparedStatement ps = conn.prepareStatement(insertDriverSQL)) {
+            ps.setString(1, driver.driverId());     // התעודת זהות שלך
             ps.setString(2, driver.driverName());
             ps.setBoolean(3, driver.isAvailable());
             ps.executeUpdate();
         }
 
-        // Insert licenses
         String insertLicenseSQL = "INSERT INTO driver_licenses (driver_id, license_type) VALUES (?, ?)";
-        try (PreparedStatement ps = Database.getConnection().prepareStatement(insertLicenseSQL)) {
+        try (PreparedStatement ps = conn.prepareStatement(insertLicenseSQL)) {
             for (String license : driver.licenseTypes()) {
                 ps.setString(1, driver.driverId());
                 ps.setString(2, license);
@@ -30,8 +31,11 @@ public class SqliteDriverDAO implements DriverDAO {
             ps.executeBatch();
         }
 
-        return driver;
+        return driver; // מחזיר עם אותו ID שסיפקת
     }
+
+
+
 
     @Override
     public List<DriverDTO> findByLicenseType(String licenseType) throws SQLException {
@@ -129,6 +133,7 @@ public class SqliteDriverDAO implements DriverDAO {
         String driverId = rs.getString("driver_id");
         String name = rs.getString("driver_name");
         boolean available = rs.getBoolean("is_available");
+        System.out.println("DriverID from DB: " + driverId);
 
         // Load license types
         List<String> licenses = new ArrayList<>();

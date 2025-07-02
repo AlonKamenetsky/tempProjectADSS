@@ -13,28 +13,46 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
 
     @Override
     public TransportationTaskDTO insert(TransportationTaskDTO task) throws SQLException {
-        // INSERT
         String sql = """
-                    INSERT INTO transportation_tasks(task_date, departure_time, source_site_address, driver_id, truck_license_number, weight_before_leaving)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """;
+        INSERT INTO transportation_tasks (
+            task_date, departure_time, source_site_address,
+            driver_id, truck_license_number, weight_before_leaving, warehouse_worker_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
 
-        try (PreparedStatement ps = Database.getConnection()
-                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, task.taskDate().toString());
             ps.setString(2, task.departureTime().toString());
             ps.setString(3, task.sourceSiteAddress());
-            ps.setString(4, "");
-            ps.setString(5, "");
-            ps.setString(6, "");
-            ps.setFloat(7, -1);
+            ps.setString(4, task.driverId());
+            ps.setString(5, task.truckLicenseNumber());
+            ps.setFloat(6, task.weightBeforeLeaving());
+            ps.setString(7, task.whwId());
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                return new TransportationTaskDTO(keys.getInt(1), task.taskDate(), task.departureTime(), task.sourceSiteAddress(), new ArrayList<>(), "","" ,"", -1);
+        }
+
+        try (Statement st = Database.getConnection().createStatement();
+             ResultSet keys = st.executeQuery("SELECT last_insert_rowid()")) {
+            if (keys.next()) {
+                return new TransportationTaskDTO(
+                        keys.getInt(1),
+                        task.taskDate(),
+                        task.departureTime(),
+                        task.sourceSiteAddress(),
+                        task.destinationsAddresses(),
+                        task.driverId(),
+                        task.whwId(),
+                        task.truckLicenseNumber(),
+                        task.weightBeforeLeaving()
+                );
+            } else {
+                throw new SQLException("Failed to retrieve generated task ID.");
             }
         }
     }
+
+
 
     @Override
     public void delete(int taskId) throws SQLException {

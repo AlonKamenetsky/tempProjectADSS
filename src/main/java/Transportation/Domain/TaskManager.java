@@ -17,7 +17,7 @@ public class TaskManager {
     private final ItemListManager itemListManager;
     private final TransportationDocRepository docRepository;
     private final TransportationTaskRepository taskRepository;
-    private final List<WarehouseWorker> warehouseWorkers;
+    private List<WarehouseWorker> warehouseWorkers;
     private final ProductProvider productProvider;
 
     public TaskManager(ProductProvider productProvider) {
@@ -28,7 +28,7 @@ public class TaskManager {
         truckManager = new TruckManager();
         driverManager = new DriverManager();
         itemListManager = new ItemListManager();
-        warehouseWorkers = new ArrayList<>();
+        initializeWarehouseWorkers();
     }
 
 
@@ -206,5 +206,19 @@ public class TaskManager {
 
         int taskId = task.get().taskId();
         return taskRepository.hasDestination(taskId, site.get().siteId());
+    }
+
+    private void initializeWarehouseWorkers() {
+        this.warehouseWorkers = new ArrayList<>();
+        warehouseWorkers.add(new WarehouseWorker("1", "avi"));
+        warehouseWorkers.add(new WarehouseWorker("2", "shlomi"));
+        warehouseWorkers.add(new WarehouseWorker("3", "keren"));
+        warehouseWorkers.add(new WarehouseWorker("4", "hadar"));
+        warehouseWorkers.add(new WarehouseWorker("5", "yael"));
+        warehouseWorkers.add(new WarehouseWorker("6", "ido"));
+        warehouseWorkers.add(new WarehouseWorker("7", "ben"));
+        warehouseWorkers.add(new WarehouseWorker("8", "shalom"));
+        warehouseWorkers.add(new WarehouseWorker("9", "jacob"));
+        warehouseWorkers.add(new WarehouseWorker("10", "john"));
     }
 }

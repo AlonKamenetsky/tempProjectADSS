@@ -6,15 +6,16 @@ import java.nio.file.Paths;
 import java.sql.*;
 
 public final class Database {
-    private static final String DB_URL = "jdbc:sqlite:SuperLee.db";
+    private static final String DB_URL = "jdbc:sqlite:SuperLeeTry.db";
     private final static Connection conn;
 
     static {
         try {
-
-            Path dbFile = Paths.get("SuperLee.db");
-            if (Files.exists(dbFile)) {
-                Files.delete(dbFile);
+            Path dbFile = Paths.get("SuperLeeTry.db");
+            if (!Files.exists(dbFile)) {
+                System.out.println("Creating new DB...");
+            } else {
+                System.out.println("Reusing existing DB...");
             }
 
             Class.forName("org.sqlite.JDBC");
@@ -90,12 +91,13 @@ public final class Database {
                     CREATE TABLE IF NOT EXISTS transportation_tasks (
                         task_id               INTEGER PRIMARY KEY AUTOINCREMENT,
                         truck_id              INTEGER,
-                        truck_license_number TEXT    NOT NULL,
+                        truck_license_number TEXT  NOT NULL  ,
                         task_date             TEXT    NOT NULL,
                         departure_time        TEXT    NOT NULL,
                         source_site_address        TEXT NOT NULL,
                         weight_before_leaving REAL    NOT NULL,
-                        driver_id TEXT NOT NULL,
+                        driver_id TEXT ,
+                         warehouse_worker_id TEXT ,
                         FOREIGN KEY (source_site_address) REFERENCES sites(address),
                         FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
                         FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)

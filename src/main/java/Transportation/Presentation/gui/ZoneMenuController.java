@@ -6,7 +6,6 @@ import Transportation.Service.SiteZoneService;
 import Transportation.Service.ZoneService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -155,7 +154,7 @@ public class ZoneMenuController {
 
     @FXML
     private void onBack() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Transportation/Presentation/gui/TransportationMenu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TransportationMenu.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) backButton.getScene().getWindow();
         stage.setScene(new Scene(root));

@@ -10,23 +10,24 @@ import java.util.Optional;
 
 public class SqliteZoneDAO implements ZoneDAO {
 
-    @Override
     public ZoneDTO insert(ZoneDTO zone) throws SQLException {
         String sql = "INSERT INTO zones(zone_name) VALUES (?)";
-        try (PreparedStatement ps = Database.getConnection()
-                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, zone.zoneName());
             ps.executeUpdate();
+        }
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
-                    return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
-                } else {
-                    throw new SQLException("Failed to retrieve generated zone ID.");
-                }
+        String query = "SELECT last_insert_rowid()";
+        try (Statement st = Database.getConnection().createStatement();
+             ResultSet keys = st.executeQuery(query)) {
+            if (keys.next()) {
+                return new ZoneDTO(keys.getInt(1), zone.zoneName(), new ArrayList<>());
+            } else {
+                throw new SQLException("Failed to retrieve generated zone ID.");
             }
         }
     }
+
 
     @Override
     public void delete(int zoneId) throws SQLException {

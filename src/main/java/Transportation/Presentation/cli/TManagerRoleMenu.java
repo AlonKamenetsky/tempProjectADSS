@@ -1,7 +1,7 @@
 package Transportation.Presentation.cli;
 
 import Transportation.Service.*;
-import TransportationSuppliers.Main;
+import TransportationSuppliers.CliMain;
 
 import java.util.Scanner;
 
@@ -55,7 +55,7 @@ public class TManagerRoleMenu {
                             Returning to main menu..
                             """);
                     try {
-                        Main.main(new String[0]);
+                        CliMain.main(new String[0]);
                     }
                     catch (Exception e) {
                         e.printStackTrace();

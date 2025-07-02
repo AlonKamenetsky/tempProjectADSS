@@ -14,8 +14,7 @@ public class SqliteTruckDAO implements TruckDAO {
         if (truck.truckId() == null) {
             String sql = "INSERT INTO trucks(truck_type, license_number, model, net_weight, max_weight, is_free) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement ps = Database.getConnection()
-                    .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
                 ps.setString(1, truck.truckType());
                 ps.setString(2, truck.licenseNumber());
                 ps.setString(3, truck.model());
@@ -23,8 +22,13 @@ public class SqliteTruckDAO implements TruckDAO {
                 ps.setFloat(5, truck.maxWeight());
                 ps.setBoolean(6, truck.isFree());
                 ps.executeUpdate();
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    keys.next();
+            }
+
+            // השגת ה-ID שנוצר
+            String query = "SELECT last_insert_rowid()";
+            try (Statement st = Database.getConnection().createStatement();
+                 ResultSet keys = st.executeQuery(query)) {
+                if (keys.next()) {
                     return new TruckDTO(
                             keys.getInt(1),
                             truck.truckType(),
@@ -34,6 +38,8 @@ public class SqliteTruckDAO implements TruckDAO {
                             truck.maxWeight(),
                             truck.isFree()
                     );
+                } else {
+                    throw new SQLException("Failed to retrieve generated truck ID.");
                 }
             }
         } else {
