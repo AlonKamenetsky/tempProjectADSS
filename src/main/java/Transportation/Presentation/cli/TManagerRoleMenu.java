@@ -54,12 +54,7 @@ public class TManagerRoleMenu {
                             Logging out of Transportation Menu
                             Returning to main menu..
                             """);
-                    try {
-                        CliMain.main(new String[0]);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    return;
                 default:
                     System.out.println("Invalid input.");
             }

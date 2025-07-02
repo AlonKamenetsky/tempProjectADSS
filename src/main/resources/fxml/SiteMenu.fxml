@@ -46,7 +46,7 @@
                       alignment="CENTER"
                       spacing="10"
                       prefWidth="250"
-                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">>
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
                     <children>
                         <ComboBox fx:id="siteComboBox" prefWidth="200"/>
                         <Button text="Confirm Remove"

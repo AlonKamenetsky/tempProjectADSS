@@ -3,29 +3,72 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Transportation.Presentation.gui.DriverMenuController"
-      alignment="CENTER" prefWidth="500" prefHeight="500" spacing="20" style="-fx-padding: 30;">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            fx:controller="Transportation.Presentation.gui.DriverMenuController"
+            prefWidth="500" prefHeight="500">
 
-    <children>
-        <Button text="View All Drivers" maxWidth="200" prefHeight="40" onAction="#onViewAllDrivers"/>
-        <Button text="Add Driver" maxWidth="200" prefHeight="40" onAction="#onAddDriver"/>
-        <Button text="Remove Driver" maxWidth="200" prefHeight="40" onAction="#onShowRemoveDriver"/>
+    <top>
+        <Text text="Driver Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
 
-
-        <VBox fx:id="removeDriverBox" visible="false" managed="false"
-              spacing="10" alignment="CENTER"
-              style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+    <center>
+        <VBox spacing="15" alignment="CENTER">
             <children>
-                <ComboBox fx:id="driverComboBox" promptText="Select Driver"/>
-                <Button text="Confirm Remove" maxWidth="200" prefHeight="40" onAction="#onRemoveDriver"/>
+                <Button fx:id="viewAllDriversButton"
+                        text="View All Drivers"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewAllDrivers"/>
+
+                <Button fx:id="addDriverButton"
+                        text="Add Driver"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddDriver"/>
+
+                <Button fx:id="showRemoveDriverButton"
+                        text="Remove Driver"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onShowRemoveDriver"/>
+
+                <VBox fx:id="removeDriverBox"
+                      visible="false" managed="false"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefWidth="250"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <ComboBox fx:id="driverComboBox"
+                              promptText="Select Driver"
+                              prefWidth="200"/>
+                    <Button text="Confirm Remove"
+                            onAction="#onRemoveDriver"/>
+                </VBox>
+
+                <Button fx:id="setAvailabilityButton"
+                        text="Set Driver Availability"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onSetAvailability"/>
+
+                <Button fx:id="addLicenseButton"
+                        text="Add License To Driver"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddLicense"/>
+
+                <Button fx:id="backButton"
+                        text="Back to Main Menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
             </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
         </VBox>
-        <Button text="Set Driver Availability" maxWidth="200" prefHeight="40" onAction="#onSetAvailability"/>
-        <Button text="Add License To Driver" maxWidth="200" prefHeight="40" onAction="#onAddLicense"/>
-        <Button text="Back to Main Menu" maxWidth="200" prefHeight="40" onAction="#onBack"/>
-    </children>
-</VBox>
+    </center>
+
+</BorderPane>

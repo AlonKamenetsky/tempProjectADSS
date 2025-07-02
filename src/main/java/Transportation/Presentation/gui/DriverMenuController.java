@@ -26,6 +26,10 @@ public class DriverMenuController {
     private ComboBox<String> driverComboBox;
 
     @FXML
+    private Button backButton;
+
+
+    @FXML
     private void onViewAllDrivers() {
         String allDrivers = DriversHandler.viewAllDrivers();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -135,7 +139,6 @@ public class DriverMenuController {
             alert.showAndWait();
         }
     }
-    @FXML private Button backButton;
 
     @FXML
     private void onBack() throws IOException {

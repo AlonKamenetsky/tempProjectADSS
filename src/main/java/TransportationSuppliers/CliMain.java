@@ -69,6 +69,7 @@ public class CliMain {
                         suppliersCli.mainCliMenu();
                         break;
                     case "3":
+                        System.out.println("Bye bye!");
                         return;
                     default:
                         System.out.println("Invalid input. Please enter 1 or 2.\n");

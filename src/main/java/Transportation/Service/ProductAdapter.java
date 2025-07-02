@@ -7,7 +7,7 @@ import TransportationSuppliers.Integration.SupplierProvider;
 import java.util.List;
 
 public class ProductAdapter implements ProductProvider {
-    private SupplierProvider supplierProvider;
+    private SupplierProvider supplierProvider = new SupplierProvider();
 
     @Override
     public String getItemById(int id) {

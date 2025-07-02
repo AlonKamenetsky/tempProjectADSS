@@ -1,5 +1,6 @@
 package TransportationSuppliers;
 
+import TransportationSuppliers.data.Util.Database;
 import TransportationSuppliers.data.Util.DatabaseInitializer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,14 +21,24 @@ public class GuiMain extends Application {
 
         showCustomDialog("SuperLee", "Welcome to SuperLee", "The logistics system is ready to use!");
 
-        boolean loadFullData = askYesNo("SuperLee", "Load Data", "Do you want to load the system with FULL data?");
+        BootOption option = askBootOption("SuperLee", "Load Data", "Choose data loading method:");
 
-        if (loadFullData) {
-            DatabaseInitializer db = new DatabaseInitializer();
-            db.loadFullDataTransportation();
+        if (option == BootOption.FULL_DATA) {
+            DatabaseInitializer dbInitializer = new DatabaseInitializer();
+            Database.dropTables();
+            Database.initializeSchema();
+            dbInitializer.loadFullSuppliersData();
+            dbInitializer.loadFullDataTransportation();
             System.out.println("FULL DATA loaded.");
+        } else if (option == BootOption.LAST_RUN_DATA) {
+            System.out.println("Last run's data loaded.");
+        } else if (option == BootOption.NEW_DATABASE_BOOTUP) {
+            System.out.println("Booting up with new empty database...");
+            Database.dropTables();
+            Database.initializeSchema();
         } else {
-            System.out.println("Basic data only.");
+            System.out.println("No option selected. Exiting.");
+            System.exit(0);
         }
 
         String menuChoice = askMenuChoice("SuperLee", "Select Menu", "Which menu do you want to open?");
@@ -76,19 +87,25 @@ public class GuiMain extends Application {
         dialogStage.showAndWait();
     }
 
-    private boolean askYesNo(String title, String header, String message) {
+    private BootOption askBootOption(String title, String header, String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(message);
 
-        ButtonType yesBtn = new ButtonType("Yes");
-        ButtonType noBtn = new ButtonType("No");
+        ButtonType fullDataBtn = new ButtonType("Yes (Full Data)");
+        ButtonType lastRunBtn = new ButtonType("No (Last Run's Data)");
+        ButtonType newDbBtn = new ButtonType("New Database Bootup");
 
-        alert.getButtonTypes().setAll(yesBtn, noBtn);
+        alert.getButtonTypes().setAll(fullDataBtn, lastRunBtn, newDbBtn);
 
         Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == yesBtn;
+        if (result.isPresent()) {
+            if (result.get() == fullDataBtn) return BootOption.FULL_DATA;
+            if (result.get() == lastRunBtn) return BootOption.LAST_RUN_DATA;
+            if (result.get() == newDbBtn) return BootOption.NEW_DATABASE_BOOTUP;
+        }
+        return null;
     }
 
     private String askMenuChoice(String title, String header, String message) {
@@ -112,5 +129,12 @@ public class GuiMain extends Application {
             }
         }
         return null;
+    }
+
+
+    public enum BootOption {
+        FULL_DATA,
+        LAST_RUN_DATA,
+        NEW_DATABASE_BOOTUP
     }
 }
