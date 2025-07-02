@@ -14,7 +14,7 @@ public class CliMain {
         Scanner sc = new Scanner(System.in);
         DatabaseInitializer dbInitializer = new DatabaseInitializer();
         while (true) {
-            System.out.println("Hello, would you like to load the system with data?\n1.yes\n2.no\n3.reset the Database");
+            System.out.println("Hello, would you like to load the system with data?\n1.yes\n2.no - boot up with last run's information\n3.reset the Database - completely new system");
             String input;
             boolean t = true;
             while (t) {
@@ -26,6 +26,7 @@ public class CliMain {
                             Database.dropTables();
                             Database.initializeSchema();
                             dbInitializer.loadFullSuppliersData();
+                            dbInitializer.loadFullDataTransportation();
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }

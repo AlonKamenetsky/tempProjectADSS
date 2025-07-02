@@ -4,8 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class Database {
     private static final String DB_URL = "jdbc:sqlite:data/SuperLee.db";
@@ -66,13 +64,6 @@ public final class Database {
                         FOREIGN KEY (zone_id) REFERENCES zones(zone_id)
                     );
                 """);
-//                st.executeUpdate("""
-//                    CREATE TABLE IF NOT EXISTS items (
-//                        item_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-//                        item_name TEXT    NOT NULL,
-//                        weight    REAL    NOT NULL
-//                    );
-//                """);
                 st.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS items_lists (
                         list_id INTEGER PRIMARY KEY AUTOINCREMENT
@@ -123,15 +114,6 @@ public final class Database {
                         FOREIGN KEY (site_id) REFERENCES sites(site_id)
                     );
                 """);
-//                st.executeUpdate("""
-//                    CREATE TABLE IF NOT EXISTS drivers_in_tasks (
-//                        task_id       TEXT NOT NULL,
-//                        driver_id      TEXT NOT NULL,
-//                        PRIMARY KEY (shift_id, driver_id),
-//                        FOREIGN KEY (shift_id) REFERENCES shifts(id),
-//                        FOREIGN KEY (driver_id) REFERENCES employees(id)
-//                    );
-//                """);
 
                 //Suppliers Tables:
                 st.executeUpdate("""
@@ -245,7 +227,16 @@ public final class Database {
                 "suppliers_days",
                 "order_product_for_scheduled_order_data",
                 "order_product_data",
-                "sites"
+                "trucks",
+                "drivers",
+                "driver_licenses",
+                "zones",
+                "sites",
+                "items_lists",
+                "items_in_list",
+                "transportation_tasks",
+                "transportation_docs",
+                "transportation_task_destinations"
         };
 
         try (Statement stmt = conn.createStatement()) {
@@ -258,6 +249,101 @@ public final class Database {
 
     public static void initializeSchema() {
         try (Statement stmt = conn.createStatement()) {
+            // Initialize Transportation
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS trucks(
+                        truck_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                        truck_type      TEXT      NOT NULL,
+                        license_number  TEXT      NOT NULL,
+                        model           TEXT      NOT NULL,
+                        net_weight      REAL      NOT NULL,
+                        max_weight      REAL      NOT NULL,
+                        is_free         BOOLEAN   NOT NULL
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS drivers (
+                        driver_id    TEXT PRIMARY KEY,
+                        driver_name  TEXT NOT NULL,
+                        is_available BOOLEAN NOT NULL
+                    );
+                """);
+            stmt.executeUpdate("""
+                        CREATE TABLE IF NOT EXISTS driver_licenses (
+                        driver_id     TEXT NOT NULL,
+                        license_type  TEXT NOT NULL,
+                        PRIMARY KEY (driver_id, license_type),
+                        FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
+                );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS zones (
+                        zone_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+                        zone_name  TEXT NOT NULL
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS sites (
+                        site_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                        address       TEXT    NOT NULL,
+                        contact_name  TEXT    NOT NULL,
+                        phone_number  TEXT    NOT NULL,
+                        zone_id       INTEGER NOT NULL,
+                        FOREIGN KEY (zone_id) REFERENCES zones(zone_id)
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS items_lists (
+                        list_id INTEGER PRIMARY KEY AUTOINCREMENT
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS items_in_list (
+                        list_id   INTEGER NOT NULL,
+                        item_id   INTEGER NOT NULL,
+                        quantity  INTEGER NOT NULL,
+                        PRIMARY KEY (list_id, item_id),
+                        FOREIGN KEY (list_id) REFERENCES items_lists(list_id),
+                        FOREIGN KEY (item_id) REFERENCES products(id)
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS transportation_tasks (
+                        task_id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                        truck_id              INTEGER,
+                        truck_license_number TEXT  NOT NULL  ,
+                        task_date             TEXT    NOT NULL,
+                        departure_time        TEXT    NOT NULL,
+                        source_site_address        TEXT NOT NULL,
+                        weight_before_leaving REAL    NOT NULL,
+                        driver_id TEXT ,
+                         warehouse_worker_id TEXT ,
+                        FOREIGN KEY (source_site_address) REFERENCES sites(address),
+                        FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
+                        FOREIGN KEY (driver_id) REFERENCES drivers(driver_id)
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS transportation_docs (
+                        doc_id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                        task_id          INTEGER NOT NULL,
+                        destination_site INTEGER NOT NULL,
+                        item_list_id     INTEGER NOT NULL,
+                        FOREIGN KEY (task_id) REFERENCES transportation_tasks(task_id),
+                        FOREIGN KEY (destination_site) REFERENCES sites(site_id),
+                        FOREIGN KEY (item_list_id) REFERENCES items_lists(list_id)
+                    );
+                """);
+            stmt.executeUpdate("""
+                    CREATE TABLE IF NOT EXISTS transportation_task_destinations (
+                        task_id      INTEGER NOT NULL,
+                        site_id      INTEGER NOT NULL,
+                        PRIMARY KEY (task_id, site_id),
+                        FOREIGN KEY (task_id) REFERENCES transportation_tasks(task_id),
+                        FOREIGN KEY (site_id) REFERENCES sites(site_id)
+                    );
+                """);
+            // Initialize Suppliers
             stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS products (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
