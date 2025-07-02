@@ -49,7 +49,7 @@ public class DatabaseInitializer {
 
         //Adding Trucks
         TruckDTO truck1 = truckDAO.insert(new TruckDTO(null,"small","123","BMW",100F,120F,true));
-        TruckDTO truck2 = truckDAO.insert(new TruckDTO(null,"large","555","BMW",133F,140F,true));
+        TruckDTO truck2 = truckDAO.insert(new TruckDTO(null,"medium","555","BMW",133F,140F,true));
 
         //Adding Driver
         DriverDTO driver1 = driverDAO.insert(new DriverDTO("207271966", "Liel", List.of("B"), true));
@@ -74,7 +74,9 @@ public class DatabaseInitializer {
                 )
         );
         taskDAO.assignDriver(task1.taskId(), driver1.driverId());
+        driverDAO.setAvailability(driver1.driverId(), false);
         taskDAO.assignTruck(task1.taskId(), truck1.licenseNumber());
+        truckDAO.setAvailability(truck1.truckId(), false);
         taskDAO.assignWhWorker(task1.taskId(), "1");
 
     }

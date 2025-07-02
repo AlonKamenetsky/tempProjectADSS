@@ -255,7 +255,7 @@ public class SqliteTransportationTaskDAO implements TransportationTaskDAO {
 
     @Override
     public TransportationTaskDTO assignWhWorker(int taskId, String whwId) throws SQLException {
-        String sql = "UPDATE TransportationTasks SET warehouse_worker_id = ? WHERE task_id = ?";
+        String sql = "UPDATE transportation_tasks SET warehouse_worker_id = ? WHERE task_id = ?";
         try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setString(1, whwId);
             ps.setInt(2, taskId);

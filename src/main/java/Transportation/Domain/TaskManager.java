@@ -104,7 +104,6 @@ public class TaskManager {
             }
 
             String licenseTypeNeeded = LicenseMapper.getRequiredLicense(TruckType.fromString(nextAvailableTruck.get().truckType())).toString();
-
             Optional<DriverDTO> availableDriver = driverManager.getAvailableDriverByLicense(licenseTypeNeeded);
             if (availableDriver.isEmpty()) {
                 throw new NoSuchElementException("No drivers available for this task");
@@ -127,7 +126,7 @@ public class TaskManager {
             taskRepository.assignTruckToTask(task.get().taskId(), nextAvailableTruck.get().licenseNumber());
             truckManager.setTruckAvailability(nextAvailableTruck.get().truckId(), false);
             taskRepository.assignDriverToTask(task.get().taskId(), availableDriver.get().driverId());
-            driverManager.setDriverAvailability(task.get().driverId(), false);
+            driverManager.setDriverAvailability(availableDriver.get().driverId(), false);
             taskRepository.assignWarehouseWorkerToTask(task.get().taskId(), availableWarehouseWorker.getHwId());
 
 
