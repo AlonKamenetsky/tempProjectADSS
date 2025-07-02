@@ -13,24 +13,31 @@ public class SqliteTransportationDocDAO implements TransportationDocDAO {
     @Override
     public TransportationDocDTO insert(TransportationDocDTO doc) throws SQLException {
         String sql = "INSERT INTO transportation_docs(task_id, destination_site, item_list_id) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = Database.getConnection()
-                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.setInt(1, doc.taskId());
             ps.setInt(2, doc.destinationSite());
             ps.setInt(3, doc.itemsListId());
             ps.executeUpdate();
+        }
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
+        // Get the generated ID using SQLite's built-in function
+        try (Statement stmt = Database.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
                 return new TransportationDocDTO(
-                        keys.getInt(1),
+                        generatedId,
                         doc.taskId(),
                         doc.destinationSite(),
                         doc.itemsListId()
                 );
+            } else {
+                throw new SQLException("Failed to retrieve generated transportation_doc ID");
             }
         }
     }
+
 
     @Override
     public void delete(int docId) throws SQLException {

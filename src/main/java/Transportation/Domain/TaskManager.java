@@ -210,7 +210,9 @@ public class TaskManager {
 
     private void initializeWarehouseWorkers() {
         this.warehouseWorkers = new ArrayList<>();
-        warehouseWorkers.add(new WarehouseWorker("1", "avi"));
+        WarehouseWorker w1 = new WarehouseWorker("1", "avi");
+        w1.setAvailable(false);
+        warehouseWorkers.add(w1);
         warehouseWorkers.add(new WarehouseWorker("2", "shlomi"));
         warehouseWorkers.add(new WarehouseWorker("3", "keren"));
         warehouseWorkers.add(new WarehouseWorker("4", "hadar"));

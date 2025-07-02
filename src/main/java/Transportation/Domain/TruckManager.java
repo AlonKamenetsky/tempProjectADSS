@@ -47,7 +47,7 @@ public class TruckManager {
         if (truckToChange.isPresent()) {
             truckRepository.updateAvailability(truckId, status);
         } else {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("the truck does not exist");
         }
     }
 

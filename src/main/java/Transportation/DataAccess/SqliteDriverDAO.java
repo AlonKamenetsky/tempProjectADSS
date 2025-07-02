@@ -15,7 +15,7 @@ public class SqliteDriverDAO implements DriverDAO {
 
         String insertDriverSQL = "INSERT INTO drivers (driver_id, driver_name, is_available) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(insertDriverSQL)) {
-            ps.setString(1, driver.driverId());     // התעודת זהות שלך
+            ps.setString(1, driver.driverId());
             ps.setString(2, driver.driverName());
             ps.setBoolean(3, driver.isAvailable());
             ps.executeUpdate();
@@ -31,7 +31,7 @@ public class SqliteDriverDAO implements DriverDAO {
             ps.executeBatch();
         }
 
-        return driver; // מחזיר עם אותו ID שסיפקת
+        return driver;
     }
 
 
@@ -133,7 +133,6 @@ public class SqliteDriverDAO implements DriverDAO {
         String driverId = rs.getString("driver_id");
         String name = rs.getString("driver_name");
         boolean available = rs.getBoolean("is_available");
-        System.out.println("DriverID from DB: " + driverId);
 
         // Load license types
         List<String> licenses = new ArrayList<>();

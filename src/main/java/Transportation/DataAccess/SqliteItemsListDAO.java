@@ -12,15 +12,21 @@ public class SqliteItemsListDAO implements ItemsListDAO {
     @Override
     public int createEmptyList() throws SQLException {
         String sql = "INSERT INTO items_lists DEFAULT VALUES";
-        try (PreparedStatement ps = Database.getConnection()
-                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        try (PreparedStatement ps = Database.getConnection().prepareStatement(sql)) {
             ps.executeUpdate();
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                return keys.getInt(1);
+        }
+
+        try (Statement stmt = Database.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            } else {
+                throw new SQLException("Failed to retrieve last inserted ID");
             }
         }
     }
+
 
     @Override
     public void addItemToList(int listId, int itemId, int quantity) throws SQLException {
