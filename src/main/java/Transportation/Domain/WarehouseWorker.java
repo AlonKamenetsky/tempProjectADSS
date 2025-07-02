@@ -16,9 +16,11 @@ public class WarehouseWorker {
     public String getHwId() {
         return hwId;
     }
+
     public String getHwName() {
         return hwName;
     }
+
     public boolean isAvailable() {
         return isAvailable;
     }
