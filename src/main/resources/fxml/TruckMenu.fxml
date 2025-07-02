@@ -12,14 +12,12 @@
             fx:controller="Transportation.Presentation.gui.TruckMenuController"
             prefWidth="500" prefHeight="500">
 
-    <!-- כותרת -->
     <top>
         <Text text="Truck Management Menu"
               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
               BorderPane.alignment="CENTER"/>
     </top>
 
-    <!-- תוכן עיקרי -->
     <center>
         <VBox spacing="15" alignment="CENTER">
             <children>
@@ -49,15 +47,16 @@
                         onAction="#onShowRemoveTruck"/>
 
                 <VBox fx:id="removeTruckBox"
-                      visible="false"
-                      spacing="10" alignment="CENTER"
+                      visible="false" managed="false"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefWidth="250"
                       style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
-                    <children>
-                        <ComboBox fx:id="truckComboBox" prefWidth="200"/>
-                        <Button text="Confirm Remove"
-                                maxWidth="200" prefHeight="40"
-                                onAction="#onRemoveTruck"/>
-                    </children>
+                    <ComboBox fx:id="truckComboBox"
+                              promptText="Select Truck"
+                              prefWidth="200"/>
+                    <Button text="Confirm Remove"
+                            onAction="#onRemoveTruck"/>
                 </VBox>
 
                 <Button fx:id="backButton"

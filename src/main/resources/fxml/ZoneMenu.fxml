@@ -10,7 +10,7 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="Transportation.Presentation.gui.ZoneMenuController"
-            prefWidth="500" prefHeight="600">
+            prefWidth="500" prefHeight="500">
 
     <top>
         <Text text="Zone Management Menu"
@@ -42,8 +42,10 @@
                         onAction="#onShowModifyZone"/>
 
                 <VBox fx:id="modifyZoneBox"
-                      visible="false"
-                      spacing="10" alignment="CENTER"
+                      visible="false" managed="false"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefWidth="250"
                       style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
                     <children>
                         <ComboBox fx:id="zoneComboBox" prefWidth="200"/>
@@ -68,8 +70,10 @@
                         onAction="#onShowRemoveZone"/>
 
                 <VBox fx:id="removeZoneBox"
-                      visible="false"
-                      spacing="10" alignment="CENTER"
+                      visible="false" managed="false"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefWidth="250"
                       style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
                     <children>
                         <ComboBox fx:id="removeZoneComboBox" prefWidth="200"/>

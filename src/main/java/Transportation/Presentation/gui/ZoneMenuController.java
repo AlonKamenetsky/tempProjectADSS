@@ -92,6 +92,7 @@ public class ZoneMenuController {
     @FXML
     private void onShowModifyZone() {
         modifyZoneBox.setVisible(true);
+        modifyZoneBox.setManaged(true);
         zoneComboBox.getItems().clear();
         zonesHandler.viewAllZones().forEach(z -> zoneComboBox.getItems().add(z.zoneName()));
     }
@@ -99,6 +100,7 @@ public class ZoneMenuController {
     @FXML
     private void onShowRemoveZone() {
         removeZoneBox.setVisible(true);
+        removeZoneBox.setManaged(true);
         removeZoneComboBox.getItems().clear();
         zonesHandler.viewAllZones().forEach(z -> removeZoneComboBox.getItems().add(z.zoneName()));
     }
@@ -150,6 +152,9 @@ public class ZoneMenuController {
         zonesHandler.deleteZone(zoneName);
         showAlert("Success", "Zone removed.");
         removeZoneComboBox.getItems().remove(zoneName);
+        removeZoneBox.setManaged(false);
+        removeZoneBox.setVisible(false);
+
     }
 
     @FXML

@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Transportation.Presentation.gui.DriverMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Transportation.Presentation.gui.DriverMenuController"
+      alignment="CENTER" prefWidth="500" prefHeight="500" spacing="20" style="-fx-padding: 30;">
 
-</AnchorPane>
+    <children>
+        <Button text="View All Drivers" maxWidth="200" prefHeight="40" onAction="#onViewAllDrivers"/>
+        <Button text="Add Driver" maxWidth="200" prefHeight="40" onAction="#onAddDriver"/>
+        <Button text="Remove Driver" maxWidth="200" prefHeight="40" onAction="#onShowRemoveDriver"/>
+
+
+        <VBox fx:id="removeDriverBox" visible="false" managed="false"
+              spacing="10" alignment="CENTER"
+              style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+            <children>
+                <ComboBox fx:id="driverComboBox" promptText="Select Driver"/>
+                <Button text="Confirm Remove" maxWidth="200" prefHeight="40" onAction="#onRemoveDriver"/>
+            </children>
+        </VBox>
+        <Button text="Set Driver Availability" maxWidth="200" prefHeight="40" onAction="#onSetAvailability"/>
+        <Button text="Add License To Driver" maxWidth="200" prefHeight="40" onAction="#onAddLicense"/>
+        <Button text="Back to Main Menu" maxWidth="200" prefHeight="40" onAction="#onBack"/>
+    </children>
+</VBox>

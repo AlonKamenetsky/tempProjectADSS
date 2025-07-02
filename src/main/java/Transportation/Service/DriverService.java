@@ -5,6 +5,7 @@ import Transportation.Domain.DriverManager;
 
 import javax.management.InstanceAlreadyExistsException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -75,14 +76,23 @@ public class DriverService {
             throw new RuntimeException("Database access error - Adding license failed");
         }
     }
+    public  List<DriverDTO> getAllDrivers() throws SQLException {
+        try {
+            return driverManager.getAllDrivers();
+        }
+        catch(SQLException e) {
+            throw new RuntimeException("Database access error");
+        }
+    }
+
 
     public String viewAllDrivers() {
-        try {
-            return driverManager.getAllDriversString();
-        }
-        catch (SQLException e) {
-            throw new RuntimeException("Database access error - View all drivers failed");
-        }
+       try {
+           return driverManager.getAllDriversString();
+       }
+         catch (SQLException e) {
+           throw new RuntimeException("Database access error - viewing all drivers failed");
+       }
     }
 
     public void ChangeDriverAvailability(String driverId, boolean status) throws NullPointerException, NoSuchElementException {
