@@ -1,4 +1,4 @@
 package SuppliersModule.PresentationLayer.GUI;
 
-public class GuiMain {
+public class OrderMenuController {
 }
