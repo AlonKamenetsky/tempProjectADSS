@@ -1,7 +1,7 @@
 package SuppliersModule.DataLayer.DAO;
 
 import SuppliersModule.DataLayer.DTO.SupplierDaysDTO;
-import SuppliersModule.util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

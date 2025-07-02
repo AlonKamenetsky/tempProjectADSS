@@ -1,8 +1,10 @@
 package SuppliersModule.PresentationLayer;
 
+import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.ServiceLayer.ServiceController;
-import SuppliersModule.util.Initializers;
+import TransportationSuppliers.Integration.TransportationProvider;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 
@@ -10,11 +12,13 @@ import java.util.*;
 public class SupplierCLI {
     ServiceController serviceController;
     Scanner sc;
-   boolean dataRead;
+    boolean dataRead;
+    TransportationProvider transportationProvider;
 
     public SupplierCLI() {
         this.sc = new Scanner(System.in);
         this.serviceController = ServiceController.getInstance();
+
         dataRead = false;
     }
 
@@ -33,7 +37,7 @@ public class SupplierCLI {
         System.out.println("Enter product weight: ");
         float productWeight = sc.nextFloat();
 
-        int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory,  productWeight);
+        int productID = serviceController.registerNewProduct(productName, productCompanyName, productCategory, productWeight);
         if (productID != -1) System.out.println("Product added successfully.");
         else System.out.println("Error registering product.");
 
@@ -51,7 +55,7 @@ public class SupplierCLI {
         System.out.println("Enter new product weight: ");
         float newProductWeight = sc.nextFloat();
 
-        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany,  newProductWeight);
+        boolean result = serviceController.updateProduct(productId, newProductName, newProductCompany, newProductWeight);
         if (result)
             System.out.println("Product updated successfully.");
         else
@@ -114,7 +118,7 @@ public class SupplierCLI {
             System.out.println("Enter days for supplier (Enter -1 for exit), Enter 1-7: ");
             supplyDays = new ArrayList<>();
             while (true) {
-                int day =  readInt();
+                int day = readInt();
                 if (day == -1)
                     break;
                 supplyDays.add(day);
@@ -126,8 +130,7 @@ public class SupplierCLI {
         if (supplierID == -1) {
             System.out.println("Error creating new supplier.");
             return;
-        }
-        else 
+        } else
             System.out.println("Supplier registered successfully.");
 
 
@@ -243,6 +246,7 @@ public class SupplierCLI {
             System.out.println("Error Creating Supplier contract");
 
     }
+
     private void deleteSupplyContract() {
         //
     }
@@ -254,10 +258,11 @@ public class SupplierCLI {
     }
 
     private void printAllSupplyContracts() {
-      //  String[] contracts = serviceController.getAllContractToStrings();
-       // String[] productData = serviceController.getAllSupplyContractProductsAsString();
+        //  String[] contracts = serviceController.getAllContractToStrings();
+        // String[] productData = serviceController.getAllSupplyContractProductsAsString();
         serviceController.printSupplyContractDetails();
     }
+
     private void printSupplierContracts(int supplierId) {
         String[] result = this.serviceController.getSupplierContractsAsString(supplierId);
         if (result == null) {
@@ -274,29 +279,26 @@ public class SupplierCLI {
     private void registerNewOrder() {
         ArrayList<int[]> dataArray = new ArrayList<>();
         Date today = Date.from(Instant.now());
-
-        while (true) {
-            System.out.println("Enter product ID (Enter -1 for exit): ");
-            int productID = readInt();
-            if (productID == -1)
-                break;
-            System.out.println("Enter quantity");
-            int quantity = readInt();
-            int[] data = {productID, quantity};
-            dataArray.add(data);
-        }
-        if(dataArray.isEmpty()){
-            System.out.println("No items were added. Aborting.");
-            return;
-        }
-
+        System.out.println("Enter product ID (Enter -1 for exit): ");
+        int productID = readInt();
+        System.out.println("Enter quantity");
+        int quantity = readInt();
+        int[] data = {productID, quantity};
+        dataArray.add(data);
         System.out.println("enter delivery date: (Enter T for tomorrow)");
         String deliveryDate = sc.nextLine();
-        if (serviceController.registerNewOrder(dataArray, today, deliveryDate) != -1) {
-            System.out.println("Order registered successfully.");
-        } else {
-            System.out.println("Error: Failed to register new order.");
+        String type = SupplyMethod.ON_DEMAND.toString();
+        try {
+            if (serviceController.registerNewOrder(dataArray, today, deliveryDate, type) != -1) {
+
+                System.out.println("Order registered successfully.");
+            } else {
+                System.out.println("Error: Failed to register new order.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     private void registerNewScheduledOrder() {
@@ -311,14 +313,14 @@ public class SupplierCLI {
             int[] data = {productID, quantity};
             dataArray.add(data);
         }
-        if(dataArray.isEmpty()){
+        if (dataArray.isEmpty()) {
             System.out.println("No items were added. Aborting.");
             return;
         }
 
         System.out.println("enter regular day to be ordered");
         int deliveryDay = this.readInt();
-        if (serviceController.registerNewScheduledOrder(deliveryDay ,dataArray)) {
+        if (serviceController.registerNewScheduledOrder(deliveryDay, dataArray)) {
             System.out.println("Scheduled Order registered successfully.");
         } else {
             System.out.println("Error: Failed to register new order.");
@@ -328,7 +330,7 @@ public class SupplierCLI {
     private void updateOrder() {
         System.out.println("Which order you want to update? Enter orderID: ");
         int orderID = readInt();
-        if(!serviceController.orderExists(orderID)) {
+        if (!serviceController.orderExists(orderID)) {
             System.out.println("Order does not exist.");
             return;
         }
@@ -380,8 +382,7 @@ public class SupplierCLI {
         boolean result = serviceController.updateOrderSupplyDate(orderID, newSupplyDate);
         if (result) {
             System.out.println("Supplier supply date updated successfully.");
-        }
-        else
+        } else
             System.out.println("Supplier supply date update failed.");
     }
 
@@ -431,7 +432,7 @@ public class SupplierCLI {
                 break;
             System.out.println("Enter quantity");
             int quantity = readInt();
-            int [] data = {productID, quantity};
+            int[] data = {productID, quantity};
             dataArray.add(data);
         }
 
@@ -469,15 +470,15 @@ public class SupplierCLI {
     }
 
     private void printAllScheduledOrders() {
-        for (String orderString :this.serviceController.getAllScheduledOrdersAsString())
+        for (String orderString : this.serviceController.getAllScheduledOrdersAsString())
             System.out.println(orderString);
     }
 
     // ------------------- CLI print Functions -------------------
 
     public void printMenuOptions() {
-        if(dataRead)
-            System.out.println("0. Erase all data from Database");
+        // if(dataRead)
+        // System.out.println("0. Erase all data from Database");
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
         System.out.println("3. Supplier contract section");
@@ -493,6 +494,7 @@ public class SupplierCLI {
         System.out.println("5. Print all products");
         System.out.println("6. Exit");
     }
+
     public void printSupplierOptions() {
         System.out.println("1. Register a new supplier");
         System.out.println("2. Update supplier info");
@@ -501,6 +503,7 @@ public class SupplierCLI {
         System.out.println("5. Print all suppliers");
         System.out.println("6. Exit");
     }
+
     public void printSupplierUpdateOption() {
         System.out.println("1. Update supplier name");
         System.out.println("2. Update supplier delivery method");
@@ -508,6 +511,7 @@ public class SupplierCLI {
         System.out.println("4. Update supplier payment info");
         System.out.println("5. Exit");
     }
+
     public void printContractOptions() {
         System.out.println("1. Register a new contract");
         System.out.println("2. Delete supplier contract");
@@ -679,32 +683,35 @@ public class SupplierCLI {
                 return;
         }
     }
-    public int chooseSupplyMethod(){
+
+    public int chooseSupplyMethod() {
         int supplyMethod;
-        while(true){
+        while (true) {
             System.out.println("which type of supplier? \n0. SCHEDULED supplier \n1. ON_DEMAND supplier");
             supplyMethod = readInt();
-            if(supplyMethod == 0 || supplyMethod == 1) break;
+            if (supplyMethod == 0 || supplyMethod == 1) break;
             else System.out.println("Invalid supply method.");
         }
         return supplyMethod;
     }
-    public int chooseDeliveryMethod(){
+
+    public int chooseDeliveryMethod() {
         int deliveryMethod = -1;
         printDeliveryMethods();
-        while(true){
+        while (true) {
             deliveryMethod = readInt();
-            if(deliveryMethod == 0 || deliveryMethod == 1) break;
+            if (deliveryMethod == 0 || deliveryMethod == 1) break;
             else System.out.println("Invalid delivery method.");
         }
         return deliveryMethod;
     }
-    public int choosePaymentMethod(){
+
+    public int choosePaymentMethod() {
         int paymentMethod = -1;
-        while(true){
+        while (true) {
             printPaymentMethods();
             paymentMethod = readInt();
-            if(paymentMethod == 0 || paymentMethod ==1 || paymentMethod==2) break;
+            if (paymentMethod == 0 || paymentMethod == 1 || paymentMethod == 2) break;
             else System.out.println("Invalid payment method.");
 
         }
@@ -713,23 +720,20 @@ public class SupplierCLI {
 
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
-        if(!dataRead){
-            System.out.println("Do you want to read data from csv files? y/n");
-            String option = sc.nextLine();
-            if (option.equalsIgnoreCase("y")) {
-                loadData();
-                dataRead = true;
-            }
-        }
+//        if(!dataRead){
+//            System.out.println("Do you want to read data from csv files? y/n");
+//            String option = sc.nextLine();
+//            if (option.equalsIgnoreCase("y")) {
+//                loadData();
+//                dataRead = true;
+//            }
+//        }
         while (true) {
             printMenuOptions();
             System.out.println("Please select an option: ");
             int userInput = readInt();
             switch (userInput) {
                 case 0:
-                    Initializers.dropAllTables();
-                    serviceController.dropData();
-                    dataRead = false;
                     break;
                 case 1:
                     printProductOptions();
@@ -760,7 +764,8 @@ public class SupplierCLI {
         }
 
     }
-    public void loadData(){
+
+    public void loadData() {
         this.serviceController.loadData();
 
     }
@@ -778,4 +783,6 @@ public class SupplierCLI {
     }
 
 
+    public void loadBasicData() {
+    }
 }

@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import SuppliersModule.ServiceLayer.ServiceController;
 import Transportation.DataAccess.*;
 import Transportation.DTO.*;
 
@@ -78,5 +79,10 @@ public class DatabaseInitializer {
                 )
         );
 
+    }
+
+    public void loadFullSuppliersData() throws SQLException {
+        ServiceController serviceController = ServiceController.getInstance();
+        serviceController.loadData();
     }
 }

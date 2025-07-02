@@ -1,7 +1,7 @@
 package SuppliersModule.DataLayer.DAO;
 
 import SuppliersModule.DataLayer.DTO.SupplierDTO;
-import SuppliersModule.util.Database;
+import TransportationSuppliers.data.Util.Database;
 
 import java.io.File;
 import java.sql.PreparedStatement;
@@ -72,7 +72,7 @@ public class SqliteSupplierDAO {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
             try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
-                System.out.println("Database file: " + new File("data/suppliers.db").getAbsolutePath());
+
 
                 stmt.setString(1, dto.supplierName());
                 stmt.setString(2, dto.productCategory());

@@ -49,7 +49,7 @@ public class SupplierService {
         }
 
         try {
-             this.supplierController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, sd);
+            this.supplierController.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, sd);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -122,9 +122,9 @@ public class SupplierService {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate) {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate,String type) {
         try {
-            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate);
+            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate, type);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -198,5 +198,9 @@ public class SupplierService {
 
     public String getOrderDepartureAdress(int id) {
         return "";
+    }
+
+    public ArrayList<String[]> executeScheduledOrders() {
+        return supplierController.executeScheduledOrders();
     }
 }

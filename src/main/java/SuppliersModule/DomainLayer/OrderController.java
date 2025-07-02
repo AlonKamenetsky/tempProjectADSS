@@ -8,6 +8,7 @@ import SuppliersModule.DomainLayer.Enums.WeekDay;
 import SuppliersModule.DomainLayer.Repositories.*;
 
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -43,8 +44,8 @@ public class OrderController {
         for (int i = 1; i <= numberOfOrders; i++) {
             List<OrderProductForScheduledOrderDataDTO> orders;
             try {
-                 orders = orderProductForScheduledOrderDataRepository.getAllByOrderId(i);
-                 scheduledOrdersMap.put(i, orders);
+                orders = orderProductForScheduledOrderDataRepository.getAllByOrderId(i);
+                scheduledOrdersMap.put(i, orders);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -423,6 +424,71 @@ public class OrderController {
         }
 
         return result.toArray(new String[0]);
+    }
+
+    public ArrayList<String[]> executeScheduledOrders() {
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        for (Map.Entry<Integer, List<OrderProductForScheduledOrderDataDTO>> entry : scheduledOrdersMap.entrySet()) {
+            Integer id = entry.getKey();
+            List<OrderProductForScheduledOrderDataDTO> dtos = entry.getValue();
+            if(checkDay(today.toString(), dtos.get(0).day().toString())){
+
+            }
+        }
+        return null;
+    }
+    private boolean checkDay(String today, String tomorrow) {
+        switch (today) {
+            case "Sunday":
+                if (tomorrow.equals("Monday")) {
+                    return true;
+                }
+                else
+                    return false;
+            case "Monday":
+                if (tomorrow.equals("Tuesday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+            case "Tuesday":
+                if (tomorrow.equals("Wednesday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+            case "Wednesday":
+                if (tomorrow.equals("Thursday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+            case "Thursday":
+                if (tomorrow.equals("Friday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+            case "Friday":
+                if (tomorrow.equals("Saturday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+            case "Saturday":
+                if (tomorrow.equals("Sunday")) {
+                    return true;
+                }
+                else
+                    return false;
+
+        }
+        return false;
     }
 
 }
