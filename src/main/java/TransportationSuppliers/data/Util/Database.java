@@ -15,6 +15,7 @@ public final class Database {
             Path dbFile = Paths.get("SuperLee.db");
             if (Files.exists(dbFile)) {
                 Files.delete(dbFile);
+                System.out.println("for lidor");
             }
 
             Class.forName("org.sqlite.JDBC");
