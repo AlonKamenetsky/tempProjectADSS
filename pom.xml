@@ -28,11 +28,6 @@
 
         <!-- SQLite JDBC driver -->
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.43.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.11</version>
@@ -47,7 +42,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.43.2.1</version>
+            <version>3.45.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

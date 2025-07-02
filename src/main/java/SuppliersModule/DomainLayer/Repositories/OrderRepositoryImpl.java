@@ -60,4 +60,13 @@ public class OrderRepositoryImpl implements IOrderRepository {
         }
     }
 
+    @Override
+    public int getNextOrderID() {
+        try {
+            return orderDAO.getNextOrderId();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

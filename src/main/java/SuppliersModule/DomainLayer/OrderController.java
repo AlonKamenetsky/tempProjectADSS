@@ -129,7 +129,7 @@ public class OrderController {
         double totalOrderValue = calculateTotalPriceDTOs(orderProductDataList);
 
         OrderDTO orderDTO = new OrderDTO(-1, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString());
-        int orderID = orderDTO.orderID();
+        int orderID = orderRepository.getNextOrderID() - 1;
         orderRepository.insertOrder(orderDTO);
 
         for (OrderProductDataDTO data : orderProductDataList) {
@@ -404,6 +404,7 @@ public class OrderController {
                 throw new RuntimeException(e);
             }
             scheduledOrdersMap.put(orderID, lst);
+
         }
         return true;
     }
@@ -441,48 +442,48 @@ public class OrderController {
     }
     private boolean checkDay(String today, String tomorrow) {
         switch (today) {
-            case "Sunday":
+            case "SUNDAY":
                 if (tomorrow.equals("Monday")) {
                     return true;
                 }
                 else
                     return false;
-            case "Monday":
+            case "MONDAY":
                 if (tomorrow.equals("Tuesday")) {
                     return true;
                 }
                 else
                     return false;
 
-            case "Tuesday":
+            case "TUESDAY":
                 if (tomorrow.equals("Wednesday")) {
                     return true;
                 }
                 else
                     return false;
 
-            case "Wednesday":
+            case "WEDNESDAY":
                 if (tomorrow.equals("Thursday")) {
                     return true;
                 }
                 else
                     return false;
 
-            case "Thursday":
+            case "THURSDAY":
                 if (tomorrow.equals("Friday")) {
                     return true;
                 }
                 else
                     return false;
 
-            case "Friday":
+            case "FRIDAY":
                 if (tomorrow.equals("Saturday")) {
                     return true;
                 }
                 else
                     return false;
 
-            case "Saturday":
+            case "SATURDAY":
                 if (tomorrow.equals("Sunday")) {
                     return true;
                 }

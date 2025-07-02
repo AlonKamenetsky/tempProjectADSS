@@ -431,7 +431,6 @@ public class SupplierController {
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
     public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate, String type) throws SQLException {
-        int id[] = null;
         SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.valueOf(type));
         if (supplier == null) return -1;
 

@@ -23,5 +23,6 @@ public interface IOrderRepository {
     Optional<OrderDTO> findAll();
 
     void insertOrder(OrderDTO orderDTO);
+    int getNextOrderID();
 
 }

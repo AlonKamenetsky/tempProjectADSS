@@ -29,6 +29,7 @@ public class ServiceController implements SupplierInterface {
         this.productService = new ProductService();
         this.transportation = new TransportationProvider();
         this.superAddress = "Ben Gurion";
+        executeScheduledOrders();
     }
 
     public void loadData() {
@@ -38,6 +39,8 @@ public class ServiceController implements SupplierInterface {
     }
     private void executeScheduledOrders(){
         List<Integer> ordersToExecute = supplierService.executeScheduledOrders();
+        if(ordersToExecute.size() == 0)
+            return;
         for (Integer orderID : ordersToExecute) {
             String [] orderData = supplierService.getScheduledOrderDataForExecution(orderID);
             ArrayList<int[]> dataList = new ArrayList<>();
@@ -45,20 +48,24 @@ public class ServiceController implements SupplierInterface {
             dataList.add(data);
             Date today = new Date();
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, 1); // add 1 day
-            String tomorrow = cal.getTime().toString();
+            cal.add(Calendar.DATE, 1);
+            Date tomorrow = cal.getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedTomorrow = formatter.format(tomorrow);
             try {
-                int order = this.registerNewOrder(dataList, today, tomorrow,SupplyMethod.SCHEDULED.toString());
+                int order = this.registerNewOrder(dataList, today, formattedTomorrow,SupplyMethod.SCHEDULED.toString());
+                if(order == -1)
+                    return;
                 String departureAddress = supplierService.getOrderDepartureAddress(order);
                 String destinationAddress = this.superAddress;
                 HashMap<String, Integer> map = new HashMap<>();
                 String productName = productService.getProductName(Integer.parseInt(orderData[1]));
                 map.put(productName ,Integer.parseInt(orderData[2]));
-                try {
-                    transportation.addTransportationAssignment(departureAddress, destinationAddress, tomorrow, map);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    transportation.addTransportationAssignment(departureAddress, destinationAddress, formattedTomorrow, map);
+//                } catch (ParseException e) {
+//                    throw new RuntimeException(e);
+//                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -469,22 +476,12 @@ public class ServiceController implements SupplierInterface {
             return -1;
         if (deliveryDateAsDate.before(creationDate))
             return -1;
-        try{
-            //    transportation. need to find a way to have the supplier at this class
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate, type);
-        if(id != -1) {
-            return id;
-        }
-        else{
-            String sourceSite = supplierService.getOrderDepartureAddress(id);
-            //transportation.addTransportationAssignment(sourceSite, superAddress, deliveryDate, );
-            return id;
-        }
+
+       int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate, type);
+       //transportation.addSupplierSite();
+       return id;
+
     }
 
     public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
