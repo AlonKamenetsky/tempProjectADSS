@@ -6,9 +6,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="SuppliersModule.PresentationLayer.GUI.SuppliersMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="SuppliersModule.PresentationLayer.GUI.SuppliersMenuController"
+      alignment="CENTER" spacing="20" prefWidth="500" prefHeight="500">
+    <children>
+        <Text text="Suppliers Main Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-</AnchorPane>
+        <Button fx:id="productButton" text="Task Menu" onAction="#onProductMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="supplierButton" text="Driver Menu" onAction="#onSupplierMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="contractButton" text="Truck Menu" onAction="#onContractMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="orderButton" text="Site Menu" onAction="#onOrderMenu" prefWidth="200" prefHeight="40"/>
+    </children>
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+
+</VBox>

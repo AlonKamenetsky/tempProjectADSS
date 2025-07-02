@@ -47,7 +47,7 @@ public class GuiMain extends Application {
         if ("Transportation".equals(menuChoice)) {
             fxmlPath = "/fxml/TransportationMenu.fxml";
         } else if ("Supplier".equals(menuChoice)) {
-            fxmlPath = "/fxml/Suppliers/SupplierMenu.fxml";
+            fxmlPath = "/fxml/Suppliers/SuppliersMenu.fxml";
         } else {
             System.out.println("No menu selected. Exiting.");
             System.exit(0);
