@@ -28,6 +28,10 @@ public class TransportationProvider implements TransportationInterface {
         }
         catch (InstanceAlreadyExistsException _) {
         }
+        catch(IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
 
         String assignmentTime = "09:00";
         taskService.addTask(assignmentDate, assignmentTime, choiceDestinationSite); // 10:00 time of departure every day for transportations
