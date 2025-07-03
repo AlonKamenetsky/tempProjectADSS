@@ -14,6 +14,7 @@ import javax.management.InstanceAlreadyExistsException;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class TruckMenuController {
 
@@ -93,29 +94,56 @@ public class TruckMenuController {
 
     @FXML
     private void onAddTruck() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Enter license number:");
-        dialog.showAndWait();
-        String licenseNumber = dialog.getResult();
+        // License Number
+        TextInputDialog licenseDialog = new TextInputDialog();
+        licenseDialog.setHeaderText("Enter license number:");
+        if (licenseDialog.showAndWait().isEmpty()) return;
+        String licenseNumber = licenseDialog.getResult();
 
-        dialog.setHeaderText("Enter truck's type (Small/Medium/Large):");
-        dialog.showAndWait();
-        String truckType = dialog.getResult();
+        // Truck Type
+        List<String> typeOptions = List.of("Small", "Medium", "Large");
+        ChoiceDialog<String> typeDialog = new ChoiceDialog<>("Small", typeOptions);
+        typeDialog.setTitle("Truck Type");
+        typeDialog.setHeaderText("Choose truck's type:");
+        typeDialog.setContentText("Type:");
 
-        dialog.setHeaderText("Enter truck's model:");
-        dialog.showAndWait();
-        String model = dialog.getResult();
+        Optional<String> typeResult = typeDialog.showAndWait();
+        if (typeResult.isEmpty()) return;
+        String truckType = typeResult.get();
 
-        dialog.setHeaderText("Enter truck's Net Weight:");
-        dialog.showAndWait();
-        String netWeight = dialog.getResult();
-        float netF = Float.parseFloat(netWeight);
+        // Model
+        TextInputDialog modelDialog = new TextInputDialog();
+        modelDialog.setHeaderText("Enter truck's model:");
+        if (modelDialog.showAndWait().isEmpty()) return;
+        String model = modelDialog.getResult();
 
-        dialog.setHeaderText("Enter truck's Maximum Weight:");
-        dialog.showAndWait();
-        String maximumWeight = dialog.getResult();
-        float maxF = Float.parseFloat(maximumWeight);
+        // Net Weight
+        TextInputDialog netDialog = new TextInputDialog();
+        netDialog.setHeaderText("Enter truck's Net Weight:");
+        if (netDialog.showAndWait().isEmpty()) return;
+        String netWeight = netDialog.getResult();
+        float netF;
+        try {
+            netF = Float.parseFloat(netWeight);
+        } catch (NumberFormatException e) {
+            showError("Invalid Input", "Net Weight must be a number.");
+            return;
+        }
 
+        // Maximum Weight
+        TextInputDialog maxDialog = new TextInputDialog();
+        maxDialog.setHeaderText("Enter truck's Maximum Weight:");
+        if (maxDialog.showAndWait().isEmpty()) return;
+        String maxWeight = maxDialog.getResult();
+        float maxF;
+        try {
+            maxF = Float.parseFloat(maxWeight);
+        } catch (NumberFormatException e) {
+            showError("Invalid Input", "Maximum Weight must be a number.");
+            return;
+        }
+
+        // Try to add the truck
         try {
             TrucksHandler.AddTruck(truckType, licenseNumber, model, netF, maxF);
             Alert success = new Alert(Alert.AlertType.INFORMATION);
@@ -189,5 +217,13 @@ public class TruckMenuController {
         Stage stage = (Stage) backButton.getScene().getWindow();
         stage.setScene(new Scene(root));
         stage.show();
+    }
+
+    // helper methods
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }

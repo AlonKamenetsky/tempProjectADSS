@@ -129,6 +129,7 @@ public class SiteMenu {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         } catch (NoSuchElementException n) {
+            SitesHandler.deleteSite(inputAddress);
             System.out.println("Zone doesn't exist.");
         } catch (InstanceAlreadyExistsException e) {
             System.out.println("Site already exists");
