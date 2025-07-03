@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="SuppliersModule.PresentationLayer.GUI.ProductMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <top>
+        <Text text="Product Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="addProductButton"
+                        text="Add a Product"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddProduct"/>
+
+                <Button fx:id="updateProductButton"
+                        text="Update a product"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onUpdateProduct"/>
+
+                <Button fx:id="deleteProductButton"
+                        text="Delete a product"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onDeleteProduct"/>
+                <Button fx:id="printProductButton"
+                        text="Print specific product"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintProduct"/>
+                <Button fx:id="printAllProductsButton"
+                        text="Print all products"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintAllProducts"/>
+                <Button fx:id="backButton"
+                        text="Back to main menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

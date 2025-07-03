@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -20,6 +18,7 @@
         <Button fx:id="supplierButton" text="Suppliers Menu" onAction="#onSupplierMenu" prefWidth="200" prefHeight="40"/>
         <Button fx:id="contractButton" text="Contracts Menu" onAction="#onContractMenu" prefWidth="200" prefHeight="40"/>
         <Button fx:id="orderButton" text="Orders Menu" onAction="#onOrderMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="switchToTransportation" text="SwitchToTransportation" onAction="#onSwitchToTransportation" prefWidth="200" prefHeight="40"/>
     </children>
 
     <padding>

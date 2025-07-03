@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="SuppliersModule.PresentationLayer.GUI.SupplierMenuController"
-            prefHeight="400.0" prefWidth="600.0" >
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <top>
+        <Text text="Product Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="addSupplierButton"
+                        text="Add a Supplier"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddSupplier"/>
+
+                <Button fx:id="updateSupplierButton"
+                        text="Update a Supplier"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onUpdateSupplier"/>
+
+                <Button fx:id="deleteSupplierButton"
+                        text="Delete a Supplier"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onDeleteSupplier"/>
+                <Button fx:id="printSupplierButton"
+                        text="Print specific Supplier"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintSupplier"/>
+                <Button fx:id="printAllSuppliersButton"
+                        text="Print all Suppliers"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintAllSuppliers"/>
+                <Button fx:id="backButton"
+                        text="Back to main menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>
+

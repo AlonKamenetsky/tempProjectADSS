@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="SuppliersModule.PresentationLayer.GUI.ContractMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <top>
+        <Text text="Product Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="addContractButton"
+                        text="Add a new Contract"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddContract"/>
+
+                <Button fx:id="deleteContractButton"
+                        text="Delete a contract"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onDeleteContract"/>
+
+                <Button fx:id="printContractButton"
+                        text="Print a specific contract"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintContract"/>
+                <Button fx:id="printAllContractsButton"
+                        text="Print all Contracts"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintAllContracts"/>
+                <Button fx:id="backButton"
+                        text="Back to main menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>

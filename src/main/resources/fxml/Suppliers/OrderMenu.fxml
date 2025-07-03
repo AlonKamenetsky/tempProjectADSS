@@ -1,14 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="SuppliersModule.PresentationLayer.GUI.OrderMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <top>
+        <Text text="Product Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="addOrderButton"
+                        text="Add an new Order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddOrder"/>
+
+                <Button fx:id="AddScheduledOrderButton"
+                        text="Add a new scheduled order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddScheduledOrder"/>
+
+                <Button fx:id="updateOrderButton"
+                        text="Update an order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onUpdateOrder"/>
+                <Button fx:id="deleteOrderButton"
+                        text="Delete an order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onDeleteOrder"/>
+                <Button fx:id="deleteScheduledOrderButton"
+                        text="Delete an scheduled order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onDeleteScheduledOrder"/>
+                <Button fx:id="printOrderButton"
+                        text="Print an order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintOrder"/>
+                <Button fx:id="printAllOrdersButton"
+                        text="Print all orders"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintAllOrders"/>
+                <Button fx:id="printScheduledOrderButton"
+                        text="Print a scheduled order"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintScheduledOrder"/>
+                <Button fx:id="printAllScheduledOrdersButton"
+                        text="Print all scheduled orders"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onPrintAllScheduledOrders"/>
+                <Button fx:id="backButton"
+                        text="Back to main menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+
+</BorderPane>
