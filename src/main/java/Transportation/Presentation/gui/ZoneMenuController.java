@@ -116,6 +116,10 @@ public class ZoneMenuController {
         if (newName != null) {
             zonesHandler.UpdateZone(oldName, newName);
             showAlert("Success", "Zone name updated.");
+
+            zoneComboBox.getItems().clear();
+            zoneComboBox.setValue(null);
+            zonesHandler.viewAllZones().forEach(z -> zoneComboBox.getItems().add(z.zoneName()));
         }
     }
 
@@ -130,6 +134,9 @@ public class ZoneMenuController {
         if (address != null) {
             siteZoneHandler.addSiteToZone(address, zoneName);
             showAlert("Success", "Site mapped.");
+
+            zoneComboBox.getItems().clear();
+            zoneComboBox.setValue(null);
         }
     }
 
@@ -139,9 +146,17 @@ public class ZoneMenuController {
         dialog.setHeaderText("Enter Site Address:");
         dialog.showAndWait();
         String address = dialog.getResult();
-        if (address != null) {
-            siteZoneHandler.removeSiteFromZone(address);
-            showAlert("Success", "Site mapping removed.");
+
+        if (address != null && !address.isBlank()) {
+            try {
+                siteZoneHandler.removeSiteFromZone(address);
+                showAlert("Success", "Site mapping removed.");
+            } catch (NoSuchElementException e) {
+                showError("Mapping Not Found", "No mapping found for site: " + address);
+            }
+
+            zoneComboBox.getItems().clear();
+            zoneComboBox.setValue(null);
         }
     }
 
@@ -170,6 +185,14 @@ public class ZoneMenuController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    //helepr methods
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, message);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
         alert.showAndWait();
     }
 }

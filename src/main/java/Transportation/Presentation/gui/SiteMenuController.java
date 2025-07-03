@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -75,38 +76,67 @@ public class SiteMenuController {
         dialog.setHeaderText("Enter site address:");
         dialog.showAndWait();
         String siteAddress = dialog.getResult();
-        if (siteAddress != null) {
+
+        if (siteAddress != null && !siteAddress.isBlank()) {
             Optional<SiteDTO> result = SitesHandler.getSiteByAddress(siteAddress);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Site Menu");
-            alert.setHeaderText("Site Details");
-            alert.showAndWait();
+            if (result.isPresent()) {
+                SiteDTO site = result.get();
+                StringBuilder siteDetails = new StringBuilder();
+                siteDetails.append("Site ID: ").append(site.siteId()).append("\n");
+                siteDetails.append("Address: ").append(site.siteAddress()).append("\n");
+                siteDetails.append("Contact Name: ").append(site.contactName()).append("\n");
+                siteDetails.append("Phone Number: ").append(site.phoneNumber()).append("\n");
+                siteDetails.append("Zone ID: ").append(site.zoneId()).append("\n");
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Site Menu");
+                alert.setHeaderText("Site Details");
+                alert.setContentText(siteDetails.toString());
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                alert.showAndWait();
+            } else {
+                Alert notFound = new Alert(Alert.AlertType.ERROR);
+                notFound.setTitle("Error");
+                notFound.setHeaderText("Site Not Found");
+                notFound.setContentText("No site found with the address: " + siteAddress);
+                notFound.showAndWait();
+            }
         }
     }
 
+
     @FXML
     private void onAddSite() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Enter new site's address:");
-        dialog.showAndWait();
-        String siteAddress = dialog.getResult();
+        // Step 1: Site address
+        TextInputDialog addressDialog = new TextInputDialog();
+        addressDialog.setHeaderText("Enter new site's address:");
+        if (addressDialog.showAndWait().isEmpty()) return;
+        String siteAddress = addressDialog.getResult();
 
-        dialog.setHeaderText("Enter new site's contact name:");
-        dialog.showAndWait();
-        String siteContact = dialog.getResult();
+        // Step 2: Contact name
+        TextInputDialog contactDialog = new TextInputDialog();
+        contactDialog.setHeaderText("Enter new site's contact name:");
+        if (contactDialog.showAndWait().isEmpty()) return;
+        String siteContact = contactDialog.getResult();
 
-        dialog.setHeaderText("Enter new site's contact's phone number:");
-        dialog.showAndWait();
-        String phoneContact = dialog.getResult();
+        // Step 3: Phone number
+        TextInputDialog phoneDialog = new TextInputDialog();
+        phoneDialog.setHeaderText("Enter new site's contact's phone number:");
+        if (phoneDialog.showAndWait().isEmpty()) return;
+        String phoneContact = phoneDialog.getResult();
 
-        dialog.setHeaderText("Enter new site's zone:");
-        dialog.showAndWait();
-        String zone = dialog.getResult();
+        // Step 4: Zone
+        TextInputDialog zoneDialog = new TextInputDialog();
+        zoneDialog.setHeaderText("Enter new site's zone:");
+        if (zoneDialog.showAndWait().isEmpty()) return;
+        String zone = zoneDialog.getResult();
 
+        // Try adding the site
         try {
             SitesHandler.addSite(siteAddress, siteContact, phoneContact);
             SiteZoneHandler.addSiteToZone(siteAddress, zone);
+
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Success");
             success.setHeaderText("Site added successfully and mapped to " + zone.toUpperCase());
@@ -117,6 +147,7 @@ public class SiteMenuController {
             error.setHeaderText("Site Already Exists");
             error.showAndWait();
         } catch (NoSuchElementException n) {
+            SitesHandler.deleteSite(siteAddress);
             Alert error = new Alert(Alert.AlertType.ERROR);
             error.setTitle("Error");
             error.setHeaderText("Zone Not Found");
@@ -124,12 +155,13 @@ public class SiteMenuController {
         }
     }
 
+
     @FXML
     private void onShowRemoveSite() {
         removeSiteBox.setVisible(true);
         removeSiteBox.setManaged(true);
-
         siteComboBox.getItems().clear();
+
         List<SiteDTO> sites = SitesHandler.viewAllSites();
         for (SiteDTO site : sites) {
             siteComboBox.getItems().add(site.siteAddress());
@@ -158,8 +190,8 @@ public class SiteMenuController {
             siteComboBox.getItems().remove(selectedAddress);
             siteComboBox.setValue(null);
 
-            siteComboBox.setVisible(false);
-            siteComboBox.setManaged(false);
+            removeSiteBox.setVisible(false);
+            removeSiteBox.setManaged(false);
 
         } catch (NoSuchElementException e) {
             Alert error = new Alert(Alert.AlertType.ERROR);

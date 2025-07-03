@@ -68,6 +68,7 @@ public class TaskMenuController {
 
     @FXML
     private void onAddTask() {
+        boolean destinationAdded = false;
         String taskDate, taskDeparture, taskSourceSite;
         HashMap<String, Integer> itemsChosen = new HashMap<>();
 
@@ -125,10 +126,14 @@ public class TaskMenuController {
                     }
                     String allItems = allItemsBuilder.toString();
 
-                    showInfo("Available Items", allItems);
+                    showInfoItems("Available Items", allItems);
 
                     String itemName = getInput("Add Item", "Enter item name:");
-                    if (itemName == null || !productHandler.doesItemExist(itemName)) {
+                    if (itemName == null) {
+                        // User canceled — exit the item-adding loop
+                        break;
+                    }
+                    if (!productHandler.doesItemExist(itemName)) {
                         showWarning("Invalid Item", "Item does not exist.");
                         continue;
                     }
@@ -145,6 +150,7 @@ public class TaskMenuController {
                     String done = getInput("Done?", "Are you done adding items to this destination? (Yes/No)");
                     if (done != null && done.equalsIgnoreCase("yes")) {
                         tasksHandler.addDocToTask(taskDate, taskDeparture, taskSourceSite, destinationSite, itemsChosen);
+                        destinationAdded = true;
                         break;
                     }
                 }
@@ -156,9 +162,21 @@ public class TaskMenuController {
                 showInfo("Destination Added", "Destination site added successfully.");
                 itemsChosen.clear();
 
-                String more = getInput("Add More?", "Add more destinations? (Yes/No)");
+                String more = getInput("Add More?", "Add more destinations? (Yes/Anything for no)");
                 if (more == null || !more.equalsIgnoreCase("yes")) break;
             }
+        }
+
+        // If no destination was added, cancel task and alert
+        try {
+            if (!destinationAdded) {
+                tasksHandler.deleteTask(taskDate, taskDeparture, taskSourceSite);
+                showError("No Destinations", "You must add at least one destination. Task was canceled.");
+                return;
+            }
+        }
+        catch (Exception e) {
+            showError("Task Deletion Failed", e.getMessage());
         }
 
         // Final: Assign driver & truck
@@ -256,10 +274,19 @@ public class TaskMenuController {
         return result.orElse(null);
     }
 
-    private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
+    private void showInfoItems(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
+
+        TextArea textArea = new TextArea(message);
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setPrefWidth(400);
+        textArea.setPrefHeight(400);
+
+        alert.getDialogPane().setContent(textArea);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.showAndWait();
     }
 
@@ -274,6 +301,14 @@ public class TaskMenuController {
         Alert alert = new Alert(Alert.AlertType.WARNING, message);
         alert.setTitle(title);
         alert.setHeaderText(null);
+        alert.showAndWait();
+    }
+
+    private void showInfo(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 

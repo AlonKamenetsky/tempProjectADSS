@@ -92,5 +92,8 @@ public class SiteZoneService {
         } catch (SQLException e) {
             throw new RuntimeException("Database access error");
         }
+        catch (NoSuchElementException e) {
+            return "UNMAPPED";
+        }
     }
 }
