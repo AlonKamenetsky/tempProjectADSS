@@ -1,5 +1,6 @@
 package SuppliersModule.PresentationLayer.GUI;
 
+import SuppliersModule.ServiceLayer.ServiceController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +12,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class OrderMenuController {
-    @FXML private Button backButton;
+    ServiceController serviceController;
+    public OrderMenuController() {
+        serviceController = ServiceController.getInstance();
+    }
 
     public void onBack(ActionEvent actionEvent) throws IOException {
         openView("/fxml/Suppliers/SuppliersMenu.fxml", actionEvent);

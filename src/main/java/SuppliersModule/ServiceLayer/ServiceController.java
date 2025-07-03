@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ServiceController implements SupplierInterface {
@@ -30,7 +31,7 @@ public class ServiceController implements SupplierInterface {
         this.productService = new ProductService();
         this.transportation = new TransportationProvider();
         this.superAddress = "Ben Gurion";
-    //    executeScheduledOrders();
+        executeScheduledOrders();
     }
 
     public void deleteSupplyContract(int contractId) {
@@ -479,8 +480,29 @@ public class ServiceController implements SupplierInterface {
 
 
        int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate, type, deliverySite);
-       //transportation.addSupplierSite();
-       return id;
+        String departureAddress = supplierService.getOrderDepartureAddress(id);
+        String contactName = supplierService.getOrderContactName(id);
+        String phoneNumber = supplierService.getOrderPhoneNumber(id);
+        int productId = dataList.get(0)[0];
+        int productQuantity = dataList.get(0)[1];
+        HashMap<String, Integer> productMap = new HashMap<>();
+        String productName = productService.getProductName(productId);
+        productMap.put(productName, productQuantity);
+        String formattedDate;
+        if(deliveryDate.equals("t")) {
+            LocalDate tomorrow = LocalDate.now().plusDays(1);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            formattedDate = tomorrow.format(formatter);
+        }
+        else {
+            formattedDate = deliveryDate;
+        }
+        try {
+            transportation.addTransportationAssignment(departureAddress, deliverySite, contactName, phoneNumber, formattedDate, productMap);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
 
     }
 

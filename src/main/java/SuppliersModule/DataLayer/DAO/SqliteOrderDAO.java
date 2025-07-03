@@ -66,7 +66,7 @@ public class SqliteOrderDAO {
     public OrderDTO insert(OrderDTO dto) throws SQLException {
         String sql = """
                 INSERT INTO orders (supplier_id, delivering_method, order_date, supply_date,
-                                    total_price, order_status, supply_method, delivery_ste)
+                                    total_price, order_status, supply_method, delivery_site)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
