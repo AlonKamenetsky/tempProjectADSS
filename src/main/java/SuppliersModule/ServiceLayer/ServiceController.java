@@ -68,11 +68,11 @@ public class ServiceController implements SupplierInterface {
                 HashMap<String, Integer> map = new HashMap<>();
                 String productName = productService.getProductName(Integer.parseInt(orderData[1]));
                 map.put(productName ,Integer.parseInt(orderData[2]));
-                try {
-                    transportation.addTransportationAssignment(departureAddress, destinationAddress, formattedTomorrow, map);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                     transportation.addTransportationAssignment(departureAddress, formattedTomorrow, map);
+//                } catch (ParseException e) {
+//                    throw new RuntimeException(e);
+//                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -130,11 +130,6 @@ public class ServiceController implements SupplierInterface {
                 continue;
             }
             supplierService.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, emailAddress, contactName, bankAcount, pm, supplyDays);
-            try {
-                this.transportation.addSupplierSite(address, contactName, phoneNumber);
-            } catch (InstanceAlreadyExistsException e) {
-                throw new RuntimeException(e);
-            }
             // Add to your repository or controller
         }
     }
@@ -299,13 +294,6 @@ public class ServiceController implements SupplierInterface {
         if (this.validateProductCategory(productCategory) && this.validateSupplyMethod(supplyMethod) && this.validateDeliveringMethod(deliveringMethod) &&
                 this.validatePaymentMethod(paymentMethod) && validateDays(supplyDays)) {
             id = this.supplierService.registerNewSupplier(supplyMethod, supplierName, productCategory, deliveringMethod, phoneNumber, address, email, contactName, bankAccount, paymentMethod, supplyDays);
-        }
-        if(id != -1){
-            try {
-                this.transportation.addSupplierSite(address, contactName, phoneNumber);
-            } catch (InstanceAlreadyExistsException e) {
-                throw new RuntimeException(e);
-            }
         }
         return id;
     }

@@ -40,6 +40,7 @@ public class TManagerRoleMenu {
                     break;
                 case "2":
                     DriverMenuUI.show();
+                    break;
                 case "3":
                     TaskMenuUI.show();
                     break;

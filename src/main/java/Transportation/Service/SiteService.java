@@ -25,13 +25,13 @@ public class SiteService {
         if (_address == null || _contactName == null || _phoneNumber == null) {
             throw new NullPointerException();
         }
-        if (!_contactName.matches("[a-zA-Z]+")) {
+        if (!_contactName.matches("[a-zA-Z]+( [a-zA-Z]+)?")) {
             throw new IllegalArgumentException("Not a valid contact name.");
         }
         try {
             return siteManager.addSite(_address.toLowerCase(), _contactName, _phoneNumber);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - adding site failed.");
         }
     }
 
@@ -48,7 +48,7 @@ public class SiteService {
             int siteId = maybeSite.get().siteId();
             siteManager.removeSite(siteId);
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - deleting site failed.");
         }
     }
 
@@ -59,7 +59,7 @@ public class SiteService {
         try {
             return siteManager.findSiteByAddress(address.toLowerCase());
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - getting site failed.");
         }
     }
 
@@ -67,7 +67,7 @@ public class SiteService {
         try {
             return siteManager.getAllSites();
         } catch (SQLException e) {
-            throw new RuntimeException("Database access error");
+            throw new RuntimeException("Database access error - viewing all sites failed.");
         }
     }
 }

@@ -25,19 +25,24 @@ public class DatabaseInitializer {
         boolean tasksExist = !taskDAO.findAll().isEmpty();
 
         if (zonesExist || sitesExist || trucksExist || driversExist || tasksExist) {
-            System.out.println("Fake data already exists. Skipping data load.");
+            System.out.println("Data already exists. Skipping data load.");
             return;
         }
-
 
         // Adding Zones
         ZoneDTO zone1 = zoneDAO.insert(new ZoneDTO(null, "center", new ArrayList<>()));
         ZoneDTO zone2 = zoneDAO.insert(new ZoneDTO(null, "east", new ArrayList<>()));
         ZoneDTO zone3 = zoneDAO.insert(new ZoneDTO(null, "south", new ArrayList<>()));
+        ZoneDTO zone4 = zoneDAO.insert(new ZoneDTO(null, "north", new ArrayList<>()));
+
+        //Adding 3 branches of the Super
+        SiteDTO branch1 = siteDAO.insert(new SiteDTO(null, "tel aviv", "liel", "0501111111", zone1.zoneId())); // mapped to center
+        SiteDTO branch2 = siteDAO.insert(new SiteDTO(null, "haifa", "alice", "0501234567", zone4.zoneId())); // mapped to north
+        SiteDTO branch3 = siteDAO.insert(new SiteDTO(null, "beer sheva", "lital", "0502222222", zone3.zoneId())); // mapped to south
 
         //  Adding Sites for Zone 1 (Center)
         SiteDTO site1 = siteDAO.insert(new SiteDTO(null, "bareket 20 shoham", "liel", "0501111111", zone1.zoneId()));
-        SiteDTO site2 = siteDAO.insert(new SiteDTO(null, "tel aviv", "alice", "0501234567", zone1.zoneId()));
+        SiteDTO site2 = siteDAO.insert(new SiteDTO(null, "geffen 3 netanya", "alice", "0501234567", zone1.zoneId()));
 
         //  Adding Sites for Zone 2 (East)
         SiteDTO site3 = siteDAO.insert(new SiteDTO(null, "yafo 123, jerusalem", "avi", "0509999999", zone2.zoneId()));
@@ -51,7 +56,7 @@ public class DatabaseInitializer {
         TruckDTO truck1 = truckDAO.insert(new TruckDTO(null,"small","123","BMW",100F,120F,true));
         TruckDTO truck2 = truckDAO.insert(new TruckDTO(null,"medium","555","BMW",133F,140F,true));
 
-        //Adding Driver
+        //Adding Drivers
         DriverDTO driver1 = driverDAO.insert(new DriverDTO("207271966", "Liel", List.of("B"), true));
         DriverDTO driver2 = driverDAO.insert(new DriverDTO("2005666356","Lidor", new ArrayList<>(Arrays.asList("B","C")), true));
 

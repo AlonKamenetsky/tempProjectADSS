@@ -8,24 +8,33 @@ import javax.management.InstanceNotFoundException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class TransportationProvider implements TransportationInterface {
     private final SiteService siteService;
     private final TaskService taskService;
+    private final Scanner input;
 
     public TransportationProvider() {
         siteService = new SiteService();
         taskService = new TaskService();
+        input = new Scanner(System.in);
     }
 
     @Override
-    public void addTransportationAssignment(String departureAddress, String destinationAddress, String assignmentDate, HashMap<String, Integer> itemsNeeded) throws ParseException {
+    public void addTransportationAssignment(String departureAddress, String choiceDestinationSite, String contactName, String phoneNumber, String assignmentDate, HashMap<String, Integer> itemsNeeded) throws ParseException {
+        try {
+            siteService.addSite(departureAddress, contactName, phoneNumber);
+        }
+        catch (InstanceAlreadyExistsException _) {
+        }
+
         String assignmentTime = "09:00";
-        taskService.addTask(assignmentDate, assignmentTime, departureAddress); // 10:00 time of departure every day for transportations
+        taskService.addTask(assignmentDate, assignmentTime, choiceDestinationSite); // 10:00 time of departure every day for transportations
 
         //checks if destination site already mapped to this assignment
         try {
-            if (taskService.hasDestination(assignmentDate, assignmentTime, departureAddress, destinationAddress)) {
+            if (taskService.hasDestination(assignmentDate, assignmentTime, departureAddress, choiceDestinationSite)) {
                 System.out.println("Task already has this destination.");
                 return;
             }
@@ -38,7 +47,7 @@ public class TransportationProvider implements TransportationInterface {
         }
 
         // add transportation document to this assignment
-        taskService.addDocToTask(assignmentDate, assignmentTime, departureAddress, destinationAddress, itemsNeeded);
+        taskService.addDocToTask(assignmentDate, assignmentTime, departureAddress, choiceDestinationSite, itemsNeeded);
         taskService.updateWeightForTask(assignmentDate, assignmentTime, departureAddress);
         try {
             if (!taskService.assignDriverAndTruckToTask(assignmentDate, assignmentTime, departureAddress)) {
@@ -69,16 +78,6 @@ public class TransportationProvider implements TransportationInterface {
             } catch (Exception ex) {
                 System.out.println("Failed to delete task: " + ex.getMessage());
             }
-        }
-    }
-
-    @Override
-    public void addSupplierSite(String supplierAddress, String contactName, String phoneNumber) throws InstanceAlreadyExistsException {
-        try {
-            siteService.addSite(supplierAddress, contactName, phoneNumber);
-        }
-        catch (Exception e) {
-            throw new InstanceAlreadyExistsException("Supplier site already exists");
         }
     }
 

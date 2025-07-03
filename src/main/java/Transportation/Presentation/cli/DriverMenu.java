@@ -52,7 +52,6 @@ public class DriverMenu {
                     removeDriver();
                     break;
                 case "0":
-                    returnToMain();
                     return;
                 default:
                     System.out.println("Invalid input.");
@@ -73,9 +72,6 @@ public class DriverMenu {
         }
     }
 
-    public void returnToMain() {
-        managerRoleMenu.show();
-    }
 
     public void addDriver() {
         System.out.println("Enter new driver's ID:");

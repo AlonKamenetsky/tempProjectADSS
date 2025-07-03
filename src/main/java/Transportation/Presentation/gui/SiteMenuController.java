@@ -81,7 +81,6 @@ public class SiteMenuController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Site Menu");
             alert.setHeaderText("Site Details");
-            // פה כדאי להשלים פירוט
             alert.showAndWait();
         }
     }

@@ -1,14 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx/17.0.12"
             fx:controller="Transportation.Presentation.gui.TaskMenuController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefWidth="500" prefHeight="500">
 
-</AnchorPane>
+    <top>
+        <Text text="Task Management Menu"
+              style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #2a2a2a;"
+              BorderPane.alignment="CENTER"/>
+    </top>
+
+    <center>
+        <VBox spacing="15" alignment="CENTER">
+            <children>
+                <Button fx:id="viewAllTasksButton"
+                        text="View All Tasks"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewAllTasks"/>
+
+                <Button fx:id="viewBySourceButton"
+                        text="View Tasks By Source Site"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onViewTaskBySource"/>
+
+                <Button fx:id="addTaskButton"
+                        text="Add Task"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onAddTask"/>
+
+                <Button fx:id="showRemoveTaskButton"
+                        text="Remove Task"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onShowRemoveTask"/>
+
+                <VBox fx:id="removeTaskBox"
+                      visible="false" managed="false"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefWidth="250"
+                      style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-padding: 10;">
+                    <ComboBox fx:id="taskComboBox"
+                              promptText="Select Task"
+                              prefWidth="200"/>
+                    <Button text="Confirm Remove"
+                            onAction="#onRemoveTask"/>
+                </VBox>
+
+                <Button fx:id="backButton"
+                        text="Back to Main Menu"
+                        maxWidth="250" prefHeight="40"
+                        onAction="#onBack"/>
+            </children>
+
+            <padding>
+                <Insets top="30" bottom="30" left="0" right="0"/>
+            </padding>
+        </VBox>
+    </center>
+</BorderPane>
