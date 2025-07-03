@@ -16,10 +16,10 @@
         <Text text="Suppliers Main Menu"
               style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-        <Button fx:id="productButton" text="Task Menu" onAction="#onProductMenu" prefWidth="200" prefHeight="40"/>
-        <Button fx:id="supplierButton" text="Driver Menu" onAction="#onSupplierMenu" prefWidth="200" prefHeight="40"/>
-        <Button fx:id="contractButton" text="Truck Menu" onAction="#onContractMenu" prefWidth="200" prefHeight="40"/>
-        <Button fx:id="orderButton" text="Site Menu" onAction="#onOrderMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="productButton" text="Products Menu" onAction="#onProductMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="supplierButton" text="Suppliers Menu" onAction="#onSupplierMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="contractButton" text="Contracts Menu" onAction="#onContractMenu" prefWidth="200" prefHeight="40"/>
+        <Button fx:id="orderButton" text="Orders Menu" onAction="#onOrderMenu" prefWidth="200" prefHeight="40"/>
     </children>
 
     <padding>
