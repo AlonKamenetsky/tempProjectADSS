@@ -16,8 +16,8 @@ public class OrderProductForScheduledOrderDataRepository implements IOrderProduc
     }
 
     @Override
-    public boolean addProductToOrder(int orderId, int productId, int quantity, String day) throws SQLException {
-        return dao.insert(orderId, productId, quantity, day);
+    public boolean addProductToOrder(int orderId, int productId, int quantity, String day, String deliverySite) throws SQLException {
+        return dao.insert(orderId, productId, quantity, day, deliverySite);
     }
 
     @Override

@@ -2,7 +2,7 @@ package SuppliersModule.PresentationLayer.CLI;
 
 import SuppliersModule.DomainLayer.Enums.SupplyMethod;
 import SuppliersModule.ServiceLayer.ServiceController;
-import TransportationSuppliers.Integration.TransportationProvider;
+
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -13,7 +13,6 @@ public class SupplierCLI {
     ServiceController serviceController;
     Scanner sc;
     boolean dataRead;
-    TransportationProvider transportationProvider;
 
     public SupplierCLI() {
         this.sc = new Scanner(System.in);
@@ -248,7 +247,9 @@ public class SupplierCLI {
     }
 
     private void deleteSupplyContract() {
-        //
+        System.out.println("Enter contract id");
+        int contractId = readInt();
+        serviceController.deleteSupplyContract(contractId);
     }
 
     private void printSupplyContract() {
@@ -258,21 +259,9 @@ public class SupplierCLI {
     }
 
     private void printAllSupplyContracts() {
-        //  String[] contracts = serviceController.getAllContractToStrings();
-        // String[] productData = serviceController.getAllSupplyContractProductsAsString();
-        serviceController.printSupplyContractDetails();
+        System.out.println(serviceController.getSupplyContractDetails());
     }
 
-    private void printSupplierContracts(int supplierId) {
-        String[] result = this.serviceController.getSupplierContractsAsString(supplierId);
-        if (result == null) {
-            System.out.println("Error: No such supplier exists.");
-            return;
-        }
-
-        for (String contractAsString : result)
-            System.out.println(contractAsString);
-    }
 
     // ------------------- Order FUNCTIONS -----------------------------
 
@@ -288,8 +277,17 @@ public class SupplierCLI {
         System.out.println("enter delivery date: (Enter T for tomorrow)");
         String deliveryDate = sc.nextLine();
         String type = SupplyMethod.ON_DEMAND.toString();
+        System.out.println("Enter delivery site:");
+        printSiteOptions();
+        int deliverySite = readInt();
+        if(deliverySite !=1 && deliverySite !=2 && deliverySite !=3){
+            System.out.println("Error: no such site");
+            return;
+        }
+        String site = chooseDeliverySite(deliverySite);
+
         try {
-            if (serviceController.registerNewOrder(dataArray, today, deliveryDate, type) != -1) {
+            if (serviceController.registerNewOrder(dataArray, today, deliveryDate, type, site) != -1) {
 
                 System.out.println("Order registered successfully.");
             } else {
@@ -317,10 +315,18 @@ public class SupplierCLI {
             System.out.println("No items were added. Aborting.");
             return;
         }
+        System.out.println("Enter delivery site:");
+        printSiteOptions();
+        int deliverySite = readInt();
+        if(deliverySite !=1 && deliverySite !=2 && deliverySite !=3){
+            System.out.println("Error: no such site");
+            return;
+        }
+        String site = chooseDeliverySite(deliverySite);
 
         System.out.println("enter regular day to be ordered");
         int deliveryDay = this.readInt();
-        if (serviceController.registerNewScheduledOrder(deliveryDay, dataArray)) {
+        if (serviceController.registerNewScheduledOrder(deliveryDay, dataArray, site)) {
             System.out.println("Scheduled Order registered successfully.");
         } else {
             System.out.println("Error: Failed to register new order.");
@@ -393,7 +399,7 @@ public class SupplierCLI {
 
         HashMap<Integer, Integer> map = serviceController.updateOrderStatus(orderID, status);
         if (map != null)
-            System.out.println("Order items retrived!");
+            System.out.println("Order items retrieved!");
     }
 
     private void removeProductsFromOrder(int orderID) {
@@ -475,10 +481,10 @@ public class SupplierCLI {
     }
 
     // ------------------- CLI print Functions -------------------
-
+    public void printSiteOptions() {
+        System.out.println("1.Tel aviv\n2.Haifa\n3.beer sheva");
+    }
     public void printMenuOptions() {
-        // if(dataRead)
-        // System.out.println("0. Erase all data from Database");
         System.out.println("1. Product section");
         System.out.println("2. Supplier section");
         System.out.println("3. Supplier contract section");
@@ -589,7 +595,7 @@ public class SupplierCLI {
                 this.printAllProducts();
                 break;
             case 6:
-                return;
+
 
         }
     }
@@ -612,7 +618,6 @@ public class SupplierCLI {
                 this.printAllSuppliers();
                 break;
             case 6:
-                return;
         }
     }
 
@@ -631,7 +636,6 @@ public class SupplierCLI {
                 this.updateSupplierPaymentMethod(supplierID);
                 break;
             case 5:
-                return;
         }
     }
 
@@ -659,7 +663,6 @@ public class SupplierCLI {
                 printAllScheduledOrders();
                 break;
             case 8:
-                return;
         }
     }
 
@@ -680,7 +683,6 @@ public class SupplierCLI {
                 printAllSupplyContracts();
                 break;
             case 5:
-                return;
         }
     }
 
@@ -696,7 +698,7 @@ public class SupplierCLI {
     }
 
     public int chooseDeliveryMethod() {
-        int deliveryMethod = -1;
+        int deliveryMethod;
         printDeliveryMethods();
         while (true) {
             deliveryMethod = readInt();
@@ -707,7 +709,7 @@ public class SupplierCLI {
     }
 
     public int choosePaymentMethod() {
-        int paymentMethod = -1;
+        int paymentMethod;
         while (true) {
             printPaymentMethods();
             paymentMethod = readInt();
@@ -717,17 +719,18 @@ public class SupplierCLI {
         }
         return paymentMethod;
     }
+    public String chooseDeliverySite(int deliverySite) {
+        return switch (deliverySite) {
+            case 1 -> "tel aviv";
+            case 2 -> "haifa";
+            case 3 -> "beer sheva";
+            default -> "";
+        };
+    }
 
     public void mainCliMenu() {
         System.out.println("Welcome to SuppliersModule!");
-//        if(!dataRead){
-//            System.out.println("Do you want to read data from csv files? y/n");
-//            String option = sc.nextLine();
-//            if (option.equalsIgnoreCase("y")) {
-//                loadData();
-//                dataRead = true;
-//            }
-//        }
+
         while (true) {
             printMenuOptions();
             System.out.println("Please select an option: ");
@@ -765,12 +768,6 @@ public class SupplierCLI {
 
     }
 
-    public void loadData() {
-        this.serviceController.loadData();
-
-    }
-
-
     // ---------------helpers------------
     private int readInt() {
         while (!sc.hasNextInt()) {
@@ -783,6 +780,5 @@ public class SupplierCLI {
     }
 
 
-    public void loadBasicData() {
-    }
+
 }

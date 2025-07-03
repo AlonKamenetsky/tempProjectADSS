@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public class SqliteOrderProductForScheduledOrderDataDAO {
 
-    public boolean insert(int orderId, int productId, int productQuantity, String day) throws SQLException {
+    public boolean insert(int orderId, int productId, int productQuantity, String day, String deliverySite) throws SQLException {
         String sql = """
-            INSERT INTO order_product_for_scheduled_order_data (order_id, product_id, product_quantity, day)
+            INSERT INTO order_product_for_scheduled_order_data (order_id, product_id, product_quantity, day,  delivery_site) VALUES (?, ?, ?, ?, ?);)
             VALUES (?, ?, ?, ?);
         """;
         try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
@@ -23,6 +23,7 @@ public class SqliteOrderProductForScheduledOrderDataDAO {
             stmt.setInt(2, productId);
             stmt.setInt(3, productQuantity);
             stmt.setString(4, day);
+            stmt.setString(5, deliverySite);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -68,7 +69,7 @@ public class SqliteOrderProductForScheduledOrderDataDAO {
     }
 
     public List<Object[]> findAll() throws SQLException {
-        String sql = "SELECT order_id, product_id, product_quantity, day FROM order_product_for_scheduled_order_data;";
+        String sql = "SELECT order_id, product_id, product_quantity, day, delivery_site FROM order_product_for_scheduled_order_data;";
         try (Statement stmt = Database.getConnection().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -78,7 +79,8 @@ public class SqliteOrderProductForScheduledOrderDataDAO {
                         rs.getInt("order_id"),
                         rs.getInt("product_id"),
                         rs.getInt("product_quantity"),
-                        rs.getString("day")
+                        rs.getString("day"),
+                        rs.getString("delivery_site")
                 });
             }
             return list;
@@ -104,7 +106,7 @@ public class SqliteOrderProductForScheduledOrderDataDAO {
     }
     public List<OrderProductForScheduledOrderDataDTO> getAllByOrderId(int orderId) throws SQLException {
         String sql = """
-        SELECT order_id, product_id, product_quantity, day
+        SELECT order_id, product_id, product_quantity, day, delivery_ste
         FROM order_product_for_scheduled_order_data
         WHERE order_id = ?
     """;
@@ -119,7 +121,8 @@ public class SqliteOrderProductForScheduledOrderDataDAO {
                             rs.getInt("order_id"),
                             rs.getInt("product_id"),
                             rs.getInt("product_quantity"),
-                            rs.getString("day")
+                            rs.getString("day"),
+                            rs.getString("delivery_site")
                     ));
                 }
                 return list;

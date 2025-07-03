@@ -122,18 +122,18 @@ public class SupplierService {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate,String type) {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate,String type, String deliverySite) {
         try {
-            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate, type);
+            return this.supplierController.registerNewOrder(dataList, creationDate, deliveryDate, type, deliverySite);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
+    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList, String deliverySite) {
         WeekDay d = WeekDay.values()[day - 1];
         try {
-            return this.supplierController.registerNewScheduledOrder(d, dataList);
+            return this.supplierController.registerNewScheduledOrder(d, dataList, deliverySite);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -209,4 +209,11 @@ public class SupplierService {
     }
 
 
+    public String getOrderContactName(int orderID) {
+        return supplierController.getOrderContactName(orderID);
+    }
+
+    public String getOrderPhoneNumber(int orderID) {
+        return supplierController.getOrderPhoneNumber(orderID);
+    }
 }

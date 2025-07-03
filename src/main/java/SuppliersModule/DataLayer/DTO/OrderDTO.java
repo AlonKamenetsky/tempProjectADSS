@@ -12,7 +12,8 @@ public record OrderDTO (
      String deliveryDate,
      double totalPrice,
      String orderStatus,
-     String supplyMethod
+     String supplyMethod,
+    String deliverySite
 ){
     @Override
     public String toString() {

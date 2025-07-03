@@ -17,7 +17,7 @@ public class SqliteOrderDAO {
         String sql = """
                 SELECT o.id AS order_id, o.supplier_id, o.delivering_method, o.order_date,
                        o.supply_date, o.total_price, o.order_status, o.supply_method,
-                       s.contact_name, s.phone_number, s.address, s.email
+                       s.contact_name, s.phone_number, s.address, s.email, o.delivery_site
                 FROM orders o
                 JOIN suppliers s ON o.supplier_id = s.id
                 """;
@@ -41,7 +41,7 @@ public class SqliteOrderDAO {
         String sql = """
                 SELECT o.id AS order_id, o.supplier_id, o.delivering_method, o.order_date,
                        o.supply_date, o.total_price, o.order_status, o.supply_method,
-                       s.contact_name, s.phone_number, s.address, s.email
+                       s.contact_name, s.phone_number, s.address, s.email, s.delivery_site
                 FROM orders o
                 JOIN suppliers s ON o.supplier_id = s.id
                 WHERE o.id = ?
@@ -66,8 +66,8 @@ public class SqliteOrderDAO {
     public OrderDTO insert(OrderDTO dto) throws SQLException {
         String sql = """
                 INSERT INTO orders (supplier_id, delivering_method, order_date, supply_date,
-                                    total_price, order_status, supply_method)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                                    total_price, order_status, supply_method, delivery_ste)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (PreparedStatement ps = Database.getConnection()
@@ -80,6 +80,7 @@ public class SqliteOrderDAO {
             ps.setDouble(5, dto.totalPrice());
             ps.setString(6, dto.orderStatus());
             ps.setString(7, dto.supplyMethod());
+            ps.setString(8, dto.deliverySite());
 
             ps.executeUpdate();
 
@@ -97,7 +98,8 @@ public class SqliteOrderDAO {
                         dto.deliveryDate(),
                         dto.totalPrice(),
                         dto.orderStatus(),
-                        dto.supplyMethod()
+                        dto.supplyMethod(),
+                        dto.deliverySite()
                 );
             }
             catch (SQLException e) {
@@ -115,7 +117,7 @@ public class SqliteOrderDAO {
         String sql = """
                 UPDATE orders
                 SET supplier_id = ?, delivering_method = ?, order_date = ?, supply_date = ?,
-                    total_price = ?, order_status = ?, supply_method = ?
+                    total_price = ?, order_status = ?, supply_method = ?, delivery_ste = ?
                 WHERE id = ?
                 """;
 
@@ -127,7 +129,8 @@ public class SqliteOrderDAO {
             ps.setDouble(5, dto.totalPrice());
             ps.setString(6, dto.orderStatus());
             ps.setString(7, dto.supplyMethod());
-            ps.setInt(8, dto.orderID());
+            ps.setString(8, dto.deliverySite());
+            ps.setInt(9, dto.orderID());
             ps.executeUpdate();
             return dto;
         }
@@ -162,7 +165,8 @@ public class SqliteOrderDAO {
                 rs.getString("supply_date"),
                 rs.getDouble("total_price"),
                 rs.getString("order_status"),
-                rs.getString("supply_method")
+                rs.getString("supply_method"),
+                rs.getString("delivery_site")
         );
     }
     public int getNextOrderId() throws SQLException {

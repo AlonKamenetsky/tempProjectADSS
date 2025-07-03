@@ -32,6 +32,10 @@ public class ServiceController implements SupplierInterface {
         this.superAddress = "Ben Gurion";
     //    executeScheduledOrders();
     }
+
+    public void deleteSupplyContract(int contractId) {
+    }
+
     private static class ServiceControllerHelper {
         private static final ServiceController INSTANCE = new ServiceController();
     }
@@ -59,20 +63,22 @@ public class ServiceController implements SupplierInterface {
             Date tomorrow = cal.getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String formattedTomorrow = formatter.format(tomorrow);
+            String deliverySite = orderData[4];
             try {
-                int order = this.registerNewOrder(dataList, today, formattedTomorrow,SupplyMethod.SCHEDULED.toString());
+                int order = this.registerNewOrder(dataList, today, formattedTomorrow,SupplyMethod.SCHEDULED.toString(), deliverySite);
                 if(order == -1)
                     return;
                 String departureAddress = supplierService.getOrderDepartureAddress(order);
-                String destinationAddress = this.superAddress;
+                String contactName = supplierService.getOrderContactName(order);
+                String phoneNumber = supplierService.getOrderPhoneNumber(order);
                 HashMap<String, Integer> map = new HashMap<>();
                 String productName = productService.getProductName(Integer.parseInt(orderData[1]));
                 map.put(productName ,Integer.parseInt(orderData[2]));
-//                try {
-//                     transportation.addTransportationAssignment(departureAddress, formattedTomorrow, map);
-//                } catch (ParseException e) {
-//                    throw new RuntimeException(e);
-//                }
+                try {
+                    transportation.addTransportationAssignment(departureAddress, deliverySite, contactName, phoneNumber, formattedTomorrow, map );
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -130,6 +136,7 @@ public class ServiceController implements SupplierInterface {
                 continue;
             }
             supplierService.registerNewSupplier(sm, supplierName, pc, dm, phoneNumber, address, emailAddress, contactName, bankAcount, pm, supplyDays);
+
             // Add to your repository or controller
         }
     }
@@ -361,7 +368,9 @@ public class ServiceController implements SupplierInterface {
     public String[] getAllSupplyContractProductsAsString(){
         return supplierService.getAllSupplyContractProductsAsString();
     }
-    public void printSupplyContractDetails() {
+    public String getSupplyContractDetails() {
+        StringBuilder resultBuilder = new StringBuilder();
+
         String[] supplyContractDTOs = getAllContractToStrings();
         String[] productDTOs = getAllProductsAsStrings();
         String[] supplyContractProductDataDTOs = getAllSupplyContractProductsAsString();
@@ -371,46 +380,49 @@ public class ServiceController implements SupplierInterface {
             int supplierId = extractIntValue(contractStr, "supplierID");
             String supplier = getSupplierAsString(supplierId);
             String supplyMethod = extractStringValue(supplier, "supplyMethod");
+
             String result = contractStr.substring(0, contractStr.length() - 1);
-            result = result + ", " + supplyMethod + "}";
-            System.out.println(result);
+            result += ", " + supplyMethod + "}";
+
+            resultBuilder.append(result).append("\n");
+
             for (String productDataStr : supplyContractProductDataDTOs) {
                 if (extractIntValue(productDataStr, "supplyContractID") == contractId) {
                     int productId = extractIntValue(productDataStr, "productID");
 
                     // Match the product
                     for (String productStr : productDTOs) {
-                        //    System.out.println("Looking for productId: " + productId);
-                        //  System.out.println("Matching against: " + productStr);
-
                         if (extractIntValue(productStr, "id") == productId) {
                             String name = extractStringValue(productStr, "name");
                             String company = extractStringValue(productStr, "company_name");
                             String category = extractStringValue(productStr, "product_category");
                             double weight = extractDoubleValue(productStr, "product_weight");
 
-                            System.out.println("  Product ID: " + productId +
-                                    ", Name: " + name +
-                                    ", Company: " + company +
-                                    ", Category: " + category +
-                                    ", Weight: " + weight);
+                            resultBuilder.append("  Product ID: ").append(productId)
+                                    .append(", Name: ").append(name)
+                                    .append(", Company: ").append(company)
+                                    .append(", Category: ").append(category)
+                                    .append(", Weight: ").append(weight).append("\n");
                             break;
                         }
                     }
 
-                    // Print discount info
+                    // Add discount info
                     double price = extractDoubleValue(productDataStr, "productPrice");
                     int quantity = extractIntValue(productDataStr, "quantityForDiscount");
                     double discount = extractDoubleValue(productDataStr, "discountPercentage");
 
-                    System.out.println("    Price: " + price +
-                            ", Quantity for Discount: " + quantity +
-                            ", Discount: " + discount + "%");
+                    resultBuilder.append("    Price: ").append(price)
+                            .append(", Quantity for Discount: ").append(quantity)
+                            .append(", Discount: ").append(discount).append("%\n");
                 }
             }
-            System.out.println(); // space between contracts
+            resultBuilder.append("\n"); // space between contracts
         }
+
+        return resultBuilder.toString();
     }
+
 
 
     private static String extractStringValue(String line, String label) {
@@ -453,7 +465,7 @@ public class ServiceController implements SupplierInterface {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate, String type) throws SQLException {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, String deliveryDate, String type, String deliverySite) throws SQLException {
         Date deliveryDateAsDate;
         if (deliveryDate.equalsIgnoreCase("t"))
             deliveryDateAsDate = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -466,17 +478,17 @@ public class ServiceController implements SupplierInterface {
             return -1;
 
 
-       int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate, type);
+       int id =  this.supplierService.registerNewOrder(dataList, creationDate, deliveryDateAsDate, type, deliverySite);
        //transportation.addSupplierSite();
        return id;
 
     }
 
-    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList) {
+    public boolean registerNewScheduledOrder(int day, ArrayList<int[]> dataList, String deliverySite) {
         if (!validateDay(day))
             return false;
 
-        return this.supplierService.registerNewScheduledOrder(day, dataList);
+        return this.supplierService.registerNewScheduledOrder(day, dataList, deliverySite);
     }
 
     public boolean deleteOrder(int orderID) {

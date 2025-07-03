@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IOrderProductForScheduledOrderDataRepository {
 
-    boolean addProductToOrder(int orderId, int productId, int quantity, String day) throws SQLException;
+    boolean addProductToOrder(int orderId, int productId, int quantity, String day, String deliverySite) throws SQLException;
 
     Optional<Integer> getProductQuantity(int orderId, int productId) throws SQLException;
 

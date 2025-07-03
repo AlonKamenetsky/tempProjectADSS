@@ -430,7 +430,7 @@ public class SupplierController {
 
     // --------------------------- ORDER FUNCTIONS ---------------------------
 
-    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate, String type) throws SQLException {
+    public int registerNewOrder(ArrayList<int[]> dataList, Date creationDate, Date deliveryDate, String type, String deliverySite) throws SQLException {
         SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.valueOf(type));
         if (supplier == null) return -1;
 
@@ -441,11 +441,11 @@ public class SupplierController {
         SupplyMethod supplyMethod = SupplyMethod.valueOf(supplier.supplyMethod());
 
         List<SupplyContractDTO> supplyContracts = supplyContractController.getSupplierContracts(supplierId);
-        return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo);
+        return this.orderController.registerNewOrder(supplierId, dataList, supplyContracts, creationDate, deliveryDate, deliveringMethod, supplyMethod, contactInfo, deliverySite);
     }
 
 
-    public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList) throws SQLException {
+    public boolean registerNewScheduledOrder(WeekDay day, ArrayList<int[]> dataList, String deliverySite) throws SQLException {
         SupplierDTO supplier = this.getSupplierByProductsPrice(dataList, SupplyMethod.SCHEDULED);
         if (supplier == null) return false;
 
@@ -454,7 +454,7 @@ public class SupplierController {
 
         ArrayList<OrderProductDataDTO> orderProductData = buildProductDataArray(dataList, new ArrayList<>(supplyContracts));
         if (orderProductData == null) return false;
-        return this.orderController.registerNewScheduledOrder(supplierId, day, dataList);
+        return this.orderController.registerNewScheduledOrder(supplierId, day, dataList, deliverySite);
     }
 
 
@@ -543,5 +543,13 @@ public class SupplierController {
 
     public String getOrderDepartureAddress(int id) {
         return orderController.getOrderDepartureAddress(id);
+    }
+
+    public String getOrderContactName(int orderID) {
+        return orderController.getOrderContactName(orderID);
+    }
+
+    public String getOrderPhoneNumber(int orderID) {
+        return orderController.getOrderPhoneNumber(orderID);
     }
 }

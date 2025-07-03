@@ -4,6 +4,7 @@ public record OrderProductForScheduledOrderDataDTO(
         Integer orderID,
         Integer productID,
         Integer productQuantity,
-        String day
+        String day,
+        String deliverySite
 ) {
 }

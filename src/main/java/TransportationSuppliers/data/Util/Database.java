@@ -137,6 +137,7 @@ public final class Database {
                     total_price REAL NOT NULL,
                     supply_method TEXT NOT NULL,
                     order_status TEXT NOT NULL,
+                    delivery_site TEXT NOT NULL,
                     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
                 );
             """);
@@ -145,7 +146,8 @@ public final class Database {
                     order_id INTEGER NOT NULL,
                     product_id INTEGER NOT NULL,
                     product_quantity INTEGER NOT NULL,
-                    day TEXT NOT NULL
+                    day TEXT NOT NULL,
+                    delivery_site TEXT NOT NULL
                 );
             """);
 
@@ -365,6 +367,7 @@ public final class Database {
                     total_price REAL NOT NULL,
                     supply_method TEXT NOT NULL,
                     order_status TEXT NOT NULL,
+                    delivery_site TEXT NOT NULL,
                     FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
                 );
             """);

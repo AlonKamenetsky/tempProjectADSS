@@ -52,6 +52,7 @@ public class OrderController {
 
         }
     }
+
     private void loadAllOnDemandOrders() {
         try {
             this.ordersArrayList.addAll(orderRepository.getAllOrders());
@@ -112,7 +113,7 @@ public class OrderController {
     }
 
 
-    public int registerNewOrder(int supplierId, ArrayList<int[]> dataList, List<SupplyContractDTO> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo) {
+    public int registerNewOrder(int supplierId, ArrayList<int[]> dataList, List<SupplyContractDTO> supplyContracts, Date creationDate, Date deliveryDate, DeliveringMethod deliveringMethod, SupplyMethod supplyMethod, ContactInfo supplierContactInfo, String deliverySite) {
         if (creationDate == null) {
             LocalDate today = LocalDate.now();
             creationDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -128,7 +129,7 @@ public class OrderController {
 
         double totalOrderValue = calculateTotalPriceDTOs(orderProductDataList);
 
-        OrderDTO orderDTO = new OrderDTO(-1, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString());
+        OrderDTO orderDTO = new OrderDTO(-1, supplierId, supplierContactInfo.phoneNumber, supplierContactInfo.address, supplierContactInfo.email, supplierContactInfo.name, deliveringMethod.toString(), creationDate.toString(), deliveryDate.toString(), totalOrderValue, OrderStatus.PENDING.toString(), supplyMethod.toString(), deliverySite);
         int orderID = orderRepository.getNextOrderID() - 1;
         orderRepository.insertOrder(orderDTO);
 
@@ -209,7 +210,7 @@ public class OrderController {
         OrderDTO oldDTO = optionalOrder.get();
 
         // Create new DTO with updated contact info fields
-        OrderDTO updatedDTO = new OrderDTO(oldDTO.orderID(), oldDTO.supplierID(), phoneNumber, address, email, contactName, oldDTO.deliveryMethod(), oldDTO.orderDate(), oldDTO.deliveryDate(), oldDTO.totalPrice(), oldDTO.orderStatus(), oldDTO.supplyMethod());
+        OrderDTO updatedDTO = new OrderDTO(oldDTO.orderID(), oldDTO.supplierID(), phoneNumber, address, email, contactName, oldDTO.deliveryMethod(), oldDTO.orderDate(), oldDTO.deliveryDate(), oldDTO.totalPrice(), oldDTO.orderStatus(), oldDTO.supplyMethod(), oldDTO.deliverySite());
 
         orderRepository.update(updatedDTO);
         return true;
@@ -224,7 +225,7 @@ public class OrderController {
         OrderDTO oldDTO = optionalOrderDTO.get();
 
         // Create new DTO with updated supply date
-        OrderDTO updatedDTO = new OrderDTO(oldDTO.orderID(), oldDTO.supplierID(), oldDTO.phoneNumber(), oldDTO.physicalAddress(), oldDTO.emailAddress(), oldDTO.contactName(), oldDTO.deliveryMethod(), oldDTO.orderDate(), newSupplyDate.toString(), oldDTO.totalPrice(), oldDTO.orderStatus(), oldDTO.supplyMethod());
+        OrderDTO updatedDTO = new OrderDTO(oldDTO.orderID(), oldDTO.supplierID(), oldDTO.phoneNumber(), oldDTO.physicalAddress(), oldDTO.emailAddress(), oldDTO.contactName(), oldDTO.deliveryMethod(), oldDTO.orderDate(), newSupplyDate.toString(), oldDTO.totalPrice(), oldDTO.orderStatus(), oldDTO.supplyMethod(), oldDTO.deliverySite());
 
         orderRepository.update(updatedDTO);
         return true;
@@ -239,7 +240,7 @@ public class OrderController {
         OrderDTO orderDTO = optionalOrderDTO.get();
 
         // Create a new DTO with updated status
-        OrderDTO updatedOrder = new OrderDTO(orderDTO.orderID(), orderDTO.supplierID(), orderDTO.phoneNumber(), orderDTO.physicalAddress(), orderDTO.emailAddress(), orderDTO.contactName(), orderDTO.deliveryMethod(), orderDTO.orderDate(), orderDTO.deliveryDate(), orderDTO.totalPrice(), newStatus.toString(), orderDTO.supplyMethod());
+        OrderDTO updatedOrder = new OrderDTO(orderDTO.orderID(), orderDTO.supplierID(), orderDTO.phoneNumber(), orderDTO.physicalAddress(), orderDTO.emailAddress(), orderDTO.contactName(), orderDTO.deliveryMethod(), orderDTO.orderDate(), orderDTO.deliveryDate(), orderDTO.totalPrice(), newStatus.toString(), orderDTO.supplyMethod(), orderDTO.deliverySite());
 
         // Persist the change via repository
         orderRepository.update(updatedOrder);
@@ -357,7 +358,7 @@ public class OrderController {
 
         OrderDTO oldOrder = maybeOrder.get();
         OrderDTO updatedOrder = new OrderDTO(oldOrder.orderID(), oldOrder.supplierID(), oldOrder.phoneNumber(), oldOrder.physicalAddress(), oldOrder.emailAddress(), oldOrder.contactName(), oldOrder.deliveryMethod(), oldOrder.orderDate(), oldOrder.deliveryDate(), price, // updated price
-                oldOrder.orderStatus(), oldOrder.supplyMethod());
+                oldOrder.orderStatus(), oldOrder.supplyMethod(), oldOrder.deliverySite());
 
         orderRepository.update(updatedOrder);
         return true;
@@ -390,7 +391,7 @@ public class OrderController {
         ordersArrayList.clear();
     }
 
-    public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList) {
+    public boolean registerNewScheduledOrder(int supplierId, WeekDay day, ArrayList<int[]> dataList, String deliverySite) {
         List<OrderProductForScheduledOrderDataDTO> lst = new ArrayList<>();
         int orderID;
         for (int[] data : dataList) {
@@ -398,7 +399,7 @@ public class OrderController {
             int quantity = data[1];
             try {
                 orderID = this.orderProductForScheduledOrderDataRepository.generateNextOrderId();
-                this.orderProductForScheduledOrderDataRepository.addProductToOrder(orderID, productID, quantity, day.toString());
+                this.orderProductForScheduledOrderDataRepository.addProductToOrder(orderID, productID, quantity, day.toString(), deliverySite);
                 lst.add(orderProductForScheduledOrderDataRepository.getByOrderIDProductID(orderID, productID));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -418,9 +419,7 @@ public class OrderController {
 
             result.add("Order ID: " + orderId);
             for (OrderProductForScheduledOrderDataDTO product : products) {
-                result.add("    Product ID: " + product.productID() +
-                        ", Quantity: " + product.productQuantity() +
-                        ", Day: " + product.day());
+                result.add("    Product ID: " + product.productID() + ", Quantity: " + product.productQuantity() + ", Day: " + product.day() + "DeliverySite: " + product.deliverySite());
             }
         }
 
@@ -434,61 +433,48 @@ public class OrderController {
         for (Map.Entry<Integer, List<OrderProductForScheduledOrderDataDTO>> entry : scheduledOrdersMap.entrySet()) {
             Integer id = entry.getKey();
             List<OrderProductForScheduledOrderDataDTO> dtos = entry.getValue();
-            if(checkDay(today.toString(), dtos.get(0).day().toString())){
+            if (checkDay(today.toString(), dtos.get(0).day().toString())) {
                 ordersToExecute.add(id);
             }
         }
-       return ordersToExecute;
+        return ordersToExecute;
     }
+
     private boolean checkDay(String today, String tomorrow) {
         switch (today) {
             case "SUNDAY":
                 if (tomorrow.equals("Monday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
             case "MONDAY":
                 if (tomorrow.equals("Tuesday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
             case "TUESDAY":
                 if (tomorrow.equals("Wednesday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
             case "WEDNESDAY":
                 if (tomorrow.equals("Thursday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
             case "THURSDAY":
                 if (tomorrow.equals("Friday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
             case "FRIDAY":
                 if (tomorrow.equals("Saturday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
             case "SATURDAY":
                 if (tomorrow.equals("Sunday")) {
                     return true;
-                }
-                else
-                    return false;
+                } else return false;
 
         }
         return false;
@@ -497,13 +483,31 @@ public class OrderController {
     public String[] getScheduledOrderDataForExecution(Integer orderID) {
         List<OrderProductForScheduledOrderDataDTO> dtos = scheduledOrdersMap.get(orderID);
         OrderProductForScheduledOrderDataDTO dto = dtos.get(0);
-        return new String[] {dto.orderID().toString(), dto.productID().toString(), dto.productQuantity().toString(), dto.day().toString()};
+        return new String[]{dto.orderID().toString(), dto.productID().toString(), dto.productQuantity().toString(), dto.day().toString(), dto.deliverySite()};
     }
 
     public String getOrderDepartureAddress(int id) {
-        for(int i = 0; i < ordersArrayList.size(); i++) {
+        for (int i = 0; i < ordersArrayList.size(); i++) {
             if (ordersArrayList.get(i).orderID() == id) {
                 return ordersArrayList.get(i).physicalAddress().toString();
+            }
+        }
+        return "";
+    }
+
+    public String getOrderContactName(int orderID) {
+        for (int i = 0; i < ordersArrayList.size(); i++) {
+            if (ordersArrayList.get(i).orderID() == orderID) {
+                return ordersArrayList.get(i).physicalAddress().toString();
+            }
+        }
+        return "";
+    }
+
+    public String getOrderPhoneNumber(int orderID) {
+        for (int i = 0; i < ordersArrayList.size(); i++) {
+            if (ordersArrayList.get(i).orderID() == orderID) {
+                return ordersArrayList.get(i).phoneNumber().toString();
             }
         }
         return "";

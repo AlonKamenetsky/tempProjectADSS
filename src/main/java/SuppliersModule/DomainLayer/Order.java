@@ -42,7 +42,7 @@ public class Order {
                  Date deliveryDate,
                  DeliveringMethod deliveringMethod,
                  SupplyMethod supplyMethod,
-                 ContactInfo supplierContactInfo) {
+                 ContactInfo supplierContactInfo, String deliverySite) {
 
         this.orderID = orderID;
         this.supplierID = supplierID;
@@ -71,7 +71,8 @@ public class Order {
                 formatDate(supplyDate),
                 totalPrice,
                 orderStatus.toString(),
-                supplyMethod.toString()
+                supplyMethod.toString(),
+                deliverySite
         );
     }
 
